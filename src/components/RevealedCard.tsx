@@ -19,16 +19,14 @@ const RevealedCard: React.FC<RevealedCardProps> = ({
   avatar,
   emoji 
 }) => {
-  const percentValue = parseFloat(percent);
+  const percentValue = parseFloat(percent || "0");
   const isNegative = percentValue < 0;
   
   return (
     <div className="neo-brutal-box bg-dawg-light animate-fade-in hover:bg-dawg-secondary relative p-4">
       <div className="flex items-center gap-3">
-        <img 
-          src={avatar} 
-          alt={name} 
-          className="w-12 h-12 rounded-full neo-brutal-border object-cover"
+        <div 
+          className="w-12 h-12 rounded-full neo-brutal-border bg-transparent flex items-center justify-center"
         />
         <div className="flex-1">
           <div className="flex items-center gap-1">

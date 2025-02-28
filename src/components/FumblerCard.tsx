@@ -11,10 +11,8 @@ interface FumblerCardProps {
 const FumblerCard: React.FC<FumblerCardProps> = ({ name, amount, avatar }) => {
   return (
     <div className="neo-brutal-box bg-dawg-light animate-fade-in hover:bg-dawg-secondary relative p-4 flex items-center gap-3">
-      <img 
-        src={avatar} 
-        alt={name} 
-        className="w-12 h-12 rounded-full neo-brutal-border object-cover"
+      <div 
+        className="w-12 h-12 rounded-full neo-brutal-border bg-transparent flex items-center justify-center"
       />
       <div className="flex-1">
         <div className="flex flex-col">

@@ -26,7 +26,7 @@ const TableRow: React.FC<TableRowProps> = ({
   avatar,
   emoji
 }) => {
-  const percentValue = parseFloat(balanceChange.replace('%', ''));
+  const percentValue = parseFloat(balanceChange?.replace('%', '') || "0");
   const isNegative = percentValue < 0;
   
   const getActivityBar = () => {
@@ -62,7 +62,7 @@ const TableRow: React.FC<TableRowProps> = ({
     <tr className="border-b-2 border-black hover:bg-dawg-secondary transition-colors">
       <td className="py-4 px-2">
         <div className="flex items-center gap-2">
-          <img src={avatar} alt={name} className="w-10 h-10 rounded-full neo-brutal-border object-cover" />
+          <div className="w-10 h-10 rounded-full neo-brutal-border bg-transparent flex items-center justify-center" />
           <div>
             <div className="flex items-center gap-1">
               <p className="font-bold">{name}</p>
