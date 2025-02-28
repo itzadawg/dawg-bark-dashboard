@@ -1,10 +1,8 @@
-
 import React, { useState } from 'react';
 import { Search, AlertTriangle, DollarSign, TrendingDown } from 'lucide-react';
 import FumblerCard from '../components/FumblerCard';
 import RevealedCard from '../components/RevealedCard';
 import TableRow from '../components/TableRow';
-
 const Index = () => {
   const [showMasked, setShowMasked] = useState(false);
 
@@ -127,7 +125,7 @@ const Index = () => {
         {/* Left content (5 columns) */}
         <div className="col-span-6 lg:col-span-4 space-y-10 animate-slide-in">
           <div>
-            <h1 className="text-3xl md:text-4xl font-black mb-2 text-dawg">Tracking Dawgs & Mini-Dawgs</h1>
+            <h1 className="text-3xl md:text-4xl font-black mb-2 text-dawg">Tracking Dawg Holders</h1>
             <p className="text-dawg-dark/80 max-w-3xl">
               Use this wall to monitor the people who were approved in the DAWG application process. In an
               effort to maintain transparency in the process, we are revealing those who sold over 50% of
