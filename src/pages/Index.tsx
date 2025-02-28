@@ -8,116 +8,116 @@ import TableRow from '../components/TableRow';
 const Index = () => {
   const [showMasked, setShowMasked] = useState(false);
 
-  // Sample data for our dashboard
+  // Sample data for our dashboard (with empty values)
   const fumblers = [
-    { id: 1, name: 'ntoine 9000', amount: '+142,434.45', avatar: 'https://i.pravatar.cc/150?img=1' },
-    { id: 2, name: 'Masil (0,G)', amount: '+85,709.96', avatar: 'https://i.pravatar.cc/150?img=2' },
-    { id: 3, name: 'Retardo Masturbinio', amount: '+70,033.39', avatar: 'https://i.pravatar.cc/150?img=3' },
-    { id: 4, name: 'Galileo', amount: '+77,830.53', avatar: 'https://i.pravatar.cc/150?img=4' },
+    { id: 1, name: '', amount: '', avatar: 'https://i.pravatar.cc/150?img=1' },
+    { id: 2, name: '', amount: '', avatar: 'https://i.pravatar.cc/150?img=2' },
+    { id: 3, name: '', amount: '', avatar: 'https://i.pravatar.cc/150?img=3' },
+    { id: 4, name: '', amount: '', avatar: 'https://i.pravatar.cc/150?img=4' },
   ];
 
   const revealed = [
     { 
       id: 1, 
-      name: 'Whomp', 
-      balance: '700,000', 
-      percent: '-52.32%', 
-      time: 'an hour ago', 
+      name: '', 
+      balance: '', 
+      percent: '', 
+      time: '', 
       avatar: 'https://i.pravatar.cc/150?img=5' 
     },
     { 
       id: 2, 
-      name: 'VirtualQuery', 
-      balance: '725,000', 
-      percent: '-50.61%', 
-      time: '2 hours ago', 
+      name: '', 
+      balance: '', 
+      percent: '', 
+      time: '', 
       avatar: 'https://i.pravatar.cc/150?img=6',
-      emoji: '🟡' 
+      emoji: '' 
     },
     { 
       id: 3, 
-      name: 'chifuu', 
-      balance: '388,745.95', 
-      percent: '-7.32%', 
-      time: '5 hours ago', 
+      name: '', 
+      balance: '', 
+      percent: '', 
+      time: '', 
       avatar: 'https://i.pravatar.cc/150?img=7',
-      emoji: '▲' 
+      emoji: '' 
     },
     { 
       id: 4, 
-      name: 'Emperor Osmo', 
-      balance: '300,000.52', 
-      percent: '-79.56%', 
-      time: '9 hours ago', 
+      name: '', 
+      balance: '', 
+      percent: '', 
+      time: '', 
       avatar: 'https://i.pravatar.cc/150?img=8',
-      emoji: '🐺 🚀' 
+      emoji: '' 
     },
   ];
 
   const tableData = [
     {
       id: 1,
-      name: 'Emperor Osmo',
-      username: '@EmperorOsmo',
-      address: '0x2c0a...34ef',
-      initial: '1,468,041',
-      current: '300,000.52',
-      balanceChange: '-79.56%',
+      name: '',
+      username: '',
+      address: '',
+      initial: '',
+      current: '',
+      balanceChange: '',
       activity: 'none' as const,
-      realizedPnL: '$0',
+      realizedPnL: '',
       avatar: 'https://i.pravatar.cc/150?img=8',
-      emoji: '🐺 🚀'
+      emoji: ''
     },
     {
       id: 2,
-      name: 'gobelz',
-      username: '@gobelz_',
-      address: '0x96f8...6b8f',
-      initial: '419,440',
-      current: '0',
-      balanceChange: '-100.00%',
-      activity: 'medium' as const,
-      realizedPnL: '$19,947.71',
+      name: '',
+      username: '',
+      address: '',
+      initial: '',
+      current: '',
+      balanceChange: '',
+      activity: 'none' as const,
+      realizedPnL: '',
       avatar: 'https://i.pravatar.cc/150?img=9',
-      emoji: '🍕'
+      emoji: ''
     },
     {
       id: 3,
-      name: 'aihansu9000',
-      username: '@Zenousmansesh',
-      address: '0xd427...1b00',
-      initial: '1,468,041',
-      current: '1,705,550.76',
-      balanceChange: '16.18%',
-      activity: 'low' as const,
-      realizedPnL: '$0',
+      name: '',
+      username: '',
+      address: '',
+      initial: '',
+      current: '',
+      balanceChange: '',
+      activity: 'none' as const,
+      realizedPnL: '',
       avatar: 'https://i.pravatar.cc/150?img=10',
-      emoji: '👨‍💻 🌒 🔮'
+      emoji: ''
     },
     {
       id: 4,
-      name: 'Figurandy',
-      username: '@figurandy',
-      address: '0x1768...7c50',
-      initial: '419,440',
-      current: '48,650.94',
-      balanceChange: '-88.40%',
-      activity: 'medium' as const,
-      realizedPnL: '$26,013.10',
+      name: '',
+      username: '',
+      address: '',
+      initial: '',
+      current: '',
+      balanceChange: '',
+      activity: 'none' as const,
+      realizedPnL: '',
       avatar: 'https://i.pravatar.cc/150?img=11'
     },
     {
       id: 5,
-      name: 'minho',
-      username: '@minhodm',
-      address: '0x2616...f39b',
-      initial: '419,440',
-      current: '0',
-      balanceChange: '-100.00%',
-      activity: 'medium' as const,
-      realizedPnL: '$19,808.52',
+      name: '',
+      username: '',
+      address: '',
+      initial: '',
+      current: '',
+      balanceChange: '',
+      activity: 'none' as const,
+      realizedPnL: '',
       avatar: 'https://i.pravatar.cc/150?img=12',
-      emoji: '🌿'
+      emoji: ''
     },
   ];
 
@@ -142,32 +142,32 @@ const Index = () => {
               <div className="mb-1 text-sm">Current price</div>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl font-bold">$0.2807</span>
+                  <span className="text-2xl font-bold"></span>
                   <div className="flex items-center">
                     <TrendingDown size={18} />
-                    <span className="text-sm">8%</span>
+                    <span className="text-sm"></span>
                   </div>
                 </div>
-                <div className="text-xl">🦊</div>
+                <div className="text-xl"></div>
               </div>
             </div>
 
             {/* Max Allocation Card */}
             <div className="neo-brutal-box bg-dawg-light hover:bg-dawg-secondary p-4 animate-fade-in">
               <div className="mb-1 text-sm">Max allocation worth</div>
-              <div className="text-2xl font-bold">$760,896.02</div>
+              <div className="text-2xl font-bold"></div>
             </div>
 
             {/* Market Cap Card */}
             <div className="neo-brutal-box bg-dawg-light hover:bg-dawg-secondary p-4 animate-fade-in">
               <div className="mb-1 text-sm">Market Cap</div>
-              <div className="text-2xl font-bold">$280,727,184.00</div>
+              <div className="text-2xl font-bold"></div>
             </div>
 
             {/* Liquidity Card */}
             <div className="neo-brutal-box bg-dawg-light hover:bg-dawg-secondary p-4 animate-fade-in">
               <div className="mb-1 text-sm">Liquidity</div>
-              <div className="text-2xl font-bold">$3,673,894.81</div>
+              <div className="text-2xl font-bold"></div>
             </div>
           </div>
 
