@@ -1,128 +1,126 @@
-
 import React, { useState } from 'react';
 import { Search, AlertTriangle, DollarSign, TrendingDown } from 'lucide-react';
 import FumblerCard from '../components/FumblerCard';
 import RevealedCard from '../components/RevealedCard';
 import TableRow from '../components/TableRow';
-
 const Index = () => {
   const [showMasked, setShowMasked] = useState(false);
 
   // Sample data for our dashboard (with empty values)
-  const fumblers = [
-    { id: 1, name: '', amount: '', avatar: 'https://i.pravatar.cc/150?img=1' },
-    { id: 2, name: '', amount: '', avatar: 'https://i.pravatar.cc/150?img=2' },
-    { id: 3, name: '', amount: '', avatar: 'https://i.pravatar.cc/150?img=3' },
-    { id: 4, name: '', amount: '', avatar: 'https://i.pravatar.cc/150?img=4' },
-  ];
-
-  const revealed = [
-    { 
-      id: 1, 
-      name: '', 
-      balance: '', 
-      percent: '', 
-      time: '', 
-      avatar: 'https://i.pravatar.cc/150?img=5' 
-    },
-    { 
-      id: 2, 
-      name: '', 
-      balance: '', 
-      percent: '', 
-      time: '', 
-      avatar: 'https://i.pravatar.cc/150?img=6',
-      emoji: '' 
-    },
-    { 
-      id: 3, 
-      name: '', 
-      balance: '', 
-      percent: '', 
-      time: '', 
-      avatar: 'https://i.pravatar.cc/150?img=7',
-      emoji: '' 
-    },
-    { 
-      id: 4, 
-      name: '', 
-      balance: '', 
-      percent: '', 
-      time: '', 
-      avatar: 'https://i.pravatar.cc/150?img=8',
-      emoji: '' 
-    },
-  ];
-
-  const tableData = [
-    {
-      id: 1,
-      name: '',
-      username: '',
-      address: '',
-      initial: '',
-      current: '',
-      balanceChange: '',
-      activity: 'none' as const,
-      realizedPnL: '',
-      avatar: 'https://i.pravatar.cc/150?img=8',
-      emoji: ''
-    },
-    {
-      id: 2,
-      name: '',
-      username: '',
-      address: '',
-      initial: '',
-      current: '',
-      balanceChange: '',
-      activity: 'none' as const,
-      realizedPnL: '',
-      avatar: 'https://i.pravatar.cc/150?img=9',
-      emoji: ''
-    },
-    {
-      id: 3,
-      name: '',
-      username: '',
-      address: '',
-      initial: '',
-      current: '',
-      balanceChange: '',
-      activity: 'none' as const,
-      realizedPnL: '',
-      avatar: 'https://i.pravatar.cc/150?img=10',
-      emoji: ''
-    },
-    {
-      id: 4,
-      name: '',
-      username: '',
-      address: '',
-      initial: '',
-      current: '',
-      balanceChange: '',
-      activity: 'none' as const,
-      realizedPnL: '',
-      avatar: 'https://i.pravatar.cc/150?img=11'
-    },
-    {
-      id: 5,
-      name: '',
-      username: '',
-      address: '',
-      initial: '',
-      current: '',
-      balanceChange: '',
-      activity: 'none' as const,
-      realizedPnL: '',
-      avatar: 'https://i.pravatar.cc/150?img=12',
-      emoji: ''
-    },
-  ];
-
-  return (
-    <div className="min-h-screen bg-dawg-light px-8 py-8 max-w-7xl mx-auto">
+  const fumblers = [{
+    id: 1,
+    name: '',
+    amount: '',
+    avatar: 'https://i.pravatar.cc/150?img=1'
+  }, {
+    id: 2,
+    name: '',
+    amount: '',
+    avatar: 'https://i.pravatar.cc/150?img=2'
+  }, {
+    id: 3,
+    name: '',
+    amount: '',
+    avatar: 'https://i.pravatar.cc/150?img=3'
+  }, {
+    id: 4,
+    name: '',
+    amount: '',
+    avatar: 'https://i.pravatar.cc/150?img=4'
+  }];
+  const revealed = [{
+    id: 1,
+    name: '',
+    balance: '',
+    percent: '',
+    time: '',
+    avatar: 'https://i.pravatar.cc/150?img=5'
+  }, {
+    id: 2,
+    name: '',
+    balance: '',
+    percent: '',
+    time: '',
+    avatar: 'https://i.pravatar.cc/150?img=6',
+    emoji: ''
+  }, {
+    id: 3,
+    name: '',
+    balance: '',
+    percent: '',
+    time: '',
+    avatar: 'https://i.pravatar.cc/150?img=7',
+    emoji: ''
+  }, {
+    id: 4,
+    name: '',
+    balance: '',
+    percent: '',
+    time: '',
+    avatar: 'https://i.pravatar.cc/150?img=8',
+    emoji: ''
+  }];
+  const tableData = [{
+    id: 1,
+    name: '',
+    username: '',
+    address: '',
+    initial: '',
+    current: '',
+    balanceChange: '',
+    activity: 'none' as const,
+    realizedPnL: '',
+    avatar: 'https://i.pravatar.cc/150?img=8',
+    emoji: ''
+  }, {
+    id: 2,
+    name: '',
+    username: '',
+    address: '',
+    initial: '',
+    current: '',
+    balanceChange: '',
+    activity: 'none' as const,
+    realizedPnL: '',
+    avatar: 'https://i.pravatar.cc/150?img=9',
+    emoji: ''
+  }, {
+    id: 3,
+    name: '',
+    username: '',
+    address: '',
+    initial: '',
+    current: '',
+    balanceChange: '',
+    activity: 'none' as const,
+    realizedPnL: '',
+    avatar: 'https://i.pravatar.cc/150?img=10',
+    emoji: ''
+  }, {
+    id: 4,
+    name: '',
+    username: '',
+    address: '',
+    initial: '',
+    current: '',
+    balanceChange: '',
+    activity: 'none' as const,
+    realizedPnL: '',
+    avatar: 'https://i.pravatar.cc/150?img=11'
+  }, {
+    id: 5,
+    name: '',
+    username: '',
+    address: '',
+    initial: '',
+    current: '',
+    balanceChange: '',
+    activity: 'none' as const,
+    realizedPnL: '',
+    avatar: 'https://i.pravatar.cc/150?img=12',
+    emoji: ''
+  }];
+  return <div className="min-h-screen bg-dawg-light px-8 py-8 max-w-7xl mx-auto">
       <div className="grid grid-cols-6 gap-8">
         {/* Left content (5 columns) */}
         <div className="col-span-6 lg:col-span-4 space-y-10 animate-slide-in">
@@ -182,14 +180,7 @@ const Index = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {fumblers.map(fumbler => (
-                <FumblerCard 
-                  key={fumbler.id}
-                  name={fumbler.name}
-                  amount={fumbler.amount}
-                  avatar={fumbler.avatar}
-                />
-              ))}
+              {fumblers.map(fumbler => <FumblerCard key={fumbler.id} name={fumbler.name} amount={fumbler.amount} avatar={fumbler.avatar} />)}
             </div>
           </div>
 
@@ -204,17 +195,7 @@ const Index = () => {
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {revealed.map(item => (
-                <RevealedCard 
-                  key={item.id}
-                  name={item.name}
-                  balance={item.balance}
-                  percent={item.percent}
-                  time={item.time}
-                  avatar={item.avatar}
-                  emoji={item.emoji}
-                />
-              ))}
+              {revealed.map(item => <RevealedCard key={item.id} name={item.name} balance={item.balance} percent={item.percent} time={item.time} avatar={item.avatar} emoji={item.emoji} />)}
             </div>
           </div>
 
@@ -223,21 +204,14 @@ const Index = () => {
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <Search className="h-5 w-5 text-gray-500" />
             </div>
-            <input
-              type="text"
-              placeholder="Search by symbol, name or address"
-              className="w-full pl-10 py-3 neo-brutal-border focus:outline-none focus:ring-2 focus:ring-dawg bg-white"
-            />
+            <input type="text" placeholder="Search by symbol, name or address" className="w-full pl-10 py-3 neo-brutal-border focus:outline-none focus:ring-2 focus:ring-dawg bg-white" />
           </div>
 
           {/* Table */}
           <div className="overflow-x-auto neo-brutal-box p-0">
             <div className="flex justify-between items-center bg-dawg p-4 neo-brutal-border">
               <h2 className="text-xl font-bold">DAWG Holders</h2>
-              <button 
-                className="flex items-center gap-2 neo-brutal-button bg-white hover:bg-dawg-light"
-                onClick={() => setShowMasked(!showMasked)}
-              >
+              <button className="flex items-center gap-2 neo-brutal-button bg-white hover:bg-dawg-light" onClick={() => setShowMasked(!showMasked)}>
                 <AlertTriangle size={16} />
                 <span>Show masked entries</span>
               </button>
@@ -255,21 +229,7 @@ const Index = () => {
                 </tr>
               </thead>
               <tbody>
-                {tableData.map(row => (
-                  <TableRow
-                    key={row.id}
-                    name={row.name}
-                    username={row.username}
-                    address={row.address}
-                    initial={row.initial}
-                    current={row.current}
-                    balanceChange={row.balanceChange}
-                    activity={row.activity}
-                    realizedPnL={row.realizedPnL}
-                    avatar={row.avatar}
-                    emoji={row.emoji}
-                  />
-                ))}
+                {tableData.map(row => <TableRow key={row.id} name={row.name} username={row.username} address={row.address} initial={row.initial} current={row.current} balanceChange={row.balanceChange} activity={row.activity} realizedPnL={row.realizedPnL} avatar={row.avatar} emoji={row.emoji} />)}
               </tbody>
             </table>
           </div>
@@ -277,15 +237,9 @@ const Index = () => {
 
         {/* Right content (mascot image - 1 column) */}
         <div className="col-span-6 lg:col-span-2 flex justify-center lg:justify-end">
-          <img 
-            src="/lovable-uploads/cad422db-0b5b-4daa-8c69-399db79c934a.png" 
-            alt="Dawg Mascot"
-            className="w-48 h-48 object-contain animate-fade-in"
-          />
+          
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
