@@ -27,20 +27,20 @@ const GameMenu: React.FC<GameMenuProps> = ({ onSelectGame }) => {
       name: 'Block Puzzle',
       description: 'Solve puzzles by arranging blocks in the right pattern!',
       icon: <Dice1 size={40} />,
-      color: 'bg-[#f15bb5]',
+      color: 'bg-dawg-accent',
     },
     {
       id: 'whackADawg',
       name: 'Whack-A-Dawg',
       description: 'Whack the dawgs as they pop up from their holes!',
-      icon: <img src="/lovable-uploads/311c90d1-3b76-4522-8532-bdb805985a2d.png" alt="Dawg" className="w-10 h-10 object-contain" />,
-      color: 'bg-[#f15bb5]',
+      icon: <img src="/lovable-uploads/13194617-f0ef-4538-9821-b08ae6fbdde9.png" alt="Dawg" className="w-full h-full object-contain" />,
+      color: 'bg-[#1EAEDB]', // Blue background to match the new image
     },
   ];
 
   return (
     <div className="text-center">
-      <h1 className="text-4xl font-black mb-2 text-center text-[#f8d347]">Dawg Games</h1>
+      <h1 className="text-4xl font-black mb-2 text-center text-dawg">Dawg Games</h1>
       <p className="text-lg text-center mb-8">
         Select a game to play!
       </p>

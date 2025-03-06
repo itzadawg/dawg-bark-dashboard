@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '../ui/button';
 import { toast } from '../ui/use-toast';
+import GameOverModal from './GameOverModal';
 
 interface Hole {
   id: number;
@@ -139,7 +140,7 @@ const WhackADawg: React.FC = () => {
   
   return (
     <div className="text-center">
-      <h1 className="text-4xl font-black mb-6 text-center text-[#f15bb5]">Whack-A-Dawg</h1>
+      <h1 className="text-4xl font-black mb-6 text-center text-dawg">Whack-A-Dawg</h1>
       <p className="text-lg text-center mb-8">
         Whack the dawgs as they pop up! Score as many points as you can in 30 seconds.
       </p>
@@ -156,13 +157,13 @@ const WhackADawg: React.FC = () => {
         </div>
       </div>
       
-      <div className="neo-brutal-box p-6 max-w-xl mx-auto bg-[#f9e1d2]">
+      <div className="neo-brutal-box p-6 max-w-xl mx-auto bg-dawg-secondary">
         {!isPlaying && !gameOver && (
           <div className="mb-6 text-center">
             <h2 className="text-2xl font-bold mb-4">Ready to Play?</h2>
             <Button 
               onClick={startGame}
-              className="neo-brutal-button bg-[#f15bb5] hover:bg-[#e74da9]"
+              className="neo-brutal-button bg-dawg hover:bg-dawg-accent text-dawg-dark"
             >
               Start Game
             </Button>
@@ -170,27 +171,22 @@ const WhackADawg: React.FC = () => {
         )}
         
         {gameOver && (
-          <div className="mb-6 text-center">
-            <h2 className="text-2xl font-bold mb-4">Game Over!</h2>
-            <p className="mb-4">Your score: {score}</p>
-            <Button 
-              onClick={startGame}
-              className="neo-brutal-button bg-[#f15bb5] hover:bg-[#e74da9]"
-            >
-              Play Again
-            </Button>
-          </div>
+          <GameOverModal 
+            score={score} 
+            highScore={highScore} 
+            onRestart={startGame} 
+          />
         )}
         
         <div className="grid grid-cols-3 gap-4">
           {holes.map((hole) => (
             <div 
               key={hole.id} 
-              className="aspect-square relative bg-[#9b5de5] rounded-full overflow-hidden border-4 border-black"
+              className="aspect-square relative bg-dawg-accent/30 rounded-full overflow-hidden border-4 border-black"
               onClick={() => whackDawg(hole.id)}
             >
               <div 
-                className={`absolute inset-0 bg-[#00f5d4] rounded-b-full transition-all duration-200 ease-out ${
+                className={`absolute inset-0 bg-dawg-light rounded-b-full transition-all duration-200 ease-out ${
                   hole.active ? 'bottom-0' : 'bottom-full'
                 }`}
               >
@@ -202,7 +198,7 @@ const WhackADawg: React.FC = () => {
                 }`}
               >
                 <img 
-                  src="/lovable-uploads/311c90d1-3b76-4522-8532-bdb805985a2d.png"
+                  src="/lovable-uploads/13194617-f0ef-4538-9821-b08ae6fbdde9.png"
                   alt="Dawg" 
                   className={`w-16 h-16 object-contain transform ${hole.whacked ? 'rotate-12' : ''}`}
                 />
