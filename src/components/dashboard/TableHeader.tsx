@@ -16,7 +16,7 @@ const TableHeader: React.FC = () => {
   };
 
   const getSortableHeaderClass = (field: SortField) => {
-    return `text-left py-4 px-2 font-bold cursor-pointer select-none hover:bg-dawg-secondary/50 transition-colors flex items-center gap-1 ${sortField === field ? 'text-dawg-accent' : ''}`;
+    return `py-4 px-2 font-bold cursor-pointer select-none hover:bg-dawg-secondary/50 transition-colors flex items-center gap-1 ${sortField === field ? 'text-dawg-accent' : ''}`;
   };
 
   return (

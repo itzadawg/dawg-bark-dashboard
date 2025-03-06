@@ -60,7 +60,7 @@ const TableRow: React.FC<TableRowProps> = ({
   
   return (
     <tr className="border-b-2 border-black hover:bg-dawg-secondary transition-colors">
-      <td className="py-4 px-2">
+      <td className="py-4 px-2 w-[20%]">
         <div className="flex items-center gap-2">
           <div className="w-10 h-10 rounded-full neo-brutal-border bg-transparent flex items-center justify-center" />
           <div>
@@ -72,14 +72,14 @@ const TableRow: React.FC<TableRowProps> = ({
           </div>
         </div>
       </td>
-      <td className="py-4 px-2 font-mono text-xs">{address}</td>
-      <td className="py-4 px-2 font-mono">{initial}</td>
-      <td className="py-4 px-2 font-mono">{current}</td>
-      <td className={`py-4 px-2 font-mono ${isNegative ? 'percent-negative' : 'percent-positive'}`}>
+      <td className="py-4 px-2 font-mono text-xs w-[15%]">{address}</td>
+      <td className="py-4 px-2 font-mono w-[13%]">{initial}</td>
+      <td className="py-4 px-2 font-mono w-[13%]">{current}</td>
+      <td className={`py-4 px-2 font-mono w-[13%] ${isNegative ? 'percent-negative' : 'percent-positive'}`}>
         {balanceChange}
       </td>
-      <td className="py-4 px-2">{getActivityBar()}</td>
-      <td className="py-4 px-2 font-mono">{realizedPnL}</td>
+      <td className="py-4 px-2 w-[11%]">{getActivityBar()}</td>
+      <td className="py-4 px-2 font-mono w-[15%]">{realizedPnL}</td>
     </tr>
   );
 };

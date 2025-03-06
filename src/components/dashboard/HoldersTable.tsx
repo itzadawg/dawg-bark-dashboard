@@ -10,7 +10,7 @@ const HoldersTable: React.FC = () => {
   const { tableData } = getDashboardData();
 
   return (
-    <div className="overflow-x-auto neo-brutal-box p-0">
+    <div className="overflow-hidden neo-brutal-box p-0">
       <div className="flex justify-between items-center bg-dawg p-4 neo-brutal-border">
         <h2 className="text-xl font-bold">DAWG Holders</h2>
         <button 
@@ -22,7 +22,7 @@ const HoldersTable: React.FC = () => {
         </button>
       </div>
       <div className="w-full overflow-x-auto">
-        <table className="w-full border-collapse table-auto">
+        <table className="w-full border-collapse table-fixed">
           <thead>
             <TableHeader />
           </thead>
