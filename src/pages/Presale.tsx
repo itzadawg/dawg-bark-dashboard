@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
@@ -21,7 +20,7 @@ const Presale = () => {
           <div className="w-full md:w-1/2">
             <div className="neo-brutal-border overflow-hidden">
               <img 
-                src="https://i.imghippo.com/files/vWPh5294lmg.webp" 
+                src="https://i.imghippo.com/files/nJX2719GY.webp" 
                 alt="DAWG Token" 
                 className="w-full h-auto"
               />
