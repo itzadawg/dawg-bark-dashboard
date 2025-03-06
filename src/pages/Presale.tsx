@@ -1,7 +1,8 @@
+
 import React from 'react';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Calendar, ArrowRight } from 'lucide-react';
+import { ShoppingCart, ArrowRight } from 'lucide-react';
 
 const Presale = () => {
   return (
@@ -16,7 +17,7 @@ const Presale = () => {
         </div>
 
         {/* Hero Section */}
-        <div className="flex flex-col md:flex-row gap-8 mb-16 items-center">
+        <div className="flex flex-col md:flex-row gap-8 mb-16 items-start">
           <div className="w-full md:w-1/2">
             <div className="neo-brutal-border overflow-hidden">
               <img 
@@ -60,65 +61,6 @@ const Presale = () => {
               <ShoppingCart className="h-5 w-5" />
               Join Presale Now
             </Button>
-          </div>
-        </div>
-
-        {/* Timeline Section */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">Presale Timeline</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="neo-brutal-box p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold">Phase 1</h3>
-                <Calendar className="text-dawg h-6 w-6" />
-              </div>
-              <p className="mb-2">Private Sale</p>
-              <p className="text-sm text-gray-600">Invitation only for early supporters and community members</p>
-            </div>
-            <div className="neo-brutal-box p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold">Phase 2</h3>
-                <Calendar className="text-dawg h-6 w-6" />
-              </div>
-              <p className="mb-2">Public Presale</p>
-              <p className="text-sm text-gray-600">Open to all participants with bonuses for early buyers</p>
-            </div>
-            <div className="neo-brutal-box p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold">Phase 3</h3>
-                <Calendar className="text-dawg h-6 w-6" />
-              </div>
-              <p className="mb-2">DEX Listing</p>
-              <p className="text-sm text-gray-600">DAWG token available on decentralized exchanges</p>
-            </div>
-          </div>
-        </div>
-
-        {/* How to Participate */}
-        <div className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center">How to Participate</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="neo-brutal-box p-6">
-              <div className="text-2xl font-bold mb-4 flex items-center">
-                <span className="bg-dawg w-8 h-8 rounded-full flex items-center justify-center mr-2 text-white">1</span>
-                Connect Wallet
-              </div>
-              <p className="text-gray-600">Link your MetaMask or other Web3 wallet to participate</p>
-            </div>
-            <div className="neo-brutal-box p-6">
-              <div className="text-2xl font-bold mb-4 flex items-center">
-                <span className="bg-dawg w-8 h-8 rounded-full flex items-center justify-center mr-2 text-white">2</span>
-                Enter Amount
-              </div>
-              <p className="text-gray-600">Choose how many DAWG tokens you want to purchase</p>
-            </div>
-            <div className="neo-brutal-box p-6">
-              <div className="text-2xl font-bold mb-4 flex items-center">
-                <span className="bg-dawg w-8 h-8 rounded-full flex items-center justify-center mr-2 text-white">3</span>
-                Confirm Transaction
-              </div>
-              <p className="text-gray-600">Approve the transaction in your wallet and receive your tokens</p>
-            </div>
           </div>
         </div>
 
