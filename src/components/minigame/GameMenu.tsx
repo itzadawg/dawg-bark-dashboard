@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Gamepad2, Target, Dice1, Trophy } from 'lucide-react';
+import { Gamepad2, Dice1, Trophy } from 'lucide-react';
 
 interface GameMenuProps {
   onSelectGame: (game: string) => void;
@@ -12,7 +12,7 @@ const GameMenu: React.FC<GameMenuProps> = ({ onSelectGame }) => {
       id: 'dawgCatcher',
       name: 'Dawg Catcher',
       description: 'Catch as many dogs as you can before time runs out!',
-      icon: <Target size={40} />,
+      icon: <img src="https://i.imghippo.com/files/uoT9434D.webp" alt="Dawg Catcher" className="w-10 h-10 object-contain" />,
       color: 'bg-[#f8d347]',
     },
     {
