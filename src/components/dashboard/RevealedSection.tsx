@@ -8,7 +8,7 @@ const RevealedSection: React.FC = () => {
   const { revealed } = getDashboardData();
 
   return (
-    <div>
+    <div className="neo-brutal-box bg-white p-4">
       <div className="flex justify-between items-center mb-4">
         <div>
           <h2 className="text-xl font-bold">Recently revealed</h2>
@@ -23,7 +23,7 @@ const RevealedSection: React.FC = () => {
         </button>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-3">
         {revealed.slice(0, visibleRevealed).map(item => (
           <div 
             key={item.id} 
