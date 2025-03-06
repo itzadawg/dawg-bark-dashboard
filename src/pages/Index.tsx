@@ -238,7 +238,7 @@ const Index = () => {
               <button 
                 className="neo-brutal-button text-sm" 
                 onClick={handleToggleFumblers}
-                disabled={visibleFumblers >= fumblers.length && visibleFumblers !== 4}
+                disabled={visibleFumblers >= fumblers.length && visibleFumblers <= 4}
               >
                 {visibleFumblers > 4 ? "Show Less" : "Show More"}
               </button>
