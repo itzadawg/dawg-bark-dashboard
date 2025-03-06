@@ -8,6 +8,7 @@ import Home from "./pages/Home";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Minigame from "./pages/Minigame";
+import Presale from "./pages/Presale";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +21,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/shameboard" element={<Index />} />
-          <Route path="/presale" element={<Home />} /> {/* Placeholder for Presale page */}
+          <Route path="/presale" element={<Presale />} />
           <Route path="/minigame" element={<Minigame />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
