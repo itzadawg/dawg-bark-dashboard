@@ -132,7 +132,7 @@ const DogCatcher = () => {
       >
         {!gameActive && !showGameOver && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-dawg-light/80">
-            <div className="w-24 h-24 rounded-full overflow-hidden mb-4 neo-brutal-border bg-dawg p-2">
+            <div className="w-24 h-24 rounded-full overflow-hidden mb-4 neo-brutal-border bg-white p-2">
               <img 
                 src="/lovable-uploads/311c90d1-3b76-4522-8532-bdb805985a2d.png" 
                 alt="Dawg" 

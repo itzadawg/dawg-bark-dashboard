@@ -65,7 +65,7 @@ const DogCharacter: React.FC<DogCharacterProps> = ({ id, x, y, speed, onCatch })
       }}
       onClick={handleClick}
     >
-      <div className="neo-brutal-border bg-dawg p-2 rounded-full w-12 h-12 flex items-center justify-center overflow-hidden">
+      <div className="neo-brutal-border bg-white p-2 rounded-full w-12 h-12 flex items-center justify-center overflow-hidden">
         <img 
           src="/lovable-uploads/311c90d1-3b76-4522-8532-bdb805985a2d.png" 
           alt="Dawg" 
