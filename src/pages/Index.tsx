@@ -62,12 +62,19 @@ const Index = () => {
     avatar: 'https://i.pravatar.cc/150?img=10'
   }];
 
-  // Handle showing more fumblers with sequential animation
-  const handleShowMoreFumblers = () => {
+  // Handle showing more/less fumblers with sequential animation
+  const handleToggleFumblers = () => {
+    // If currently showing more than default (4), collapse back to default
+    if (visibleFumblers > 4) {
+      setVisibleFumblers(4);
+      setAnimatingFumblers([]);
+      return;
+    }
+    
+    // Otherwise, show more fumblers
     if (visibleFumblers >= fumblers.length) return;
     
     const newVisibleCount = Math.min(visibleFumblers + 6, fumblers.length);
-    const newFumblers = [];
     
     // Schedule animation for each new fumbler
     for (let i = visibleFumblers; i < newVisibleCount; i++) {
@@ -226,10 +233,10 @@ const Index = () => {
               </div>
               <button 
                 className="neo-brutal-button text-sm" 
-                onClick={handleShowMoreFumblers}
-                disabled={visibleFumblers >= fumblers.length}
+                onClick={handleToggleFumblers}
+                disabled={visibleFumblers >= fumblers.length && visibleFumblers !== 4}
               >
-                Show More
+                {visibleFumblers > 4 ? "Show Less" : "Show More"}
               </button>
             </div>
             
