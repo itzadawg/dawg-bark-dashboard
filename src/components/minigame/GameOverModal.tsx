@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Dog, Trophy, RefreshCw } from 'lucide-react';
+import { Trophy, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface GameOverModalProps {
@@ -26,7 +26,13 @@ const GameOverModal: React.FC<GameOverModalProps> = ({ score, highScore, onResta
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
       <div className="w-full max-w-md p-6 neo-brutal-box bg-white">
         <div className="text-center">
-          <Dog size={48} className="mx-auto text-dawg mb-4" />
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full overflow-hidden bg-dawg p-1">
+            <img 
+              src="/lovable-uploads/311c90d1-3b76-4522-8532-bdb805985a2d.png" 
+              alt="Dawg" 
+              className="w-full h-full object-cover rounded-full"
+            />
+          </div>
           <h2 className="text-2xl font-bold mb-2">Game Over!</h2>
           <p className="text-lg mb-4">{message}</p>
           

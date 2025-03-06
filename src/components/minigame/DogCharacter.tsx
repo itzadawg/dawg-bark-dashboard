@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect } from 'react';
-import { Dog } from 'lucide-react';
 
 interface DogCharacterProps {
   id: number;
@@ -66,8 +65,12 @@ const DogCharacter: React.FC<DogCharacterProps> = ({ id, x, y, speed, onCatch })
       }}
       onClick={handleClick}
     >
-      <div className="neo-brutal-border bg-dawg p-2 rounded-full">
-        <Dog size={24} className="text-dawg-dark" />
+      <div className="neo-brutal-border bg-dawg p-2 rounded-full w-12 h-12 flex items-center justify-center overflow-hidden">
+        <img 
+          src="/lovable-uploads/311c90d1-3b76-4522-8532-bdb805985a2d.png" 
+          alt="Dawg" 
+          className="w-10 h-10 object-cover rounded-full"
+        />
       </div>
     </div>
   );
