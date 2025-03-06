@@ -12,6 +12,7 @@ const IntroSection: React.FC = () => {
           backgroundSize: "cover",
           backgroundPosition: "center right",
           backgroundRepeat: "no-repeat",
+          opacity: 1, // Ensure full opacity
           maskImage: "linear-gradient(to right, transparent, rgba(0,0,0,0.9) 50%, rgba(0,0,0,1))",
           WebkitMaskImage: "linear-gradient(to right, transparent, rgba(0,0,0,0.9) 50%, rgba(0,0,0,1))"
         }}
