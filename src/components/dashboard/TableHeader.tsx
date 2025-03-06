@@ -24,26 +24,26 @@ const TableHeader: React.FC = () => {
       <th className="text-left py-4 px-2 font-bold w-[20%]">Name</th>
       <th className="text-left py-4 px-2 font-bold w-[15%]">Address</th>
       <th 
-        className={`w-[13%] ${getSortableHeaderClass('initial')}`}
+        className={`${getSortableHeaderClass('initial')} w-[13%]`}
         onClick={() => handleSort('initial')}
       >
         Initial {renderSortIcon('initial')}
       </th>
       <th 
-        className={`w-[13%] ${getSortableHeaderClass('current')}`}
+        className={`${getSortableHeaderClass('current')} w-[13%]`}
         onClick={() => handleSort('current')}
       >
         Current balance {renderSortIcon('current')}
       </th>
       <th 
-        className={`w-[13%] ${getSortableHeaderClass('balanceChange')}`}
+        className={`${getSortableHeaderClass('balanceChange')} w-[13%]`}
         onClick={() => handleSort('balanceChange')}
       >
         Balance Change {renderSortIcon('balanceChange')}
       </th>
       <th className="text-left py-4 px-2 font-bold w-[11%]">Activity</th>
       <th 
-        className={`w-[15%] ${getSortableHeaderClass('realizedPnL')}`}
+        className={`${getSortableHeaderClass('realizedPnL')} w-[15%]`}
         onClick={() => handleSort('realizedPnL')}
       >
         Realized PnL {renderSortIcon('realizedPnL')}

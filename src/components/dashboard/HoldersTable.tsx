@@ -21,28 +21,30 @@ const HoldersTable: React.FC = () => {
           <span>Show masked entries</span>
         </button>
       </div>
-      <table className="w-full border-collapse">
-        <thead>
-          <TableHeader />
-        </thead>
-        <tbody>
-          {tableData.map(row => (
-            <TableRow 
-              key={row.id}
-              name={row.name} 
-              username={row.username} 
-              address={row.address} 
-              initial={row.initial} 
-              current={row.current} 
-              balanceChange={row.balanceChange} 
-              activity={row.activity} 
-              realizedPnL={row.realizedPnL} 
-              avatar={row.avatar} 
-              emoji={row.emoji} 
-            />
-          ))}
-        </tbody>
-      </table>
+      <div className="w-full overflow-x-auto">
+        <table className="w-full border-collapse table-auto">
+          <thead>
+            <TableHeader />
+          </thead>
+          <tbody>
+            {tableData.map(row => (
+              <TableRow 
+                key={row.id}
+                name={row.name} 
+                username={row.username} 
+                address={row.address} 
+                initial={row.initial} 
+                current={row.current} 
+                balanceChange={row.balanceChange} 
+                activity={row.activity} 
+                realizedPnL={row.realizedPnL} 
+                avatar={row.avatar} 
+                emoji={row.emoji} 
+              />
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

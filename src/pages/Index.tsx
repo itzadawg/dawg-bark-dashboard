@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { DashboardProvider } from '../contexts/DashboardContext';
 import IntroSection from '../components/dashboard/IntroSection';
@@ -17,7 +18,9 @@ const Index = () => {
             <StatsCards />
             <FumblersSection />
             <RevealedSection />
-            <SearchBar />
+            <div className="mb-4">
+              <SearchBar />
+            </div>
             <HoldersTable />
           </div>
 
