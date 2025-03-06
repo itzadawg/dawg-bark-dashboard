@@ -30,11 +30,11 @@ const GameMenu: React.FC<GameMenuProps> = ({ onSelectGame }) => {
       color: 'bg-[#f15bb5]',
     },
     {
-      id: 'quizChallenge',
-      name: 'Quiz Challenge',
-      description: 'Test your knowledge with this fun quiz game!',
-      icon: <Gamepad2 size={40} />,
-      color: 'bg-[#9b5de5]',
+      id: 'whackADawg',
+      name: 'Whack-A-Dawg',
+      description: 'Whack the dawgs as they pop up from their holes!',
+      icon: <img src="/lovable-uploads/311c90d1-3b76-4522-8532-bdb805985a2d.png" alt="Dawg" className="w-10 h-10 object-contain" />,
+      color: 'bg-[#f15bb5]',
     },
   ];
 

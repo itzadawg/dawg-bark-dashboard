@@ -5,7 +5,7 @@ import DogCatcher from '../components/minigame/DogCatcher';
 import GameMenu from '../components/minigame/GameMenu';
 import FlappyDawg from '../components/minigame/FlappyDawg';
 import BlockPuzzle from '../components/minigame/BlockPuzzle';
-import QuizChallenge from '../components/minigame/QuizChallenge';
+import WhackADawg from '../components/minigame/WhackADawg';
 
 const Minigame = () => {
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
@@ -33,7 +33,7 @@ const Minigame = () => {
               {selectedGame === 'dawgCatcher' && <DogCatcher />}
               {selectedGame === 'flappyDawg' && <FlappyDawg />}
               {selectedGame === 'blockPuzzle' && <BlockPuzzle />}
-              {selectedGame === 'quizChallenge' && <QuizChallenge />}
+              {selectedGame === 'whackADawg' && <WhackADawg />}
             </div>
           )}
         </div>
