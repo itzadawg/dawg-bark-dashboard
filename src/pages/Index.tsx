@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, AlertTriangle, DollarSign, TrendingDown } from 'lucide-react';
 import FumblerCard from '../components/FumblerCard';
 import RevealedCard from '../components/RevealedCard';
 import TableRow from '../components/TableRow';
+
 const Index = () => {
   const [showMasked, setShowMasked] = useState(false);
+  const [visibleFumblers, setVisibleFumblers] = useState(4);
+  const [animatingFumblers, setAnimatingFumblers] = useState<number[]>([]);
 
   // Sample data for our dashboard (with empty values)
   const fumblers = [{
@@ -27,7 +30,56 @@ const Index = () => {
     name: '',
     amount: '',
     avatar: 'https://i.pravatar.cc/150?img=4'
+  }, {
+    id: 5,
+    name: '',
+    amount: '',
+    avatar: 'https://i.pravatar.cc/150?img=5'
+  }, {
+    id: 6,
+    name: '',
+    amount: '',
+    avatar: 'https://i.pravatar.cc/150?img=6'
+  }, {
+    id: 7,
+    name: '',
+    amount: '',
+    avatar: 'https://i.pravatar.cc/150?img=7'
+  }, {
+    id: 8,
+    name: '',
+    amount: '',
+    avatar: 'https://i.pravatar.cc/150?img=8'
+  }, {
+    id: 9,
+    name: '',
+    amount: '',
+    avatar: 'https://i.pravatar.cc/150?img=9'
+  }, {
+    id: 10,
+    name: '',
+    amount: '',
+    avatar: 'https://i.pravatar.cc/150?img=10'
   }];
+
+  // Handle showing more fumblers with sequential animation
+  const handleShowMoreFumblers = () => {
+    if (visibleFumblers >= fumblers.length) return;
+    
+    const newVisibleCount = Math.min(visibleFumblers + 6, fumblers.length);
+    const newFumblers = [];
+    
+    // Schedule animation for each new fumbler
+    for (let i = visibleFumblers; i < newVisibleCount; i++) {
+      setTimeout(() => {
+        setAnimatingFumblers(prev => [...prev, fumblers[i].id]);
+      }, (i - visibleFumblers) * 300); // 300ms delay between each card
+    }
+    
+    setVisibleFumblers(newVisibleCount);
+  };
+
+  // Sample data for our dashboard (with empty values)
   const revealed = [{
     id: 1,
     name: '',
@@ -172,11 +224,32 @@ const Index = () => {
                 <h2 className="text-xl font-bold">Top Fumblers</h2>
                 <p className="text-sm text-dawg-dark/70">Missed out on big gains.</p>
               </div>
-              <button className="neo-brutal-button text-sm">Show More</button>
+              <button 
+                className="neo-brutal-button text-sm" 
+                onClick={handleShowMoreFumblers}
+                disabled={visibleFumblers >= fumblers.length}
+              >
+                Show More
+              </button>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {fumblers.map(fumbler => <FumblerCard key={fumbler.id} name={fumbler.name} amount={fumbler.amount} avatar={fumbler.avatar} />)}
+              {fumblers.slice(0, visibleFumblers).map(fumbler => (
+                <div 
+                  key={fumbler.id} 
+                  className={`transition-all duration-500 ${
+                    animatingFumblers.includes(fumbler.id) || fumbler.id <= 4 
+                      ? 'opacity-100 translate-y-0' 
+                      : 'opacity-0 translate-y-10'
+                  }`}
+                >
+                  <FumblerCard 
+                    name={fumbler.name} 
+                    amount={fumbler.amount} 
+                    avatar={fumbler.avatar} 
+                  />
+                </div>
+              ))}
             </div>
           </div>
 
