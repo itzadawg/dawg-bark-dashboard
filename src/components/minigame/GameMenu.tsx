@@ -12,8 +12,8 @@ const GameMenu: React.FC<GameMenuProps> = ({ onSelectGame }) => {
       id: 'dawgCatcher',
       name: 'Dawg Catcher',
       description: 'Catch as many dogs as you can before time runs out!',
-      icon: <img src="https://i.imghippo.com/files/uoT9434D.webp" alt="Dawg Catcher" className="w-full h-full object-cover rounded-full border-2 border-black" />,
-      color: 'bg-white',
+      icon: <img src="/lovable-uploads/b20f764f-39b1-4aba-967d-36ca81400ae3.png" alt="Dawg Catcher" className="w-full h-full object-cover" />,
+      color: 'bg-[#1EAEDB]', // Blue background to match the reference image
     },
     {
       id: 'memoryMatch',
@@ -52,7 +52,7 @@ const GameMenu: React.FC<GameMenuProps> = ({ onSelectGame }) => {
             className="neo-brutal-box p-6 cursor-pointer hover:translate-y-[-4px] transition-transform"
             onClick={() => onSelectGame(game.id)}
           >
-            <div className={`w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center overflow-hidden ${game.color}`}>
+            <div className={`w-16 h-16 rounded-full mx-auto mb-4 flex items-center justify-center overflow-hidden ${game.color} border-2 border-black`}>
               {game.icon}
             </div>
             <h2 className="text-2xl font-bold mb-2">{game.name}</h2>
