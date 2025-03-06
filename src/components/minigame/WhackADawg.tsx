@@ -200,7 +200,7 @@ const WhackADawg: React.FC = () => {
                 <img 
                   src="/lovable-uploads/13194617-f0ef-4538-9821-b08ae6fbdde9.png"
                   alt="Dawg" 
-                  className={`w-16 h-16 object-contain transform ${hole.whacked ? 'rotate-12' : ''}`}
+                  className={`w-20 h-20 object-cover transform ${hole.whacked ? 'rotate-12' : ''}`}
                 />
               </div>
             </div>
