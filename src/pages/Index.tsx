@@ -396,29 +396,29 @@ const Index = () => {
             <table className="w-full border-collapse">
               <thead>
                 <tr className="bg-dawg neo-brutal-border">
-                  <th className="text-left py-4 px-2 font-bold">Name</th>
-                  <th className="text-left py-4 px-2 font-bold">Address</th>
+                  <th className="text-left py-4 px-2 font-bold w-[20%]">Name</th>
+                  <th className="text-left py-4 px-2 font-bold w-[15%]">Address</th>
                   <th 
-                    className={getSortableHeaderClass('initial')}
+                    className={`w-[13%] ${getSortableHeaderClass('initial')}`}
                     onClick={() => handleSort('initial')}
                   >
                     Initial {renderSortIcon('initial')}
                   </th>
                   <th 
-                    className={getSortableHeaderClass('current')}
+                    className={`w-[13%] ${getSortableHeaderClass('current')}`}
                     onClick={() => handleSort('current')}
                   >
                     Current balance {renderSortIcon('current')}
                   </th>
                   <th 
-                    className={getSortableHeaderClass('balanceChange')}
+                    className={`w-[13%] ${getSortableHeaderClass('balanceChange')}`}
                     onClick={() => handleSort('balanceChange')}
                   >
                     Balance Change {renderSortIcon('balanceChange')}
                   </th>
-                  <th className="text-left py-4 px-2 font-bold">Activity</th>
+                  <th className="text-left py-4 px-2 font-bold w-[11%]">Activity</th>
                   <th 
-                    className={getSortableHeaderClass('realizedPnL')}
+                    className={`w-[15%] ${getSortableHeaderClass('realizedPnL')}`}
                     onClick={() => handleSort('realizedPnL')}
                   >
                     Realized PnL {renderSortIcon('realizedPnL')}
