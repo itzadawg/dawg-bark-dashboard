@@ -66,8 +66,12 @@ const Index = () => {
   const handleToggleFumblers = () => {
     // If currently showing more than default (4), collapse back to default
     if (visibleFumblers > 4) {
-      setVisibleFumblers(4);
+      // Reset animating fumblers first to ensure proper cleanup
       setAnimatingFumblers([]);
+      // Use setTimeout to ensure state update completes before reducing visible count
+      setTimeout(() => {
+        setVisibleFumblers(4);
+      }, 50);
       return;
     }
     
