@@ -1,3 +1,4 @@
+
 import React from 'react';
 const IntroSection: React.FC = () => {
   return <div className="relative overflow-hidden rounded-lg mb-8 h-[300px]">
@@ -14,7 +15,7 @@ const IntroSection: React.FC = () => {
       
       {/* Content with adjusted background for better text readability */}
       <div className="relative z-10 p-6 bg-dawg-light/70 neo-brutal-border h-full flex flex-col justify-center">
-        <h1 className="text-3xl md:text-4xl font-black mb-2 text-[#ffdc6b]">Dawg Shameboard</h1>
+        <h1 className="text-3xl md:text-4xl font-black mb-2 text-dawg">Dawg Shameboard</h1>
         <p className="text-dawg-dark/80 max-w-3xl">
           Use this board to monitor the people who were approved in the DAWG application process. 
           In an effort to maintain transparency in the process, we are revealing those who sold 
