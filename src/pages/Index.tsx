@@ -7,7 +7,9 @@ import TableRow from '../components/TableRow';
 const Index = () => {
   const [showMasked, setShowMasked] = useState(false);
   const [visibleFumblers, setVisibleFumblers] = useState(4);
+  const [visibleRevealed, setVisibleRevealed] = useState(4);
   const [animatingFumblers, setAnimatingFumblers] = useState<number[]>([]);
+  const [animatingRevealed, setAnimatingRevealed] = useState<number[]>([]);
 
   // Sample data for our dashboard (with empty values)
   const fumblers = [{
@@ -90,6 +92,34 @@ const Index = () => {
     setVisibleFumblers(newVisibleCount);
   };
 
+  // Handle showing more/less revealed cards with sequential animation
+  const handleToggleRevealed = () => {
+    // If currently showing more than default (4), collapse back to default
+    if (visibleRevealed > 4) {
+      // Reset animating revealed first to ensure proper cleanup
+      setAnimatingRevealed([]);
+      // Use setTimeout to ensure state update completes before reducing visible count
+      setTimeout(() => {
+        setVisibleRevealed(4);
+      }, 50);
+      return;
+    }
+    
+    // Otherwise, show more revealed cards
+    if (visibleRevealed >= revealed.length) return;
+    
+    const newVisibleCount = Math.min(visibleRevealed + 6, revealed.length);
+    
+    // Schedule animation for each new revealed card
+    for (let i = visibleRevealed; i < newVisibleCount; i++) {
+      setTimeout(() => {
+        setAnimatingRevealed(prev => [...prev, revealed[i].id]);
+      }, (i - visibleRevealed) * 300); // 300ms delay between each card
+    }
+    
+    setVisibleRevealed(newVisibleCount);
+  };
+
   // Sample data for our dashboard (with empty values)
   const revealed = [{
     id: 1,
@@ -122,7 +152,40 @@ const Index = () => {
     time: '',
     avatar: 'https://i.pravatar.cc/150?img=8',
     emoji: ''
+  }, {
+    id: 5,
+    name: '',
+    balance: '',
+    percent: '',
+    time: '',
+    avatar: 'https://i.pravatar.cc/150?img=9',
+    emoji: ''
+  }, {
+    id: 6,
+    name: '',
+    balance: '',
+    percent: '',
+    time: '',
+    avatar: 'https://i.pravatar.cc/150?img=10',
+    emoji: ''
+  }, {
+    id: 7,
+    name: '',
+    balance: '',
+    percent: '',
+    time: '',
+    avatar: 'https://i.pravatar.cc/150?img=11',
+    emoji: ''
+  }, {
+    id: 8,
+    name: '',
+    balance: '',
+    percent: '',
+    time: '',
+    avatar: 'https://i.pravatar.cc/150?img=12',
+    emoji: ''
   }];
+
   const tableData = [{
     id: 1,
     name: '',
@@ -183,6 +246,7 @@ const Index = () => {
     avatar: 'https://i.pravatar.cc/150?img=12',
     emoji: ''
   }];
+
   return <div className="min-h-screen bg-dawg-light px-8 py-8 max-w-7xl mx-auto">
       <div className="grid grid-cols-6 gap-8">
         {/* Left content (5 columns) */}
@@ -271,11 +335,35 @@ const Index = () => {
                 <h2 className="text-xl font-bold">Recently revealed</h2>
                 <p className="text-sm text-dawg-dark/70">Sold over 50% of their allocation</p>
               </div>
-              <button className="neo-brutal-button text-sm">Show More</button>
+              <button 
+                className="neo-brutal-button text-sm"
+                onClick={handleToggleRevealed}
+                disabled={visibleRevealed >= revealed.length && visibleRevealed <= 4}
+              >
+                {visibleRevealed > 4 ? "Show Less" : "Show More"}
+              </button>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {revealed.map(item => <RevealedCard key={item.id} name={item.name} balance={item.balance} percent={item.percent} time={item.time} avatar={item.avatar} emoji={item.emoji} />)}
+              {revealed.slice(0, visibleRevealed).map(item => (
+                <div 
+                  key={item.id} 
+                  className={`transition-all duration-500 ${
+                    animatingRevealed.includes(item.id) || item.id <= 4 
+                      ? 'opacity-100 translate-y-0' 
+                      : 'opacity-0 translate-y-10'
+                  }`}
+                >
+                  <RevealedCard 
+                    name={item.name} 
+                    balance={item.balance} 
+                    percent={item.percent} 
+                    time={item.time} 
+                    avatar={item.avatar} 
+                    emoji={item.emoji} 
+                  />
+                </div>
+              ))}
             </div>
           </div>
 
