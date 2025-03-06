@@ -125,12 +125,8 @@ const Index = () => {
         {/* Left content (5 columns) */}
         <div className="col-span-6 lg:col-span-4 space-y-10 animate-slide-in">
           <div>
-            <h1 className="text-3xl md:text-4xl font-black mb-2 text-dawg">Tracking Dawg Holders</h1>
-            <p className="text-dawg-dark/80 max-w-3xl">
-              Use this wall to monitor the people who were approved in the DAWG application process. In an
-              effort to maintain transparency in the process, we are revealing those who sold over 50% of
-              their allocation, and are tracking attempts to obscure trading patterns.
-            </p>
+            <h1 className="text-3xl md:text-4xl font-black mb-2 text-dawg">Dawg Shameboard</h1>
+            <p className="text-dawg-dark/80 max-w-3xl">Use this board to monitor the people who were approved in the DAWG application process. In an effort to maintain transparency in the process, we are revealing those who sold over 50% of their allocation, and are tracking attempts to obscure trading patterns.</p>
           </div>
 
           {/* Price Info Cards */}
