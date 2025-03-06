@@ -23,7 +23,6 @@ const FlappyDawg: React.FC = () => {
   const [dawgPosition, setDawgPosition] = useState(250);
   const [dawgVelocity, setDawgVelocity] = useState(0);
   const [pipes, setPipes] = useState<Array<{x: number, height: number, passed: boolean}>>([]);
-  const [isColliding, setIsColliding] = useState(false);
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>();
   const lastTimeRef = useRef<number>(0);
@@ -37,7 +36,6 @@ const FlappyDawg: React.FC = () => {
     setDawgPosition(250);
     setDawgVelocity(0);
     setPipes([]);
-    setIsColliding(false);
     lastTimeRef.current = 0;
     frameCountRef.current = 0;
   };
@@ -51,10 +49,7 @@ const FlappyDawg: React.FC = () => {
       return;
     }
     
-    // Only allow jumping if not colliding with a pipe
-    if (!isColliding) {
-      setDawgVelocity(JUMP_FORCE);
-    }
+    setDawgVelocity(JUMP_FORCE);
   };
 
   // Game animation loop
@@ -68,29 +63,23 @@ const FlappyDawg: React.FC = () => {
       return;
     }
 
-    // Check if dawg is currently colliding
-    let currentlyColliding = false;
-    let gameOverNow = false;
-
-    // Check if dawg would hit ceiling or floor next frame
-    const nextPosition = dawgPosition + dawgVelocity;
-    if (nextPosition < 0 || nextPosition > (gameAreaRef.current?.clientHeight || 500) - DAWG_HEIGHT) {
-      setGameOver(true);
-      setIsPlaying(false);
-      setHighScore(prev => Math.max(prev, score));
-      requestRef.current = requestAnimationFrame(gameLoop);
-      return;
-    }
-    
-    // Update dawg position with gravity only if not colliding
-    if (!isColliding) {
-      setDawgPosition(prevPos => {
-        return prevPos + dawgVelocity;
-      });
+    // Update dawg position with gravity
+    setDawgPosition(prevPos => {
+      const newPos = prevPos + dawgVelocity;
       
-      // Update dawg velocity (gravity)
-      setDawgVelocity(prev => prev + GRAVITY);
-    }
+      // Check if dawg hits the ground or ceiling
+      if (newPos < 0 || newPos > (gameAreaRef.current?.clientHeight || 500) - DAWG_HEIGHT) {
+        setGameOver(true);
+        setIsPlaying(false);
+        setHighScore(prev => Math.max(prev, score));
+        return prevPos;
+      }
+      
+      return newPos;
+    });
+    
+    // Update dawg velocity (gravity)
+    setDawgVelocity(prev => prev + GRAVITY);
     
     // Generate new pipes
     frameCountRef.current += 1;
@@ -107,8 +96,8 @@ const FlappyDawg: React.FC = () => {
     setPipes(prevPipes => {
       const updatedPipes = prevPipes
         .map(pipe => {
-          // Only move pipes if the dawg is not colliding
-          const newX = isColliding ? pipe.x : pipe.x - PIPE_SPEED;
+          // Move pipe to the left
+          const newX = pipe.x - PIPE_SPEED;
           
           // Check if dawg passed the pipe
           if (!pipe.passed && newX + PIPE_WIDTH < 100) {
@@ -128,18 +117,14 @@ const FlappyDawg: React.FC = () => {
           const topPipeBottom = pipe.height;
           const bottomPipeTop = pipe.height + PIPE_GAP;
           
-          // Check for collision with pipes
           if (
             dawgHitboxRight > pipeLeft && 
             dawgHitboxLeft < pipeRight && 
             (dawgHitboxTop < topPipeBottom || dawgHitboxBottom > bottomPipeTop)
           ) {
-            currentlyColliding = true;
-            
-            // If we've been colliding for a few frames, end the game
-            if (isColliding) {
-              gameOverNow = true;
-            }
+            setGameOver(true);
+            setIsPlaying(false);
+            setHighScore(prev => Math.max(prev, score));
           }
           
           return { ...pipe, x: newX };
@@ -148,16 +133,6 @@ const FlappyDawg: React.FC = () => {
       
       return updatedPipes;
     });
-    
-    // Update collision state
-    setIsColliding(currentlyColliding);
-    
-    // End game if needed
-    if (gameOverNow) {
-      setGameOver(true);
-      setIsPlaying(false);
-      setHighScore(prev => Math.max(prev, score));
-    }
     
     requestRef.current = requestAnimationFrame(gameLoop);
   };
@@ -170,7 +145,7 @@ const FlappyDawg: React.FC = () => {
         cancelAnimationFrame(requestRef.current);
       }
     };
-  }, [isPlaying, gameOver, dawgVelocity, isColliding]); // Added isColliding to dependencies
+  }, [isPlaying, gameOver, dawgVelocity]); // Add dawgVelocity to the dependency array
 
   // Handle keyboard input
   useEffect(() => {
@@ -184,7 +159,7 @@ const FlappyDawg: React.FC = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isPlaying, gameOver, isColliding]); // Added isColliding to dependencies
+  }, [isPlaying, gameOver]);
 
   return (
     <div className="text-center">
