@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import Minigame from "./pages/Minigame";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +21,7 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/shameboard" element={<Index />} />
           <Route path="/presale" element={<Home />} /> {/* Placeholder for Presale page */}
-          <Route path="/minigame" element={<Home />} /> {/* Placeholder for Minigame page */}
+          <Route path="/minigame" element={<Minigame />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
