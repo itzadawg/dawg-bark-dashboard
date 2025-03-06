@@ -4,16 +4,15 @@ import React from 'react';
 const IntroSection: React.FC = () => {
   return (
     <div className="relative overflow-hidden rounded-lg mb-8 h-[300px]">
-      {/* Background image - now fully visible */}
+      {/* Background image - fully visible with no gaps */}
       <div 
         className="absolute inset-0 z-0"
         style={{
           backgroundImage: "url('https://i.imghippo.com/files/vWPh5294lmg.webp')",
-          backgroundSize: "contain",
-          backgroundPosition: "right center",
+          backgroundSize: "cover", // Changed from "contain" to "cover" to fill entire space
+          backgroundPosition: "center", // Center the image to avoid gaps
           backgroundRepeat: "no-repeat",
           opacity: 1
-          // Removed mask/gradient to make image fully visible
         }}
       />
       
