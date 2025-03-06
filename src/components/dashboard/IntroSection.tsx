@@ -8,7 +8,7 @@ const IntroSection: React.FC = () => {
       <div 
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: "url('/lovable-uploads/5571d0e5-e54a-4858-95e0-612a96fad718.png')",
+          backgroundImage: "url('https://i.imghippo.com/files/vWPh5294lmg.webp')",
           backgroundSize: "cover",
           backgroundPosition: "center right",
           backgroundRepeat: "no-repeat",
