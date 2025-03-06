@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Gamepad2, Dice1, Trophy } from 'lucide-react';
+import { Gamepad2, Dice1 } from 'lucide-react';
 
 interface GameMenuProps {
   onSelectGame: (game: string) => void;
@@ -16,10 +16,10 @@ const GameMenu: React.FC<GameMenuProps> = ({ onSelectGame }) => {
       color: 'bg-[#1EAEDB]', // Blue background to match the reference image
     },
     {
-      id: 'memoryMatch',
-      name: 'Memory Match',
-      description: 'Test your memory by matching pairs of cards!',
-      icon: <Trophy size={40} />,
+      id: 'flappyDawg',
+      name: 'Flappy Dawg',
+      description: 'Guide your dawg through obstacles in this fun flying game!',
+      icon: <img src="/lovable-uploads/d4d58344-3817-4b81-a535-e7fd84d0e807.png" alt="Flappy Dawg" className="w-full h-full object-cover" />,
       color: 'bg-[#4cc9f0]',
     },
     {

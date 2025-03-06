@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Header from '../components/dashboard/Header';
 import DogCatcher from '../components/minigame/DogCatcher';
 import GameMenu from '../components/minigame/GameMenu';
-import MemoryMatch from '../components/minigame/MemoryMatch';
+import FlappyDawg from '../components/minigame/FlappyDawg';
 import BlockPuzzle from '../components/minigame/BlockPuzzle';
 import QuizChallenge from '../components/minigame/QuizChallenge';
 
@@ -31,7 +31,7 @@ const Minigame = () => {
               </button>
               
               {selectedGame === 'dawgCatcher' && <DogCatcher />}
-              {selectedGame === 'memoryMatch' && <MemoryMatch />}
+              {selectedGame === 'flappyDawg' && <FlappyDawg />}
               {selectedGame === 'blockPuzzle' && <BlockPuzzle />}
               {selectedGame === 'quizChallenge' && <QuizChallenge />}
             </div>
