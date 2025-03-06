@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useRef } from 'react';
+import { Button } from '../ui/button';
 
 const GRAVITY = 0.5;
 const JUMP_FORCE = -10;
@@ -136,7 +137,7 @@ const FlappyDawg: React.FC = () => {
         cancelAnimationFrame(requestRef.current);
       }
     };
-  }, [isPlaying, gameOver]);
+  }, [isPlaying, gameOver, dawgVelocity]); // Add dawgVelocity to the dependency array
 
   // Handle keyboard input
   useEffect(() => {
@@ -228,12 +229,12 @@ const FlappyDawg: React.FC = () => {
                   ? `Your score: ${score}`
                   : 'Click or press Space to start!'}
               </p>
-              <button 
+              <Button 
                 onClick={startGame}
                 className="neo-brutal-button"
               >
                 {gameOver ? 'Play Again' : 'Start Game'}
-              </button>
+              </Button>
             </div>
           </div>
         )}
