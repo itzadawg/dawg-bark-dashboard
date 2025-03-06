@@ -9,6 +9,11 @@ const PIPE_GAP = 200;
 const PIPE_SPEED = 3;
 const DAWG_WIDTH = 60;
 const DAWG_HEIGHT = 60;
+// Define a smaller hitbox for collision detection
+const HITBOX_OFFSET_X = 15; // pixels from left side
+const HITBOX_OFFSET_Y = 15; // pixels from top
+const HITBOX_WIDTH = DAWG_WIDTH - (HITBOX_OFFSET_X * 2); // smaller than the actual image
+const HITBOX_HEIGHT = DAWG_HEIGHT - (HITBOX_OFFSET_Y * 2); // smaller than the actual image
 
 const FlappyDawg: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -100,9 +105,12 @@ const FlappyDawg: React.FC = () => {
             return { ...pipe, x: newX, passed: true };
           }
           
-          // Check collision with pipe
-          const dawgRight = 100 + DAWG_WIDTH;
-          const dawgLeft = 100;
+          // Use hitbox for collision detection instead of full image dimensions
+          const dawgHitboxLeft = 100 + HITBOX_OFFSET_X;
+          const dawgHitboxRight = dawgHitboxLeft + HITBOX_WIDTH;
+          const dawgHitboxTop = dawgPosition + HITBOX_OFFSET_Y;
+          const dawgHitboxBottom = dawgHitboxTop + HITBOX_HEIGHT;
+          
           const pipeLeft = pipe.x;
           const pipeRight = pipe.x + PIPE_WIDTH;
           
@@ -110,9 +118,9 @@ const FlappyDawg: React.FC = () => {
           const bottomPipeTop = pipe.height + PIPE_GAP;
           
           if (
-            dawgRight > pipeLeft && 
-            dawgLeft < pipeRight && 
-            (dawgPosition < topPipeBottom || dawgPosition + DAWG_HEIGHT > bottomPipeTop)
+            dawgHitboxRight > pipeLeft && 
+            dawgHitboxLeft < pipeRight && 
+            (dawgHitboxTop < topPipeBottom || dawgHitboxBottom > bottomPipeTop)
           ) {
             setGameOver(true);
             setIsPlaying(false);
@@ -189,6 +197,18 @@ const FlappyDawg: React.FC = () => {
             alt="Flappy Dawg" 
             className="w-full h-full object-contain"
           />
+          
+          {/* Debug hitbox - uncomment to see the hitbox
+          <div
+            className="absolute border-2 border-red-500 opacity-50"
+            style={{
+              left: `${HITBOX_OFFSET_X}px`,
+              top: `${HITBOX_OFFSET_Y}px`,
+              width: `${HITBOX_WIDTH}px`,
+              height: `${HITBOX_HEIGHT}px`,
+            }}
+          />
+          */}
         </div>
         
         {/* Pipes */}
