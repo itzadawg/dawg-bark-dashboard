@@ -65,11 +65,11 @@ const DogCharacter: React.FC<DogCharacterProps> = ({ id, x, y, speed, onCatch })
       }}
       onClick={handleClick}
     >
-      <div className="neo-brutal-border bg-white p-2 rounded-full w-12 h-12 flex items-center justify-center overflow-hidden">
+      <div className="neo-brutal-border w-12 h-12 rounded-full overflow-hidden">
         <img 
           src="/lovable-uploads/311c90d1-3b76-4522-8532-bdb805985a2d.png" 
           alt="Dawg" 
-          className="w-10 h-10 object-cover rounded-full"
+          className="w-full h-full object-cover"
         />
       </div>
     </div>

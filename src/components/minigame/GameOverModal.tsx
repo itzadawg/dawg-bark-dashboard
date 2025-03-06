@@ -26,11 +26,11 @@ const GameOverModal: React.FC<GameOverModalProps> = ({ score, highScore, onResta
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
       <div className="w-full max-w-md p-6 neo-brutal-box bg-white">
         <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-full overflow-hidden bg-white p-1 neo-brutal-border">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-full overflow-hidden neo-brutal-border">
             <img 
               src="/lovable-uploads/311c90d1-3b76-4522-8532-bdb805985a2d.png" 
               alt="Dawg" 
-              className="w-full h-full object-cover rounded-full"
+              className="w-full h-full object-cover"
             />
           </div>
           <h2 className="text-2xl font-bold mb-2">Game Over!</h2>
