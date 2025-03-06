@@ -8,11 +8,11 @@ const FumblersSection: React.FC = () => {
   const { fumblers } = getDashboardData();
 
   return (
-    <div className="neo-brutal-box bg-white p-4">
+    <div>
       <div className="flex justify-between items-center mb-4">
         <div>
           <h2 className="text-xl font-bold">Top Fumblers</h2>
-          <p className="text-sm text-dawg-dark/70">Missed out on big gains</p>
+          <p className="text-sm text-dawg-dark/70">Missed out on big gains.</p>
         </div>
         <button 
           className="neo-brutal-button text-sm" 
@@ -23,7 +23,7 @@ const FumblersSection: React.FC = () => {
         </button>
       </div>
       
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {fumblers.slice(0, visibleFumblers).map(fumbler => (
           <div 
             key={fumbler.id} 
