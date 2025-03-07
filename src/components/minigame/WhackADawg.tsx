@@ -189,22 +189,33 @@ const WhackADawg: React.FC = () => {
           {holes.map((hole) => (
             <div 
               key={hole.id} 
-              className={`aspect-square relative bg-dawg-accent/30 rounded-full overflow-hidden border-4 border-black cursor-pointer`}
+              className="aspect-square relative bg-dawg-accent/30 rounded-full overflow-hidden border-4 border-black cursor-pointer"
               onClick={() => whackDawg(hole.id)}
-              style={{
-                boxShadow: hole.flashColor ? `0 0 15px 5px ${hole.flashColor}` : 'none',
-                transition: 'box-shadow 0.2s ease-out'
-              }}
             >
+              {/* Outer glow effect - only shows when whacked */}
+              {hole.whacked && (
+                <div 
+                  className="absolute -inset-2 rounded-full z-0" 
+                  style={{ 
+                    background: `radial-gradient(circle, ${hole.flashColor || '#F97316'} 0%, transparent 70%)`,
+                    opacity: 0.7
+                  }}
+                />
+              )}
+              
+              {/* Hole background */}
+              <div className="absolute inset-0 bg-dawg-accent/30 rounded-full z-10"></div>
+              
+              {/* Grass/hole cover */}
               <div 
-                className={`absolute inset-0 bg-dawg-light rounded-b-full transition-all duration-200 ease-out ${
+                className={`absolute inset-0 bg-dawg-light rounded-b-full transition-all duration-200 ease-out z-30 ${
                   hole.active ? 'bottom-0' : 'bottom-full'
                 }`}
-              >
-                {/* Grass/hole cover */}
-              </div>
+              />
+              
+              {/* Dawg character */}
               <div 
-                className={`absolute left-0 right-0 bottom-0 flex items-center justify-center transition-all duration-200 ease-out ${
+                className={`absolute left-0 right-0 bottom-0 flex items-center justify-center transition-all duration-200 ease-out z-20 ${
                   hole.active ? 'translate-y-[20%]' : 'translate-y-full'
                 }`}
               >
@@ -213,20 +224,24 @@ const WhackADawg: React.FC = () => {
                   alt="Dawg" 
                   className={`w-3/4 transform ${
                     hole.whacked 
-                      ? 'rotate-12 scale-110 opacity-80' 
+                      ? 'rotate-12 scale-110 opacity-90' 
                       : ''
                   }`}
                   style={{
-                    filter: hole.whacked ? 'brightness(1.2)' : 'none',
+                    filter: hole.whacked ? 'brightness(1.3) contrast(1.1)' : 'none',
                     transition: 'all 0.15s ease-out'
                   }}
                 />
               </div>
+              
+              {/* Impact flash effect - inside the hole but above the dawg */}
               {hole.whacked && (
-                <div className="absolute inset-0 animate-pulse" 
+                <div 
+                  className="absolute inset-0 z-25 animate-pulse" 
                   style={{ 
                     backgroundColor: hole.flashColor || 'transparent',
-                    opacity: 0.3
+                    opacity: 0.3,
+                    mixBlendMode: 'overlay'
                   }}
                 />
               )}
