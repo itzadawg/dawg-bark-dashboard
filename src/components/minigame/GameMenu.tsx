@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Gamepad2, Dice1 } from 'lucide-react';
+import { Gamepad2 } from 'lucide-react';
 
 interface GameMenuProps {
   onSelectGame: (game: string) => void;
@@ -23,11 +23,17 @@ const GameMenu: React.FC<GameMenuProps> = ({ onSelectGame }) => {
       color: 'bg-[#4cc9f0]',
     },
     {
-      id: 'blockPuzzle',
-      name: 'Block Puzzle',
-      description: 'Solve puzzles by arranging blocks in the right pattern!',
-      icon: <Dice1 size={40} />,
-      color: 'bg-dawg-accent',
+      id: 'dawgDash',
+      name: 'Dawg Dash',
+      description: 'Jump over obstacles in this fast-paced running game!',
+      icon: <div className="flex items-center justify-center w-full h-full">
+              <img 
+                src="/lovable-uploads/d4d58344-3817-4b81-a535-e7fd84d0e807.png" 
+                alt="Dawg Dash" 
+                className="w-4/5 h-4/5" 
+              />
+            </div>,
+      color: 'bg-[#1EAEDB]',
     },
     {
       id: 'whackADawg',

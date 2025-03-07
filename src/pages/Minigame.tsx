@@ -4,7 +4,7 @@ import Header from '../components/dashboard/Header';
 import DogCatcher from '../components/minigame/DogCatcher';
 import GameMenu from '../components/minigame/GameMenu';
 import FlappyDawg from '../components/minigame/FlappyDawg';
-import BlockPuzzle from '../components/minigame/BlockPuzzle';
+import DawgDash from '../components/minigame/DawgDash';
 import WhackADawg from '../components/minigame/WhackADawg';
 
 const Minigame = () => {
@@ -32,7 +32,7 @@ const Minigame = () => {
               
               {selectedGame === 'dawgCatcher' && <DogCatcher />}
               {selectedGame === 'flappyDawg' && <FlappyDawg />}
-              {selectedGame === 'blockPuzzle' && <BlockPuzzle />}
+              {selectedGame === 'dawgDash' && <DawgDash />}
               {selectedGame === 'whackADawg' && <WhackADawg />}
             </div>
           )}
