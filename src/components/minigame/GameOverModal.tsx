@@ -24,7 +24,10 @@ const GameOverModal: React.FC<GameOverModalProps> = ({ score, highScore, onResta
   
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
-      <div className="w-full max-w-md p-6 neo-brutal-box bg-white" style={{ transform: 'none' }}>
+      <div 
+        className="w-full max-w-md p-6 bg-white neo-brutal-border shadow-brutal" 
+        style={{ transform: 'none', pointerEvents: 'auto' }}
+      >
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full overflow-hidden neo-brutal-border">
             <img 
@@ -50,13 +53,15 @@ const GameOverModal: React.FC<GameOverModalProps> = ({ score, highScore, onResta
             </div>
           </div>
           
-          <Button 
-            onClick={onRestart}
-            className="neo-brutal-button flex items-center gap-2"
-          >
-            <RefreshCw size={16} />
-            Play Again
-          </Button>
+          <div className="flex justify-center">
+            <Button 
+              onClick={onRestart}
+              className="neo-brutal-button flex items-center gap-2"
+            >
+              <RefreshCw size={16} />
+              Play Again
+            </Button>
+          </div>
         </div>
       </div>
     </div>
