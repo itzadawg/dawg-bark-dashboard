@@ -18,7 +18,7 @@ const DawgDash: React.FC = () => {
   const [gameOver, setGameOver] = useState(false);
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
-  const [playerY, setPlayerY] = useState(200);
+  const [playerY, setPlayerY] = useState(0); // Will be set to ground level on init
   const [playerVelocity, setPlayerVelocity] = useState(0);
   const [isJumping, setIsJumping] = useState(false);
   const [obstacles, setObstacles] = useState<Array<{x: number, height: number, width: number, passed: boolean}>>([]);
@@ -27,17 +27,35 @@ const DawgDash: React.FC = () => {
   const requestRef = useRef<number>();
   const lastTimeRef = useRef<number>(0);
   const frameCountRef = useRef<number>(0);
+  const groundYRef = useRef<number>(0);
+
+  // Initialize ground position when component mounts or gameArea changes
+  useEffect(() => {
+    if (gameAreaRef.current) {
+      const gameHeight = gameAreaRef.current.clientHeight;
+      const groundY = gameHeight - PLAYER_HEIGHT - GROUND_HEIGHT;
+      groundYRef.current = groundY;
+      setPlayerY(groundY); // Start on ground
+    }
+  }, [gameAreaRef.current]);
 
   const startGame = () => {
     setIsPlaying(true);
     setGameOver(false);
     setScore(0);
-    setPlayerY(200);
     setPlayerVelocity(0);
     setIsJumping(false);
     setObstacles([]);
     lastTimeRef.current = 0;
     frameCountRef.current = 0;
+    
+    // Make sure player starts on ground
+    if (gameAreaRef.current) {
+      const gameHeight = gameAreaRef.current.clientHeight;
+      const groundY = gameHeight - PLAYER_HEIGHT - GROUND_HEIGHT;
+      groundYRef.current = groundY;
+      setPlayerY(groundY);
+    }
   };
 
   const closeGameOver = () => {
@@ -71,12 +89,11 @@ const DawgDash: React.FC = () => {
     // Update player position
     setPlayerY(prevY => {
       const newY = prevY + playerVelocity;
-      const groundY = (gameAreaRef.current?.clientHeight || 400) - PLAYER_HEIGHT - GROUND_HEIGHT;
       
-      if (newY >= groundY) {
+      if (newY >= groundYRef.current) {
         setIsJumping(false);
         setPlayerVelocity(0);
-        return groundY;
+        return groundYRef.current;
       }
       
       return newY;
@@ -91,7 +108,6 @@ const DawgDash: React.FC = () => {
     frameCountRef.current += 1;
     if (frameCountRef.current % 100 === 0) {
       const gameWidth = gameAreaRef.current?.clientWidth || 600;
-      const gameHeight = gameAreaRef.current?.clientHeight || 400;
       const obstacleHeight = Math.floor(Math.random() * 50) + 50;
       const obstacleWidth = OBSTACLE_WIDTH;
       
