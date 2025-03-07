@@ -181,17 +181,16 @@ const DawgDash: React.FC = () => {
               setPlayerVelocity(0);
               setIsJumping(false);
             }
-          } else {
+          } else if (obstacle.type === 'hazard') {
             // For hazards, any collision is game over
             const obstacleTop = (gameAreaRef.current?.clientHeight || 400) - obstacle.height;
-            const obstacleBottom = (gameAreaRef.current?.clientHeight || 400);
             
             if (
               playerRight > obstacleLeft && 
               playerLeft < obstacleRight && 
-              playerBottom > obstacleTop &&
-              playerTop < obstacleBottom
+              playerBottom > obstacleTop
             ) {
+              // Collision with hazard
               setGameOver(true);
               setIsPlaying(false);
               setHighScore(prev => Math.max(prev, score));
