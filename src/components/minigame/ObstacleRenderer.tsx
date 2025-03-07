@@ -44,7 +44,7 @@ const ObstacleRenderer: React.FC<ObstacleRendererProps> = ({ obstacles, gameHeig
                     key={i} 
                     className="w-2 bg-red-600 border border-black" 
                     style={{ 
-                      height: `${obstacle.height * 0.8}px',
+                      height: `${obstacle.height * 0.8}px`,
                       clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)'
                     }}
                   />
