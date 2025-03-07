@@ -9,11 +9,10 @@ const PIPE_GAP = 200;
 const PIPE_SPEED = 3;
 const DAWG_WIDTH = 60;
 const DAWG_HEIGHT = 60;
-// Define a smaller hitbox for collision detection
-const HITBOX_OFFSET_X = 15; // pixels from left side
-const HITBOX_OFFSET_Y = 15; // pixels from top
-const HITBOX_WIDTH = DAWG_WIDTH - (HITBOX_OFFSET_X * 2); // smaller than the actual image
-const HITBOX_HEIGHT = DAWG_HEIGHT - (HITBOX_OFFSET_Y * 2); // smaller than the actual image
+const HITBOX_OFFSET_X = 15;
+const HITBOX_OFFSET_Y = 15;
+const HITBOX_WIDTH = DAWG_WIDTH - (HITBOX_OFFSET_X * 2);
+const HITBOX_HEIGHT = DAWG_HEIGHT - (HITBOX_OFFSET_Y * 2);
 
 const FlappyDawg: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -28,7 +27,6 @@ const FlappyDawg: React.FC = () => {
   const lastTimeRef = useRef<number>(0);
   const frameCountRef = useRef<number>(0);
 
-  // Initialize the game
   const startGame = () => {
     setIsPlaying(true);
     setGameOver(false);
@@ -44,7 +42,6 @@ const FlappyDawg: React.FC = () => {
     setGameOver(false);
   };
 
-  // Handle jump action
   const jump = () => {
     if (gameOver) return;
     
@@ -56,7 +53,6 @@ const FlappyDawg: React.FC = () => {
     setDawgVelocity(JUMP_FORCE);
   };
 
-  // Game animation loop
   const gameLoop = (timestamp: number) => {
     if (!lastTimeRef.current) lastTimeRef.current = timestamp;
     const deltaTime = timestamp - lastTimeRef.current;
@@ -67,11 +63,9 @@ const FlappyDawg: React.FC = () => {
       return;
     }
 
-    // Update dawg position with gravity
     setDawgPosition(prevPos => {
       const newPos = prevPos + dawgVelocity;
       
-      // Check if dawg hits the ground or ceiling
       if (newPos < 0 || newPos > (gameAreaRef.current?.clientHeight || 500) - DAWG_HEIGHT) {
         setGameOver(true);
         setIsPlaying(false);
@@ -82,10 +76,8 @@ const FlappyDawg: React.FC = () => {
       return newPos;
     });
     
-    // Update dawg velocity (gravity)
     setDawgVelocity(prev => prev + GRAVITY);
     
-    // Generate new pipes
     frameCountRef.current += 1;
     if (frameCountRef.current % 100 === 0) {
       const height = Math.floor(Math.random() * 200) + 100;
@@ -96,20 +88,16 @@ const FlappyDawg: React.FC = () => {
       }]);
     }
     
-    // Update pipes position and check collisions
     setPipes(prevPipes => {
       const updatedPipes = prevPipes
         .map(pipe => {
-          // Move pipe to the left
           const newX = pipe.x - PIPE_SPEED;
           
-          // Check if dawg passed the pipe
           if (!pipe.passed && newX + PIPE_WIDTH < 100) {
             setScore(prev => prev + 1);
             return { ...pipe, x: newX, passed: true };
           }
           
-          // Use hitbox for collision detection instead of full image dimensions
           const dawgHitboxLeft = 100 + HITBOX_OFFSET_X;
           const dawgHitboxRight = dawgHitboxLeft + HITBOX_WIDTH;
           const dawgHitboxTop = dawgPosition + HITBOX_OFFSET_Y;
@@ -133,7 +121,7 @@ const FlappyDawg: React.FC = () => {
           
           return { ...pipe, x: newX };
         })
-        .filter(pipe => pipe.x > -PIPE_WIDTH); // Remove pipes that are off-screen
+        .filter(pipe => pipe.x > -PIPE_WIDTH);
       
       return updatedPipes;
     });
@@ -141,7 +129,6 @@ const FlappyDawg: React.FC = () => {
     requestRef.current = requestAnimationFrame(gameLoop);
   };
 
-  // Set up and clean up the game loop
   useEffect(() => {
     requestRef.current = requestAnimationFrame(gameLoop);
     return () => {
@@ -149,9 +136,8 @@ const FlappyDawg: React.FC = () => {
         cancelAnimationFrame(requestRef.current);
       }
     };
-  }, [isPlaying, gameOver, dawgVelocity]); // Add dawgVelocity to the dependency array
+  }, [isPlaying, gameOver, dawgVelocity]);
 
-  // Handle keyboard input
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space') {
@@ -180,11 +166,10 @@ const FlappyDawg: React.FC = () => {
       
       <div 
         ref={gameAreaRef}
-        className="neo-brutal-box relative mx-auto bg-gradient-to-b from-sky-300 to-sky-500 overflow-hidden"
+        className="neo-brutal-border relative mx-auto bg-gradient-to-b from-sky-300 to-sky-500 overflow-hidden"
         style={{ width: '600px', height: '500px', cursor: 'pointer' }}
         onClick={jump}
       >
-        {/* Game character */}
         <div
           className="absolute transition-transform"
           style={{
@@ -203,10 +188,8 @@ const FlappyDawg: React.FC = () => {
           />
         </div>
         
-        {/* Pipes */}
         {pipes.map((pipe, index) => (
           <React.Fragment key={index}>
-            {/* Top pipe */}
             <div
               className="absolute bg-green-500 rounded-b-lg border-2 border-black"
               style={{
@@ -216,7 +199,6 @@ const FlappyDawg: React.FC = () => {
                 height: `${pipe.height}px`,
               }}
             />
-            {/* Bottom pipe */}
             <div
               className="absolute bg-green-500 rounded-t-lg border-2 border-black"
               style={{
@@ -229,7 +211,6 @@ const FlappyDawg: React.FC = () => {
           </React.Fragment>
         ))}
         
-        {/* Start/Game Over message */}
         {!isPlaying && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 z-30">
             {gameOver ? (
