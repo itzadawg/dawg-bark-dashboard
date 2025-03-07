@@ -8,7 +8,7 @@ const GRAVITY = 0.6;
 const JUMP_FORCE = -10;
 const GAME_SPEED = 5;
 const OBSTACLE_WIDTH = 50;
-const OBSTACLE_GAP = 300;
+const OBSTACLE_GAP = 200; // Reduced gap between obstacles for more challenge
 const PLAYER_WIDTH = 60;
 const PLAYER_HEIGHT = 60;
 const GROUND_HEIGHT = 40;
@@ -21,13 +21,15 @@ const DawgDash: React.FC = () => {
   const [playerY, setPlayerY] = useState(0); // Will be set to ground level on init
   const [playerVelocity, setPlayerVelocity] = useState(0);
   const [isJumping, setIsJumping] = useState(false);
-  const [obstacles, setObstacles] = useState<Array<{x: number, height: number, width: number, passed: boolean}>>([]);
+  const [obstacles, setObstacles] = useState<Array<{x: number, height: number, width: number, passed: boolean, type: string}>>([]);
+  const [distanceTraveled, setDistanceTraveled] = useState(0);
   
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>();
   const lastTimeRef = useRef<number>(0);
   const frameCountRef = useRef<number>(0);
   const groundYRef = useRef<number>(0);
+  const obstacleGenerationRef = useRef<number>(0);
 
   // Initialize ground position when component mounts or gameArea changes
   useEffect(() => {
@@ -43,11 +45,13 @@ const DawgDash: React.FC = () => {
     setIsPlaying(true);
     setGameOver(false);
     setScore(0);
+    setDistanceTraveled(0);
     setPlayerVelocity(0);
     setIsJumping(false);
     setObstacles([]);
     lastTimeRef.current = 0;
     frameCountRef.current = 0;
+    obstacleGenerationRef.current = 0;
     
     // Make sure player starts on ground
     if (gameAreaRef.current) {
@@ -76,6 +80,13 @@ const DawgDash: React.FC = () => {
     }
   };
 
+  // Generate random obstacle type
+  const generateObstacleType = () => {
+    const types = ['spike', 'block', 'saw'];
+    const randomIndex = Math.floor(Math.random() * types.length);
+    return types[randomIndex];
+  };
+
   const gameLoop = (timestamp: number) => {
     if (!lastTimeRef.current) lastTimeRef.current = timestamp;
     const deltaTime = timestamp - lastTimeRef.current;
@@ -85,6 +96,9 @@ const DawgDash: React.FC = () => {
       requestRef.current = requestAnimationFrame(gameLoop);
       return;
     }
+
+    // Increase distance traveled (progress meter)
+    setDistanceTraveled(prev => prev + GAME_SPEED);
 
     // Update player position
     setPlayerY(prevY => {
@@ -104,18 +118,22 @@ const DawgDash: React.FC = () => {
       setPlayerVelocity(prev => prev + GRAVITY);
     }
     
-    // Generate obstacles
-    frameCountRef.current += 1;
-    if (frameCountRef.current % 100 === 0) {
+    // Generate obstacles more rhythmically
+    obstacleGenerationRef.current += GAME_SPEED;
+    if (obstacleGenerationRef.current >= OBSTACLE_GAP) {
+      obstacleGenerationRef.current = 0;
+      
       const gameWidth = gameAreaRef.current?.clientWidth || 600;
-      const obstacleHeight = Math.floor(Math.random() * 50) + 50;
+      const obstacleHeight = Math.floor(Math.random() * 50) + 50; // Random height
       const obstacleWidth = OBSTACLE_WIDTH;
+      const obstacleType = generateObstacleType();
       
       setObstacles(prevObstacles => [...prevObstacles, {
         x: gameWidth,
         height: obstacleHeight,
         width: obstacleWidth,
-        passed: false
+        passed: false,
+        type: obstacleType
       }]);
     }
     
@@ -185,6 +203,9 @@ const DawgDash: React.FC = () => {
     };
   }, [isPlaying, gameOver, isJumping]);
 
+  // Calculate progress percentage
+  const progressPercentage = Math.min(100, Math.floor((distanceTraveled / 5000) * 100));
+
   return (
     <div className="text-center">
       <h1 className="text-4xl font-black mb-6 text-center text-[#1EAEDB]">Dawg Dash</h1>
@@ -192,6 +213,9 @@ const DawgDash: React.FC = () => {
       <div className="flex justify-between items-center mb-4 max-w-2xl mx-auto">
         <div className="neo-brutal-box p-3">
           <p className="text-lg font-bold">Score: {score}</p>
+        </div>
+        <div className="neo-brutal-box p-3">
+          <p className="text-lg font-bold">Progress: {progressPercentage}%</p>
         </div>
         <div className="neo-brutal-box p-3">
           <p className="text-lg font-bold">High Score: {highScore}</p>
@@ -212,7 +236,9 @@ const DawgDash: React.FC = () => {
             top: `${playerY}px`,
             width: `${PLAYER_WIDTH}px`,
             height: `${PLAYER_HEIGHT}px`,
-            zIndex: 20
+            zIndex: 20,
+            transform: isJumping ? 'rotate(45deg)' : 'rotate(0deg)', // Rotate during jump like in Geometry Dash
+            transition: 'transform 0.1s ease-out'
           }}
         >
           <img 
@@ -232,15 +258,28 @@ const DawgDash: React.FC = () => {
         {obstacles.map((obstacle, index) => (
           <div
             key={index}
-            className="absolute bg-[#8b5cf6] border-2 border-black rounded-md"
+            className={`absolute border-2 border-black rounded-md ${
+              obstacle.type === 'spike' ? 'bg-red-500' : 
+              obstacle.type === 'saw' ? 'bg-gray-400 rounded-full' : 'bg-[#8b5cf6]'
+            }`}
             style={{
               left: `${obstacle.x}px`,
               bottom: GROUND_HEIGHT,
               width: `${obstacle.width}px`,
               height: `${obstacle.height}px`,
+              // For spike, use clip path to create triangle
+              clipPath: obstacle.type === 'spike' ? 'polygon(50% 0%, 0% 100%, 100% 100%)' : 'none',
             }}
           ></div>
         ))}
+        
+        {/* Progress Bar */}
+        <div className="absolute top-4 left-4 right-4 h-4 bg-gray-200 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-gradient-to-r from-green-400 to-blue-500"
+            style={{ width: `${progressPercentage}%` }}
+          ></div>
+        </div>
         
         {/* Game UI Overlay */}
         {!isPlaying && (
@@ -270,6 +309,7 @@ const DawgDash: React.FC = () => {
       
       <div className="mt-4 text-center">
         <p className="text-lg">Press Space or click to jump!</p>
+        <p className="text-md mt-2">Avoid obstacles and try to reach 100%!</p>
       </div>
     </div>
   );
