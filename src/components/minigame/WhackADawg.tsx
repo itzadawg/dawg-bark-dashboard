@@ -8,7 +8,6 @@ interface Hole {
   id: number;
   active: boolean;
   whacked: boolean;
-  flashColor: string | null;
 }
 
 const WhackADawg: React.FC = () => {
@@ -21,8 +20,7 @@ const WhackADawg: React.FC = () => {
     Array(9).fill(null).map((_, index) => ({
       id: index,
       active: false,
-      whacked: false,
-      flashColor: null
+      whacked: false
     }))
   );
   
@@ -37,8 +35,7 @@ const WhackADawg: React.FC = () => {
     setHoles(Array(9).fill(null).map((_, index) => ({
       id: index,
       active: false,
-      whacked: false,
-      flashColor: null
+      whacked: false
     })));
     
     // Game timer
@@ -87,7 +84,7 @@ const WhackADawg: React.FC = () => {
     // First reset any whacked dawgs
     setHoles(prev => 
       prev.map(hole => 
-        hole.whacked ? { ...hole, active: false, whacked: false, flashColor: null } : hole
+        hole.whacked ? { ...hole, active: false, whacked: false } : hole
       )
     );
     
@@ -130,15 +127,11 @@ const WhackADawg: React.FC = () => {
       // Valid whack!
       setScore(prev => prev + 1);
       
-      // Get a random flash color
-      const flashColors = ['#F97316', '#8B5CF6', '#D946EF', '#0EA5E9', '#1EAEDB'];
-      const randomColorIndex = Math.floor(Math.random() * flashColors.length);
-      
-      // Mark as whacked with visual feedback
+      // Mark as whacked
       setHoles(prev => 
         prev.map(hole => 
           hole.id === id 
-            ? { ...hole, whacked: true, flashColor: flashColors[randomColorIndex] } 
+            ? { ...hole, whacked: true } 
             : hole
         )
       );
@@ -189,12 +182,8 @@ const WhackADawg: React.FC = () => {
           {holes.map((hole) => (
             <div 
               key={hole.id} 
-              className={`aspect-square relative bg-dawg-accent/30 rounded-full overflow-hidden border-4 border-black cursor-pointer`}
+              className="aspect-square relative bg-dawg-accent/30 rounded-full overflow-hidden border-4 border-black"
               onClick={() => whackDawg(hole.id)}
-              style={{
-                boxShadow: hole.flashColor ? `0 0 15px 5px ${hole.flashColor}` : 'none',
-                transition: 'box-shadow 0.2s ease-out'
-              }}
             >
               <div 
                 className={`absolute inset-0 bg-dawg-light rounded-b-full transition-all duration-200 ease-out ${
@@ -204,32 +193,16 @@ const WhackADawg: React.FC = () => {
                 {/* Grass/hole cover */}
               </div>
               <div 
-                className={`absolute left-0 right-0 bottom-0 flex items-center justify-center transition-all duration-200 ease-out ${
+                className={`absolute left-0 right-0 bottom-0 flex items-center justify-center transition-all duration-200 ease-out cursor-pointer ${
                   hole.active ? 'translate-y-[20%]' : 'translate-y-full'
                 }`}
               >
                 <img 
                   src="/lovable-uploads/9b1ad62d-7684-4c97-bbea-929b0be4d290.png"
                   alt="Dawg" 
-                  className={`w-3/4 transform ${
-                    hole.whacked 
-                      ? 'rotate-12 scale-110 opacity-80' 
-                      : ''
-                  }`}
-                  style={{
-                    filter: hole.whacked ? 'brightness(1.2)' : 'none',
-                    transition: 'all 0.15s ease-out'
-                  }}
+                  className={`w-3/4 transform ${hole.whacked ? 'rotate-12' : ''}`}
                 />
               </div>
-              {hole.whacked && (
-                <div className="absolute inset-0 animate-pulse" 
-                  style={{ 
-                    backgroundColor: hole.flashColor || 'transparent',
-                    opacity: 0.3
-                  }}
-                />
-              )}
             </div>
           ))}
         </div>
