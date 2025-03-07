@@ -8,6 +8,7 @@ interface Hole {
   id: number;
   active: boolean;
   whacked: boolean;
+  flashEffect: boolean;
 }
 
 const WhackADawg: React.FC = () => {
@@ -20,7 +21,8 @@ const WhackADawg: React.FC = () => {
     Array(9).fill(null).map((_, index) => ({
       id: index,
       active: false,
-      whacked: false
+      whacked: false,
+      flashEffect: false
     }))
   );
   
@@ -35,7 +37,8 @@ const WhackADawg: React.FC = () => {
     setHoles(Array(9).fill(null).map((_, index) => ({
       id: index,
       active: false,
-      whacked: false
+      whacked: false,
+      flashEffect: false
     })));
     
     // Game timer
@@ -84,7 +87,7 @@ const WhackADawg: React.FC = () => {
     // First reset any whacked dawgs
     setHoles(prev => 
       prev.map(hole => 
-        hole.whacked ? { ...hole, active: false, whacked: false } : hole
+        hole.whacked ? { ...hole, active: false, whacked: false, flashEffect: false } : hole
       )
     );
     
@@ -127,14 +130,25 @@ const WhackADawg: React.FC = () => {
       // Valid whack!
       setScore(prev => prev + 1);
       
-      // Mark as whacked
+      // Mark as whacked and trigger flash effect
       setHoles(prev => 
         prev.map(hole => 
           hole.id === id 
-            ? { ...hole, whacked: true } 
+            ? { ...hole, whacked: true, flashEffect: true } 
             : hole
         )
       );
+      
+      // Remove flash effect after animation completes
+      setTimeout(() => {
+        setHoles(prev => 
+          prev.map(hole => 
+            hole.id === id 
+              ? { ...hole, flashEffect: false } 
+              : hole
+          )
+        );
+      }, 300);
     }
   };
   
@@ -182,7 +196,9 @@ const WhackADawg: React.FC = () => {
           {holes.map((hole) => (
             <div 
               key={hole.id} 
-              className="aspect-square relative bg-dawg-accent/30 rounded-full overflow-hidden border-4 border-black"
+              className={`aspect-square relative bg-dawg-accent/30 rounded-full overflow-hidden border-4 border-black ${
+                hole.flashEffect ? 'animate-pulse bg-dawg-accent' : ''
+              }`}
               onClick={() => whackDawg(hole.id)}
             >
               <div 
@@ -200,9 +216,16 @@ const WhackADawg: React.FC = () => {
                 <img 
                   src="/lovable-uploads/9b1ad62d-7684-4c97-bbea-929b0be4d290.png"
                   alt="Dawg" 
-                  className={`w-3/4 transform ${hole.whacked ? 'rotate-12' : ''}`}
+                  className={`w-3/4 transform ${
+                    hole.whacked ? 'rotate-12 scale-90 opacity-70' : ''
+                  } ${
+                    hole.flashEffect ? 'drop-shadow-[0_0_8px_rgba(249,115,22,0.8)]' : ''
+                  }`}
                 />
               </div>
+              {hole.flashEffect && (
+                <div className="absolute inset-0 bg-dawg-accent/30 animate-ping rounded-full"></div>
+              )}
             </div>
           ))}
         </div>
