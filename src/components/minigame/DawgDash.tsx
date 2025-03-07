@@ -1,221 +1,48 @@
-import React, { useState, useEffect, useRef } from 'react';
+
+import React, { useEffect, useRef } from 'react';
 import { Button } from '../ui/button';
 import GameOverModal from './GameOverModal';
-
-// Game constants
-const GRAVITY = 0.6;
-const JUMP_FORCE = -10;
-const GAME_SPEED = 5;
-const OBSTACLE_WIDTH = 50;
-const OBSTACLE_GAP = 300;
-const PLAYER_WIDTH = 60;
-const PLAYER_HEIGHT = 60;
-const GROUND_HEIGHT = 40;
-const MAX_JUMP_HEIGHT = Math.abs(JUMP_FORCE * JUMP_FORCE / (2 * GRAVITY)); // Calculate max jump height
+import Player from './Player';
+import Ground from './Ground';
+import ObstacleRenderer from './ObstacleRenderer';
+import ScoreDisplay from './ScoreDisplay';
+import { GROUND_HEIGHT } from './utils/gameConstants';
+import { useGameLoop } from './hooks/useGameLoop';
 
 const DawgDash: React.FC = () => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [gameOver, setGameOver] = useState(false);
-  const [score, setScore] = useState(0);
-  const [highScore, setHighScore] = useState(0);
-  const [playerY, setPlayerY] = useState(0); // Will be set to ground level on init
-  const [playerVelocity, setPlayerVelocity] = useState(0);
-  const [isJumping, setIsJumping] = useState(false);
-  const [obstacles, setObstacles] = useState<Array<{x: number, height: number, width: number, passed: boolean, type: string}>>([]);
-  
   const gameAreaRef = useRef<HTMLDivElement>(null);
-  const requestRef = useRef<number>();
-  const lastTimeRef = useRef<number>(0);
-  const frameCountRef = useRef<number>(0);
   const groundYRef = useRef<number>(0);
-
-  // Initialize ground position when component mounts or gameArea changes
+  
+  // Initialize ground position when component mounts
   useEffect(() => {
     if (gameAreaRef.current) {
       const gameHeight = gameAreaRef.current.clientHeight;
-      const groundY = gameHeight - PLAYER_HEIGHT - GROUND_HEIGHT;
+      const groundY = gameHeight - 60 - GROUND_HEIGHT; // 60 is PLAYER_HEIGHT
       groundYRef.current = groundY;
-      setPlayerY(groundY); // Start on ground
     }
   }, [gameAreaRef.current]);
-
-  const startGame = () => {
-    setIsPlaying(true);
-    setGameOver(false);
-    setScore(0);
-    setPlayerVelocity(0);
-    setIsJumping(false);
-    setObstacles([]);
-    lastTimeRef.current = 0;
-    frameCountRef.current = 0;
-    
-    // Make sure player starts on ground
-    if (gameAreaRef.current) {
-      const gameHeight = gameAreaRef.current.clientHeight;
-      const groundY = gameHeight - PLAYER_HEIGHT - GROUND_HEIGHT;
-      groundYRef.current = groundY;
-      setPlayerY(groundY);
-    }
-  };
-
-  const closeGameOver = () => {
-    setGameOver(false);
-  };
-
-  const jump = () => {
-    if (gameOver) return;
-    
-    if (!isPlaying) {
-      startGame();
-      return;
-    }
-    
-    if (!isJumping) {
-      setPlayerVelocity(JUMP_FORCE);
-      setIsJumping(true);
-    }
-  };
-
-  const gameLoop = (timestamp: number) => {
-    if (!lastTimeRef.current) lastTimeRef.current = timestamp;
-    const deltaTime = timestamp - lastTimeRef.current;
-    lastTimeRef.current = timestamp;
-    
-    if (!isPlaying || gameOver) {
-      requestRef.current = requestAnimationFrame(gameLoop);
-      return;
-    }
-
-    // Update player position
-    setPlayerY(prevY => {
-      const newY = prevY + playerVelocity;
-      
-      if (newY >= groundYRef.current) {
-        setIsJumping(false);
-        setPlayerVelocity(0);
-        return groundYRef.current;
-      }
-      
-      return newY;
-    });
-    
-    // Apply gravity if jumping
-    if (isJumping) {
-      setPlayerVelocity(prev => prev + GRAVITY);
-    }
-    
-    // Generate obstacles
-    frameCountRef.current += 1;
-    if (frameCountRef.current % 100 === 0) {
-      const gameWidth = gameAreaRef.current?.clientWidth || 600;
-      const gameHeight = gameAreaRef.current?.clientHeight || 400;
-      
-      // Calculate maximum possible height based on jump physics
-      // Maximum height a player can reach from ground level
-      const maxPossibleHeight = groundYRef.current - MAX_JUMP_HEIGHT;
-      
-      // Ensure obstacle height is within jumpable range
-      // For platforms player can stand on (purple blocks)
-      let obstacleHeight;
-      const obstacleType = Math.random() > 0.3 ? 'platform' : 'hazard';
-      
-      if (obstacleType === 'platform') {
-        // Platform heights - ensure they are reachable
-        // Either ground level or a height that can be reached with a jump
-        const possibleHeights = [
-          GROUND_HEIGHT, // Ground level platform
-          GROUND_HEIGHT + Math.random() * (MAX_JUMP_HEIGHT * 0.7) // Reachable with jump (70% of max jump)
-        ];
-        obstacleHeight = possibleHeights[Math.floor(Math.random() * possibleHeights.length)];
-      } else {
-        // Hazards (spikes) - always at ground level
-        obstacleHeight = GROUND_HEIGHT;
-      }
-      
-      const obstacleWidth = OBSTACLE_WIDTH;
-      
-      setObstacles(prevObstacles => [...prevObstacles, {
-        x: gameWidth,
-        height: obstacleHeight,
-        width: obstacleWidth,
-        passed: false,
-        type: obstacleType
-      }]);
-    }
-    
-    // Update obstacles and check collisions
-    setObstacles(prevObstacles => {
-      const updatedObstacles = prevObstacles
-        .map(obstacle => {
-          const newX = obstacle.x - GAME_SPEED;
-          
-          // Score point when passing obstacle
-          if (!obstacle.passed && newX + obstacle.width < 100) {
-            setScore(prev => prev + 1);
-            return { ...obstacle, x: newX, passed: true };
-          }
-          
-          // Check collision
-          const playerLeft = 100;
-          const playerRight = playerLeft + PLAYER_WIDTH;
-          const playerTop = playerY;
-          const playerBottom = playerY + PLAYER_HEIGHT;
-          
-          const obstacleLeft = obstacle.x;
-          const obstacleRight = obstacle.x + obstacle.width;
-          
-          // For platforms, only the top surface matters for collision
-          if (obstacle.type === 'platform') {
-            const obstacleSurfaceY = (gameAreaRef.current?.clientHeight || 400) - obstacle.height;
-            
-            // Check if player is landing on top of platform
-            if (
-              playerRight > obstacleLeft && 
-              playerLeft < obstacleRight &&
-              playerBottom >= obstacleSurfaceY - 5 && // Small tolerance for landing
-              playerBottom <= obstacleSurfaceY + 5 && // Small tolerance for landing
-              playerVelocity > 0 // Moving downward
-            ) {
-              // Land on platform
-              setPlayerY(obstacleSurfaceY - PLAYER_HEIGHT);
-              setPlayerVelocity(0);
-              setIsJumping(false);
-            }
-          } else if (obstacle.type === 'hazard') {
-            // For hazards, any collision is game over
-            const obstacleTop = (gameAreaRef.current?.clientHeight || 400) - obstacle.height;
-            
-            if (
-              playerRight > obstacleLeft && 
-              playerLeft < obstacleRight && 
-              playerBottom > obstacleTop
-            ) {
-              // Collision with hazard
-              setGameOver(true);
-              setIsPlaying(false);
-              setHighScore(prev => Math.max(prev, score));
-            }
-          }
-          
-          return { ...obstacle, x: newX };
-        })
-        .filter(obstacle => obstacle.x > -obstacle.width);
-      
-      return updatedObstacles;
-    });
-    
-    requestRef.current = requestAnimationFrame(gameLoop);
-  };
-
+  
+  const {
+    isPlaying,
+    gameOver,
+    score,
+    highScore,
+    playerY,
+    obstacles,
+    startGame,
+    closeGameOver,
+    jump,
+    setGameAreaRef
+  } = useGameLoop(groundYRef.current);
+  
+  // Update the gameAreaRef when it changes
   useEffect(() => {
-    requestRef.current = requestAnimationFrame(gameLoop);
-    return () => {
-      if (requestRef.current) {
-        cancelAnimationFrame(requestRef.current);
-      }
-    };
-  }, [isPlaying, gameOver, playerVelocity, isJumping]);
-
+    if (gameAreaRef.current) {
+      setGameAreaRef(gameAreaRef.current);
+    }
+  }, [gameAreaRef.current]);
+  
+  // Add keyboard event listener for jumping
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.code === 'Space') {
@@ -227,20 +54,13 @@ const DawgDash: React.FC = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isPlaying, gameOver, isJumping]);
+  }, [isPlaying, gameOver]);
 
   return (
     <div className="text-center">
       <h1 className="text-4xl font-black mb-6 text-center text-[#1EAEDB]">Dawg Dash</h1>
       
-      <div className="flex justify-between items-center mb-4 max-w-2xl mx-auto">
-        <div className="neo-brutal-box p-3">
-          <p className="text-lg font-bold">Score: {score}</p>
-        </div>
-        <div className="neo-brutal-box p-3">
-          <p className="text-lg font-bold">High Score: {highScore}</p>
-        </div>
-      </div>
+      <ScoreDisplay score={score} highScore={highScore} />
       
       <div 
         ref={gameAreaRef}
@@ -249,44 +69,13 @@ const DawgDash: React.FC = () => {
         onClick={jump}
       >
         {/* Player */}
-        <div
-          className="absolute transition-transform"
-          style={{
-            left: '100px',
-            top: `${playerY}px`,
-            width: `${PLAYER_WIDTH}px`,
-            height: `${PLAYER_HEIGHT}px`,
-            zIndex: 20
-          }}
-        >
-          <img 
-            src="/lovable-uploads/d4d58344-3817-4b81-a535-e7fd84d0e807.png" 
-            alt="Dawg" 
-            className="w-full h-full object-contain"
-          />
-        </div>
+        <Player y={playerY} />
         
         {/* Ground */}
-        <div 
-          className="absolute bottom-0 w-full bg-[#a67c52] border-t-2 border-black"
-          style={{ height: `${GROUND_HEIGHT}px` }}
-        ></div>
+        <Ground />
         
         {/* Obstacles */}
-        {obstacles.map((obstacle, index) => (
-          <div
-            key={index}
-            className={`absolute border-2 border-black rounded-md ${
-              obstacle.type === 'platform' ? 'bg-[#8b5cf6]' : 'bg-[#ef4444]'
-            }`}
-            style={{
-              left: `${obstacle.x}px`,
-              bottom: 0,
-              width: `${obstacle.width}px`,
-              height: `${obstacle.height}px`,
-            }}
-          ></div>
-        ))}
+        <ObstacleRenderer obstacles={obstacles} />
         
         {/* Game UI Overlay */}
         {!isPlaying && (
