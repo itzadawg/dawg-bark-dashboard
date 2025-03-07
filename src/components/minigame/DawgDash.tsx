@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '../ui/button';
 import GameOverModal from './GameOverModal';
@@ -12,6 +11,7 @@ const OBSTACLE_GAP = 300;
 const PLAYER_WIDTH = 60;
 const PLAYER_HEIGHT = 60;
 const GROUND_HEIGHT = 40;
+const MAX_JUMP_HEIGHT = Math.abs(JUMP_FORCE * JUMP_FORCE / (2 * GRAVITY)); // Calculate max jump height
 
 const DawgDash: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -21,7 +21,7 @@ const DawgDash: React.FC = () => {
   const [playerY, setPlayerY] = useState(0); // Will be set to ground level on init
   const [playerVelocity, setPlayerVelocity] = useState(0);
   const [isJumping, setIsJumping] = useState(false);
-  const [obstacles, setObstacles] = useState<Array<{x: number, height: number, width: number, passed: boolean}>>([]);
+  const [obstacles, setObstacles] = useState<Array<{x: number, height: number, width: number, passed: boolean, type: string}>>([]);
   
   const gameAreaRef = useRef<HTMLDivElement>(null);
   const requestRef = useRef<number>();
@@ -108,14 +108,38 @@ const DawgDash: React.FC = () => {
     frameCountRef.current += 1;
     if (frameCountRef.current % 100 === 0) {
       const gameWidth = gameAreaRef.current?.clientWidth || 600;
-      const obstacleHeight = Math.floor(Math.random() * 50) + 50;
+      const gameHeight = gameAreaRef.current?.clientHeight || 400;
+      
+      // Calculate maximum possible height based on jump physics
+      // Maximum height a player can reach from ground level
+      const maxPossibleHeight = groundYRef.current - MAX_JUMP_HEIGHT;
+      
+      // Ensure obstacle height is within jumpable range
+      // For platforms player can stand on (purple blocks)
+      let obstacleHeight;
+      const obstacleType = Math.random() > 0.3 ? 'platform' : 'hazard';
+      
+      if (obstacleType === 'platform') {
+        // Platform heights - ensure they are reachable
+        // Either ground level or a height that can be reached with a jump
+        const possibleHeights = [
+          GROUND_HEIGHT, // Ground level platform
+          GROUND_HEIGHT + Math.random() * (MAX_JUMP_HEIGHT * 0.7) // Reachable with jump (70% of max jump)
+        ];
+        obstacleHeight = possibleHeights[Math.floor(Math.random() * possibleHeights.length)];
+      } else {
+        // Hazards (spikes) - always at ground level
+        obstacleHeight = GROUND_HEIGHT;
+      }
+      
       const obstacleWidth = OBSTACLE_WIDTH;
       
       setObstacles(prevObstacles => [...prevObstacles, {
         x: gameWidth,
         height: obstacleHeight,
         width: obstacleWidth,
-        passed: false
+        passed: false,
+        type: obstacleType
       }]);
     }
     
@@ -139,18 +163,39 @@ const DawgDash: React.FC = () => {
           
           const obstacleLeft = obstacle.x;
           const obstacleRight = obstacle.x + obstacle.width;
-          const obstacleTop = (gameAreaRef.current?.clientHeight || 400) - GROUND_HEIGHT - obstacle.height;
-          const obstacleBottom = (gameAreaRef.current?.clientHeight || 400) - GROUND_HEIGHT;
           
-          if (
-            playerRight > obstacleLeft && 
-            playerLeft < obstacleRight && 
-            playerBottom > obstacleTop &&
-            playerTop < obstacleBottom
-          ) {
-            setGameOver(true);
-            setIsPlaying(false);
-            setHighScore(prev => Math.max(prev, score));
+          // For platforms, only the top surface matters for collision
+          if (obstacle.type === 'platform') {
+            const obstacleSurfaceY = (gameAreaRef.current?.clientHeight || 400) - obstacle.height;
+            
+            // Check if player is landing on top of platform
+            if (
+              playerRight > obstacleLeft && 
+              playerLeft < obstacleRight &&
+              playerBottom >= obstacleSurfaceY - 5 && // Small tolerance for landing
+              playerBottom <= obstacleSurfaceY + 5 && // Small tolerance for landing
+              playerVelocity > 0 // Moving downward
+            ) {
+              // Land on platform
+              setPlayerY(obstacleSurfaceY - PLAYER_HEIGHT);
+              setPlayerVelocity(0);
+              setIsJumping(false);
+            }
+          } else {
+            // For hazards, any collision is game over
+            const obstacleTop = (gameAreaRef.current?.clientHeight || 400) - obstacle.height;
+            const obstacleBottom = (gameAreaRef.current?.clientHeight || 400);
+            
+            if (
+              playerRight > obstacleLeft && 
+              playerLeft < obstacleRight && 
+              playerBottom > obstacleTop &&
+              playerTop < obstacleBottom
+            ) {
+              setGameOver(true);
+              setIsPlaying(false);
+              setHighScore(prev => Math.max(prev, score));
+            }
           }
           
           return { ...obstacle, x: newX };
@@ -232,10 +277,12 @@ const DawgDash: React.FC = () => {
         {obstacles.map((obstacle, index) => (
           <div
             key={index}
-            className="absolute bg-[#8b5cf6] border-2 border-black rounded-md"
+            className={`absolute border-2 border-black rounded-md ${
+              obstacle.type === 'platform' ? 'bg-[#8b5cf6]' : 'bg-[#ef4444]'
+            }`}
             style={{
               left: `${obstacle.x}px`,
-              bottom: GROUND_HEIGHT,
+              bottom: 0,
               width: `${obstacle.width}px`,
               height: `${obstacle.height}px`,
             }}
