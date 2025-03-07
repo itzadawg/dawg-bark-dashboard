@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '../ui/button';
+import GameOverModal from './GameOverModal';
 
 const GRAVITY = 0.5;
 const JUMP_FORCE = -10;
@@ -38,6 +38,10 @@ const FlappyDawg: React.FC = () => {
     setPipes([]);
     lastTimeRef.current = 0;
     frameCountRef.current = 0;
+  };
+
+  const closeGameOver = () => {
+    setGameOver(false);
   };
 
   // Handle jump action
@@ -197,18 +201,6 @@ const FlappyDawg: React.FC = () => {
             alt="Flappy Dawg" 
             className="w-full h-full object-contain"
           />
-          
-          {/* Debug hitbox - uncomment to see the hitbox
-          <div
-            className="absolute border-2 border-red-500 opacity-50"
-            style={{
-              left: `${HITBOX_OFFSET_X}px`,
-              top: `${HITBOX_OFFSET_Y}px`,
-              width: `${HITBOX_WIDTH}px`,
-              height: `${HITBOX_HEIGHT}px`,
-            }}
-          />
-          */}
         </div>
         
         {/* Pipes */}
@@ -240,22 +232,25 @@ const FlappyDawg: React.FC = () => {
         {/* Start/Game Over message */}
         {!isPlaying && (
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-black bg-opacity-50 z-30">
-            <div className="bg-white p-6 rounded-lg neo-brutal-box">
-              <h2 className="text-2xl font-bold mb-4">
-                {gameOver ? 'Game Over!' : 'Flappy Dawg'}
-              </h2>
-              <p className="mb-4">
-                {gameOver 
-                  ? `Your score: ${score}`
-                  : 'Click or press Space to start!'}
-              </p>
-              <Button 
-                onClick={startGame}
-                className="neo-brutal-button"
-              >
-                {gameOver ? 'Play Again' : 'Start Game'}
-              </Button>
-            </div>
+            {gameOver ? (
+              <GameOverModal 
+                score={score} 
+                highScore={highScore} 
+                onRestart={startGame}
+                onClose={closeGameOver}
+              />
+            ) : (
+              <div className="bg-white p-6 rounded-lg neo-brutal-box">
+                <h2 className="text-2xl font-bold mb-4">Flappy Dawg</h2>
+                <p className="mb-4">Click or press Space to start!</p>
+                <Button 
+                  onClick={startGame}
+                  className="neo-brutal-button"
+                >
+                  Start Game
+                </Button>
+              </div>
+            )}
           </div>
         )}
       </div>

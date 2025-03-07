@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Target, Trophy } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
@@ -29,7 +28,6 @@ const DogCatcher = () => {
     setShowGameOver(false);
     nextIdRef.current = 1;
 
-    // Start timers
     if (gameTimerRef.current) clearInterval(gameTimerRef.current);
     if (spawnTimerRef.current) clearInterval(spawnTimerRef.current);
     
@@ -68,6 +66,10 @@ const DogCatcher = () => {
     setShowGameOver(true);
   };
 
+  const closeGameOver = () => {
+    setShowGameOver(false);
+  };
+
   const spawnDog = () => {
     if (!gameAreaRef.current) return;
     
@@ -84,7 +86,6 @@ const DogCatcher = () => {
     
     setDogs(prev => [...prev, newDog]);
     
-    // Limit max dogs
     if (dogs.length > 12) {
       setDogs(prev => prev.slice(1));
     }
@@ -94,7 +95,6 @@ const DogCatcher = () => {
     setDogs(prev => prev.filter(dog => dog.id !== id));
     setScore(prev => prev + 1);
     
-    // Play sound or visual feedback
     if (score % 5 === 4) {
       toast({
         title: "Good job!",
@@ -166,6 +166,7 @@ const DogCatcher = () => {
           score={score} 
           highScore={highScore} 
           onRestart={startGame} 
+          onClose={closeGameOver}
         />
       )}
     </div>

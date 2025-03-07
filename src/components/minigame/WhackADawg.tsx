@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '../ui/button';
 import { toast } from '../ui/use-toast';
@@ -38,7 +37,6 @@ const WhackADawg: React.FC = () => {
       whacked: false
     })));
     
-    // Game timer
     gameIntervalRef.current = window.setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
@@ -49,10 +47,9 @@ const WhackADawg: React.FC = () => {
       });
     }, 1000);
     
-    // Dawg popup mechanism
     popupIntervalRef.current = window.setInterval(() => {
       showRandomDawg();
-    }, 850); // Speed can be adjusted for difficulty
+    }, 850);
   };
   
   const endGame = () => {
@@ -62,7 +59,6 @@ const WhackADawg: React.FC = () => {
     setIsPlaying(false);
     setGameOver(true);
     
-    // Update high score if needed
     if (score > highScore) {
       setHighScore(score);
       toast({
@@ -72,8 +68,11 @@ const WhackADawg: React.FC = () => {
     }
   };
   
+  const closeGameOver = () => {
+    setGameOver(false);
+  };
+  
   useEffect(() => {
-    // Cleanup on component unmount
     return () => {
       if (gameIntervalRef.current) clearInterval(gameIntervalRef.current);
       if (popupIntervalRef.current) clearInterval(popupIntervalRef.current);
@@ -81,22 +80,18 @@ const WhackADawg: React.FC = () => {
   }, []);
   
   const showRandomDawg = () => {
-    // First reset any whacked dawgs
     setHoles(prev => 
       prev.map(hole => 
         hole.whacked ? { ...hole, active: false, whacked: false } : hole
       )
     );
     
-    // Find inactive holes
     const inactiveHoles = holes.filter(hole => !hole.active && !hole.whacked);
     
     if (inactiveHoles.length > 0) {
-      // Choose random inactive hole
       const randomIndex = Math.floor(Math.random() * inactiveHoles.length);
       const randomHoleId = inactiveHoles[randomIndex].id;
       
-      // Activate the dawg in this hole
       setHoles(prev => 
         prev.map(hole => 
           hole.id === randomHoleId 
@@ -105,7 +100,6 @@ const WhackADawg: React.FC = () => {
         )
       );
       
-      // Automatically deactivate after a short time if not whacked
       setTimeout(() => {
         setHoles(prev => 
           prev.map(hole => 
@@ -114,7 +108,7 @@ const WhackADawg: React.FC = () => {
               : hole
           )
         );
-      }, 1500); // Time the dawg stays up if not whacked
+      }, 1500);
     }
   };
   
@@ -124,10 +118,8 @@ const WhackADawg: React.FC = () => {
     const targetHole = holes.find(hole => hole.id === id);
     
     if (targetHole && targetHole.active && !targetHole.whacked) {
-      // Valid whack!
       setScore(prev => prev + 1);
       
-      // Mark as whacked
       setHoles(prev => 
         prev.map(hole => 
           hole.id === id 
@@ -175,6 +167,7 @@ const WhackADawg: React.FC = () => {
             score={score} 
             highScore={highScore} 
             onRestart={startGame} 
+            onClose={closeGameOver}
           />
         )}
         

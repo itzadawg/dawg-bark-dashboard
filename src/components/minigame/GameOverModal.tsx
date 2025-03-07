@@ -1,15 +1,18 @@
 
-import React from 'react';
-import { Trophy, RefreshCw } from 'lucide-react';
+import React, { useRef, useEffect } from 'react';
+import { Trophy, RefreshCw, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface GameOverModalProps {
   score: number;
   highScore: number;
   onRestart: () => void;
+  onClose: () => void; // Add onClose prop
 }
 
-const GameOverModal: React.FC<GameOverModalProps> = ({ score, highScore, onRestart }) => {
+const GameOverModal: React.FC<GameOverModalProps> = ({ score, highScore, onRestart, onClose }) => {
+  const modalRef = useRef<HTMLDivElement>(null);
+  
   let message = "Nice try!";
   
   if (score === 0) {
@@ -22,12 +25,36 @@ const GameOverModal: React.FC<GameOverModalProps> = ({ score, highScore, onResta
     message = "Good job!";
   }
   
+  // Handle outside clicks
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [onClose]);
+  
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
       <div 
-        className="w-full max-w-md p-6 bg-white neo-brutal-border shadow-brutal" 
+        ref={modalRef}
+        className="w-full max-w-md p-6 bg-white neo-brutal-border shadow-brutal relative" 
         style={{ transform: 'none', pointerEvents: 'auto' }}
       >
+        {/* Close button */}
+        <button 
+          onClick={onClose}
+          className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+          aria-label="Close"
+        >
+          <X size={20} />
+        </button>
+        
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full overflow-hidden neo-brutal-border">
             <img 
