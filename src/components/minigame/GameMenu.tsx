@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Gamepad2, Dice1 } from 'lucide-react';
 
@@ -32,7 +33,7 @@ const GameMenu: React.FC<GameMenuProps> = ({ onSelectGame }) => {
       id: 'whackADawg',
       name: 'Whack-A-Dawg',
       description: 'Whack the dawgs as they pop up from their holes!',
-      icon: <img src="/lovable-uploads/13194617-f0ef-4538-9821-b08ae6fbdde9.png" alt="Dawg" className="w-full h-full object-cover" />,
+      icon: <div className="w-full h-full flex items-center justify-center overflow-hidden"><img src="/lovable-uploads/13194617-f0ef-4538-9821-b08ae6fbdde9.png" alt="Dawg" className="w-full h-auto min-w-full min-h-full object-cover" /></div>,
       color: 'bg-[#1EAEDB]', // Blue background to match the new image
     },
   ];
