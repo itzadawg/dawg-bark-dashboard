@@ -157,7 +157,7 @@ const WhackADawg: React.FC = () => {
         </div>
       </div>
       
-      <div className="neo-brutal-box p-6 max-w-xl mx-auto bg-dawg-secondary">
+      <div className="neo-brutal-box p-6 max-w-xl mx-auto bg-dawg-secondary relative">
         {!isPlaying && !gameOver && (
           <div className="mb-6 text-center">
             <h2 className="text-2xl font-bold mb-4">Ready to Play?</h2>

@@ -24,7 +24,7 @@ const GameOverModal: React.FC<GameOverModalProps> = ({ score, highScore, onResta
   
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/40">
-      <div className="w-full max-w-md p-6 neo-brutal-box bg-white">
+      <div className="w-full max-w-md p-6 neo-brutal-box bg-white" style={{ transform: 'none' }}>
         <div className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full overflow-hidden neo-brutal-border">
             <img 
