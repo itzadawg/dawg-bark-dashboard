@@ -182,7 +182,9 @@ const WhackADawg: React.FC = () => {
           {holes.map((hole) => (
             <div 
               key={hole.id} 
-              className="aspect-square relative bg-dawg-accent/30 rounded-full overflow-hidden border-4 border-black"
+              className={`aspect-square relative bg-dawg-accent/30 rounded-full overflow-hidden border-4 border-black ${
+                hole.whacked ? 'ring-4 ring-offset-2 ring-green-500 ring-opacity-75 transition-all duration-300' : ''
+              }`}
               onClick={() => whackDawg(hole.id)}
             >
               <div 
@@ -200,7 +202,7 @@ const WhackADawg: React.FC = () => {
                 <img 
                   src="/lovable-uploads/9b1ad62d-7684-4c97-bbea-929b0be4d290.png"
                   alt="Dawg" 
-                  className={`w-3/4 transform ${hole.whacked ? 'rotate-12' : ''}`}
+                  className={`w-3/4 transform ${hole.whacked ? 'rotate-12 brightness-110' : ''}`}
                 />
               </div>
             </div>
