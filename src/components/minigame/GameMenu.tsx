@@ -33,8 +33,14 @@ const GameMenu: React.FC<GameMenuProps> = ({ onSelectGame }) => {
       id: 'whackADawg',
       name: 'Whack-A-Dawg',
       description: 'Whack the dawgs as they pop up from their holes!',
-      icon: <div className="w-full h-full flex items-center justify-center overflow-hidden"><img src="/lovable-uploads/13194617-f0ef-4538-9821-b08ae6fbdde9.png" alt="Dawg" className="w-full h-auto min-w-full min-h-full object-cover" /></div>,
-      color: 'bg-[#1EAEDB]', // Blue background to match the new image
+      icon: <div className="flex items-center justify-center w-full h-full">
+              <img 
+                src="/lovable-uploads/9b1ad62d-7684-4c97-bbea-929b0be4d290.png" 
+                alt="Dawg" 
+                className="w-4/5 h-4/5" 
+              />
+            </div>,
+      color: 'bg-dawg',
     },
   ];
 

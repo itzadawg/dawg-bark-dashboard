@@ -193,14 +193,14 @@ const WhackADawg: React.FC = () => {
                 {/* Grass/hole cover */}
               </div>
               <div 
-                className={`absolute left-1/2 -translate-x-1/2 bottom-0 w-full flex justify-center transition-all duration-200 ease-out cursor-pointer ${
-                  hole.active ? 'translate-y-1/3' : 'translate-y-full'
+                className={`absolute left-0 right-0 bottom-0 flex items-center justify-center transition-all duration-200 ease-out cursor-pointer ${
+                  hole.active ? 'translate-y-[20%]' : 'translate-y-full'
                 }`}
               >
                 <img 
-                  src="/lovable-uploads/13194617-f0ef-4538-9821-b08ae6fbdde9.png"
+                  src="/lovable-uploads/9b1ad62d-7684-4c97-bbea-929b0be4d290.png"
                   alt="Dawg" 
-                  className={`w-full h-auto max-w-[90%] transform ${hole.whacked ? 'rotate-12' : ''}`}
+                  className={`w-3/4 transform ${hole.whacked ? 'rotate-12' : ''}`}
                 />
               </div>
             </div>
