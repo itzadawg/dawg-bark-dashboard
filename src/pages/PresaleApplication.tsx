@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -71,15 +70,14 @@ const PresaleApplication = () => {
     setLoading(true);
     
     try {
-      // Get the current domain to use for the redirect URL
+      // Get the full URL for redirection - this should match what's configured in Supabase
       const redirectUrl = window.location.origin + '/presale-application';
-      console.log('Redirect URL:', redirectUrl); // For debugging
+      console.log('Redirect URL for Supabase auth:', redirectUrl);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
         options: {
           redirectTo: redirectUrl,
-          // Make sure we're explicitly setting a scopes parameter
           scopes: 'tweet.read users.read',
         },
       });
