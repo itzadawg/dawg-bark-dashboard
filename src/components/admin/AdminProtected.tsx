@@ -1,8 +1,9 @@
 
-import React, { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { ReactNode, useEffect } from 'react';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAdmin } from '@/hooks/useAdmin';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface AdminProtectedProps {
   children: ReactNode;
@@ -10,6 +11,17 @@ interface AdminProtectedProps {
 
 export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
   const { isAdmin, isLoading } = useAdmin();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    console.log('AdminProtected: isAdmin =', isAdmin, 'isLoading =', isLoading);
+    
+    // If we're done loading and the user is not an admin, show a toast message
+    if (!isLoading && !isAdmin) {
+      toast.error('Admin access required');
+      navigate('/', { replace: true });
+    }
+  }, [isAdmin, isLoading, navigate]);
 
   if (isLoading) {
     return (
@@ -21,7 +33,7 @@ export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
   }
 
   if (!isAdmin) {
-    return <Navigate to="/" replace />;
+    return null; // We're handling the redirect in the useEffect
   }
 
   return <>{children}</>;

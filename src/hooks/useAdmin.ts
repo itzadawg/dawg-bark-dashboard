@@ -10,6 +10,9 @@ export const useAdmin = () => {
   useEffect(() => {
     const checkAdminStatus = async () => {
       try {
+        setIsLoading(true);
+        console.log('Checking admin status...');
+        
         // Get current session
         const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
         
@@ -21,11 +24,13 @@ export const useAdmin = () => {
         
         // If no session exists, set loading to false and return early
         if (!sessionData.session) {
+          console.log('No active session found');
           setIsLoading(false);
           return;
         }
         
         const currentUserId = sessionData.session.user.id;
+        console.log('Current user ID:', currentUserId);
         setUserId(currentUserId);
         
         // Check if user is admin
@@ -37,13 +42,16 @@ export const useAdmin = () => {
         
         if (error) {
           console.error('Error checking admin status:', error);
-          setIsLoading(false);
+          setIsAdmin(false);
         } else {
-          setIsAdmin(data?.is_admin || false);
-          setIsLoading(false);
+          const adminStatus = !!data?.is_admin;
+          console.log('Admin status from database:', adminStatus);
+          setIsAdmin(adminStatus);
         }
       } catch (error) {
         console.error('Unexpected error checking admin status:', error);
+        setIsAdmin(false);
+      } finally {
         setIsLoading(false);
       }
     };
