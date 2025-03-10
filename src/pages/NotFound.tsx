@@ -24,7 +24,7 @@ const NotFound = () => {
           <h1 className="text-4xl font-bold mb-4">404</h1>
           <p className="text-xl text-gray-600 mb-6">
             {isKnownRoute 
-              ? "If you're seeing this after a page refresh, please use the navigation menu to return to this page."
+              ? "If you're seeing this after a page refresh, please wait a moment as the page reloads. This is typically fixed by our server configuration."
               : "Oops! Looks like you've followed a broken link or entered a URL that doesn't exist on this site."
             }
           </p>
@@ -36,8 +36,8 @@ const NotFound = () => {
             </Link>
             {isKnownRoute && (
               <p className="text-sm text-gray-500 mt-4">
-                Direct page refreshes don't work with this application's routing.
-                Please use the navigation menu to navigate between pages.
+                If you continue to see this page after refreshing, try clearing your browser cache
+                or using the navigation menu to navigate between pages.
               </p>
             )}
           </div>
