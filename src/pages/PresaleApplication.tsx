@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 
 const PresaleApplication = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
@@ -21,15 +22,37 @@ const PresaleApplication = () => {
   });
 
   useEffect(() => {
+    // Check if we have an error in the URL (from OAuth redirect)
+    const queryParams = new URLSearchParams(location.search);
+    const error = queryParams.get('error');
+    const errorDescription = queryParams.get('error_description');
+    
+    if (error) {
+      console.error('Auth redirect error:', error, errorDescription);
+      toast.error(`Authentication error: ${errorDescription || error}`);
+    }
+    
     const checkUser = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        setIsAuthenticated(true);
-        setUserInfo(data.session.user);
+      try {
+        const { data, error } = await supabase.auth.getSession();
+        console.log('Session data:', data);
         
-        if (data.session.user?.email) {
-          setFormData(prev => ({ ...prev, email: data.session.user.email }));
+        if (error) {
+          console.error('Session error:', error);
+          return;
         }
+        
+        if (data.session) {
+          setIsAuthenticated(true);
+          setUserInfo(data.session.user);
+          console.log('User authenticated:', data.session.user);
+          
+          if (data.session.user?.email) {
+            setFormData(prev => ({ ...prev, email: data.session.user.email }));
+          }
+        }
+      } catch (error) {
+        console.error('Error checking user session:', error);
       }
     };
     
@@ -55,7 +78,7 @@ const PresaleApplication = () => {
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, []);
+  }, [location]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,9 +89,12 @@ const PresaleApplication = () => {
     setLoading(true);
     
     try {
-      // Make sure we're using the exact same URL format as configured in Supabase
-      const redirectUrl = 'https://itzadawg.com/presale-application';
-      console.log('Redirect URL for Supabase auth:', redirectUrl);
+      // Determine the current origin for redirect URL
+      const origin = window.location.origin;
+      const path = '/presale-application';
+      const redirectUrl = `${origin}${path}`;
+      
+      console.log('Using redirect URL:', redirectUrl);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
@@ -81,6 +107,8 @@ const PresaleApplication = () => {
       if (error) {
         toast.error('Failed to connect X account: ' + error.message);
         console.error('X auth error details:', error);
+      } else {
+        console.log('Auth initiated successfully:', data);
       }
     } catch (error) {
       toast.error('An unexpected error occurred');
