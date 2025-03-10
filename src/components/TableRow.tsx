@@ -35,39 +35,30 @@ const TableRow: React.FC<TableRowProps> = ({
   const isNegative = percentValue < 0;
   
   const getActivityBar = () => {
-    switch (activity) {
-      case 'high':
-        return (
-          <div className="w-24 h-2 bg-dawg-dark">
-            <div className="h-full bg-dawg-accent w-full"></div>
-          </div>
-        );
-      case 'medium':
-        return (
-          <div className="w-24 h-2 bg-dawg-dark">
-            <div className="h-full bg-dawg-accent w-2/3"></div>
-          </div>
-        );
-      case 'low':
-        return (
-          <div className="w-24 h-2 bg-dawg-dark">
-            <div className="h-full bg-dawg-accent w-1/3"></div>
-          </div>
-        );
-      default:
-        return (
-          <div className="w-24 h-2 bg-dawg-dark">
-            <div className="h-full bg-dawg-dark/20 w-0"></div>
-          </div>
-        );
+    const baseClasses = "w-24 h-2 bg-dawg-dark";
+    const barClasses = "h-full bg-dawg-accent";
+    
+    let widthClass = "w-0";
+    if (activity === 'high') {
+      widthClass = "w-full";
+    } else if (activity === 'medium') {
+      widthClass = "w-2/3";
+    } else if (activity === 'low') {
+      widthClass = "w-1/3";
     }
+    
+    return (
+      <div className={baseClasses}>
+        <div className={`${barClasses} ${widthClass}`}></div>
+      </div>
+    );
   };
   
   return (
     <tr className="border-b-2 border-black hover:bg-dawg-secondary transition-colors">
       <td className="py-4 px-2 w-[20%]">
         <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-full neo-brutal-border bg-transparent flex items-center justify-center">
+          <div className="w-10 h-10 rounded-full neo-brutal-border bg-transparent flex items-center justify-center overflow-hidden">
             {avatar && (
               <img src={avatar} alt="Avatar" className="w-full h-full rounded-full object-cover" />
             )}
