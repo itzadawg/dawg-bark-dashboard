@@ -1,11 +1,8 @@
-
 import React from 'react';
 import Header from '../components/dashboard/Header';
 import LeaderboardTable from '../components/LeaderboardTable';
-
 const DawgBoard = () => {
-  return (
-    <>
+  return <>
       <Header />
       <div className="min-h-screen bg-dawg-light px-8 py-12 max-w-7xl mx-auto">
         <div className="space-y-8">
@@ -22,9 +19,7 @@ const DawgBoard = () => {
           
           <div className="bg-white p-6 rounded-lg neo-brutal-border max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold mb-4">How it works</h2>
-            <p className="mb-4">
-              We track tweets containing $DAWG or @itzadawg and award points based on engagement:
-            </p>
+            <p className="mb-4">We track tweets containing $Dawg or @itzadawg and award points based on engagement:</p>
             <ul className="list-disc pl-6 space-y-2">
               <li><span className="font-semibold">1 point</span> for each tweet mentioning DAWG</li>
               <li><span className="font-semibold">2 points</span> for each like your tweet receives</li>
@@ -37,8 +32,6 @@ const DawgBoard = () => {
           </div>
         </div>
       </div>
-    </>
-  );
+    </>;
 };
-
 export default DawgBoard;
