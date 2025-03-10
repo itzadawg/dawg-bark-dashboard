@@ -23,6 +23,9 @@ import {
   TableRow as UITableRow,
 } from '../ui/table';
 
+// Define a type for activity values to avoid type errors
+type ActivityLevel = 'high' | 'medium' | 'low' | 'none';
+
 const HoldersTable: React.FC = () => {
   const { showMasked, setShowMasked } = useDashboard();
   const { tableData } = getDashboardData();
@@ -141,9 +144,9 @@ const HoldersTable: React.FC = () => {
                         {selectedHolder.activity === 'none' && <Badge className="bg-gray-300">None</Badge>}
                         <div className="w-24 h-2 bg-dawg-dark">
                           <div className={`h-full bg-dawg-accent ${
-                            selectedHolder.activity === 'high' ? 'w-full' : 
-                            selectedHolder.activity === 'medium' ? 'w-2/3' : 
-                            selectedHolder.activity === 'low' ? 'w-1/3' : 'w-0'
+                            selectedHolder.activity as ActivityLevel === 'high' ? 'w-full' : 
+                            selectedHolder.activity as ActivityLevel === 'medium' ? 'w-2/3' : 
+                            selectedHolder.activity as ActivityLevel === 'low' ? 'w-1/3' : 'w-0'
                           }`}></div>
                         </div>
                       </div>

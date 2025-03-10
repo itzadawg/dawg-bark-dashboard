@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -23,14 +22,11 @@ type TweetPoints = {
 
 const LeaderboardTable = () => {
   const fetchLeaderboard = async () => {
-    // Call our edge function to get the leaderboard with a URL parameter instead of a body
-    const { data, error } = await supabase.functions.invoke('fetch-tweets', {
+    const { data, error } = await supabase.functions.invoke('fetch-tweets?action=leaderboard', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-      },
-      // Using query parameters instead of body for GET request
-      queryParams: { action: 'leaderboard' }
+      }
     });
     
     if (error) throw new Error(error.message);
