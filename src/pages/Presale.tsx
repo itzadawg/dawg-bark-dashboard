@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
@@ -16,31 +15,43 @@ const Presale = () => {
   const navigate = useNavigate();
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [debugInfo, setDebugInfo] = useState({});
+  const [user, setUser] = useState(null);
   
-  // Check for auth errors in URL params
+  // Check for auth state and URL params on load
   useEffect(() => {
-    // Debug: Log full URL
-    console.log('Current URL:', window.location.href);
+    const checkSession = async () => {
+      // Debug: Log full URL
+      console.log('Current URL:', window.location.href);
+      
+      const url = new URL(window.location.href);
+      const errorParam = url.searchParams.get('error');
+      const errorDescription = url.searchParams.get('error_description');
+      const code = url.searchParams.get('code');
+      
+      // Log parameters to help diagnose
+      setDebugInfo({
+        error: errorParam,
+        errorDescription: errorDescription,
+        hasCode: !!code,
+        host: window.location.host,
+        origin: window.location.origin
+      });
+      
+      if (errorParam) {
+        toast.error(`Authentication error: ${errorDescription || errorParam}`);
+        // Clean up the URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      // Check if user is already logged in
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setUser(session.user);
+        toast.success("You're already logged in with X");
+      }
+    };
     
-    const url = new URL(window.location.href);
-    const errorParam = url.searchParams.get('error');
-    const errorDescription = url.searchParams.get('error_description');
-    const code = url.searchParams.get('code');
-    
-    // Log parameters to help diagnose
-    setDebugInfo({
-      error: errorParam,
-      errorDescription: errorDescription,
-      hasCode: !!code,
-      host: window.location.host,
-      origin: window.location.origin
-    });
-    
-    if (errorParam) {
-      toast.error(`Authentication error: ${errorDescription || errorParam}`);
-      // Clean up the URL
-      window.history.replaceState({}, document.title, window.location.pathname);
-    }
+    checkSession();
   }, []);
 
   const handleConnectX = async () => {
@@ -48,23 +59,30 @@ const Presale = () => {
       setIsRedirecting(true);
       toast.info("Connecting to X...");
       
-      // Get current absolute URL for the redirect
-      const isLocalhost = window.location.hostname === 'localhost' || 
-                          window.location.hostname === '127.0.0.1';
+      // Determine the correct redirect URL based on the current environment
+      let redirectUrl;
       
-      // Make sure it's an absolute URL and correctly formatted
-      const baseUrl = isLocalhost 
-        ? window.location.origin 
-        : 'https://itzadawg.com';
+      // Check if we're on localhost
+      if (window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1')) {
+        // For local development, include port
+        redirectUrl = `${window.location.origin}/presale-application`;
+      } 
+      // Check if we're on a preview domain
+      else if (window.location.hostname.includes('lovableproject.com')) {
+        // For preview environments, use the current origin
+        redirectUrl = `${window.location.origin}/presale-application`;
+      }
+      // Otherwise, use production URL
+      else {
+        redirectUrl = 'https://itzadawg.com/presale-application';
+      }
       
-      const redirectUrl = `${baseUrl}/presale-application`;
-      console.log('Redirecting to:', redirectUrl);
+      console.log('Using redirect URL:', redirectUrl);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
         options: {
           redirectTo: redirectUrl,
-          // Ensure we don't have any URL issues with encoding
           scopes: 'tweet.read users.read',
         },
       });
@@ -75,6 +93,7 @@ const Presale = () => {
         console.error('Twitter auth error:', error);
       } else {
         console.log('Auth started successfully:', data);
+        // We don't need to do anything else here as Supabase will handle the redirect
       }
     } catch (error) {
       setIsRedirecting(false);
@@ -94,10 +113,27 @@ const Presale = () => {
         </div>
 
         {/* Debug information - Only show in development */}
-        {Object.keys(debugInfo).length > 0 && import.meta.env.DEV && (
+        {Object.keys(debugInfo).length > 0 && (
           <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded">
             <h3 className="font-bold">Debug Info:</h3>
             <pre className="text-xs overflow-auto">{JSON.stringify(debugInfo, null, 2)}</pre>
+          </div>
+        )}
+
+        {/* User info display */}
+        {user && (
+          <div className="mb-8 p-4 bg-green-100 border border-green-400 rounded text-center">
+            <h3 className="font-bold">Connected as:</h3>
+            <div className="flex items-center justify-center mt-2">
+              {user.user_metadata?.avatar_url && (
+                <img 
+                  src={user.user_metadata.avatar_url} 
+                  alt="Profile" 
+                  className="w-10 h-10 rounded-full mr-2"
+                />
+              )}
+              <span>{user.user_metadata?.preferred_username || user.email || 'X User'}</span>
+            </div>
           </div>
         )}
 
@@ -116,14 +152,23 @@ const Presale = () => {
                 className="w-64 h-auto"
               />
             </div>
-            <Button 
-              onClick={handleConnectX}
-              disabled={isRedirecting}
-              className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2"
-            >
-              <Twitter className="h-5 w-5" />
-              {isRedirecting ? 'Connecting...' : 'Connect your X account'}
-            </Button>
+            {user ? (
+              <Button 
+                onClick={() => navigate('/presale-application')}
+                className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2"
+              >
+                Continue to Application <ArrowRight className="h-5 w-5" />
+              </Button>
+            ) : (
+              <Button 
+                onClick={handleConnectX}
+                disabled={isRedirecting}
+                className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2"
+              >
+                <Twitter className="h-5 w-5" />
+                {isRedirecting ? 'Connecting...' : 'Connect your X account'}
+              </Button>
+            )}
           </div>
         </div>
 
@@ -133,13 +178,22 @@ const Presale = () => {
           <p className="mb-6 max-w-2xl mx-auto">
             Don't miss out on this exclusive opportunity to get DAWG tokens at the lowest possible price before public launch
           </p>
-          <Button 
-            onClick={handleConnectX}
-            disabled={isRedirecting}
-            className="py-6 px-8 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2 mx-auto"
-          >
-            {isRedirecting ? 'Connecting...' : 'Connect with X'} <ArrowRight className="h-5 w-5" />
-          </Button>
+          {user ? (
+            <Button 
+              onClick={() => navigate('/presale-application')}
+              className="py-6 px-8 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2 mx-auto"
+            >
+              Continue to Application <ArrowRight className="h-5 w-5" />
+            </Button>
+          ) : (
+            <Button 
+              onClick={handleConnectX}
+              disabled={isRedirecting}
+              className="py-6 px-8 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2 mx-auto"
+            >
+              {isRedirecting ? 'Connecting...' : 'Connect with X'} <ArrowRight className="h-5 w-5" />
+            </Button>
+          )}
         </div>
       </div>
     </>;

@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { createClient } from '@supabase/supabase-js';
 
-// Initialize Supabase client
+// Initialize Supabase client - use the client from a central location to avoid duplicate warnings
 const supabaseUrl = 'https://pibsyclrftbwwkkgztek.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpYnN5Y2xyZnRid3dra2d6dGVrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1OTU2NjgsImV4cCI6MjA1NzE3MTY2OH0.iqkvsiGNLojybh4Jhje9khmNRgksu3p_0FBGDkAeREM';
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
@@ -16,6 +16,7 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 const PresaleApplication = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [authChecked, setAuthChecked] = useState(false);
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     email: '',
@@ -27,16 +28,43 @@ const PresaleApplication = () => {
   useEffect(() => {
     // Check if user is authenticated
     const checkUser = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      
-      if (error || !data.session) {
-        toast.error('Please connect your X account first');
-        navigate('/presale');
-        return;
+      try {
+        // Log URL for debugging
+        console.log('Application Page URL:', window.location.href);
+        
+        // Check for session
+        const { data, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Session check error:', error);
+          toast.error('Authentication error: ' + error.message);
+          setAuthChecked(true);
+          setLoading(false);
+          return;
+        }
+        
+        if (!data.session) {
+          console.log('No active session found, redirecting to presale page');
+          toast.error('Please connect your X account first');
+          navigate('/presale');
+          return;
+        }
+        
+        console.log('Session found:', data.session);
+        setUser(data.session.user);
+        
+        // Pre-fill email if available
+        if (data.session.user.email) {
+          setFormData(prev => ({ ...prev, email: data.session.user.email }));
+        }
+        
+      } catch (error) {
+        console.error('Auth check error:', error);
+        toast.error('An unexpected error occurred');
+      } finally {
+        setAuthChecked(true);
+        setLoading(false);
       }
-      
-      setUser(data.session.user);
-      setLoading(false);
     };
     
     checkUser();
@@ -78,18 +106,19 @@ const PresaleApplication = () => {
       toast.success('Application submitted successfully!');
       navigate('/presale');
     } catch (error) {
+      console.error('Submission error:', error);
       toast.error('Error submitting application: ' + error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) {
+  if (loading && !authChecked) {
     return (
       <>
         <Header />
         <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-pulse">Loading...</div>
+          <div className="animate-pulse">Checking authentication...</div>
         </div>
       </>
     );
