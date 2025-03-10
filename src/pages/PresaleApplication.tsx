@@ -71,15 +71,22 @@ const PresaleApplication = () => {
     setLoading(true);
     
     try {
+      // Get the current domain to use for the redirect URL
+      const redirectUrl = window.location.origin + '/presale-application';
+      console.log('Redirect URL:', redirectUrl); // For debugging
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
         options: {
-          redirectTo: window.location.origin + '/presale-application',
+          redirectTo: redirectUrl,
+          // Make sure we're explicitly setting a scopes parameter
+          scopes: 'tweet.read users.read',
         },
       });
 
       if (error) {
         toast.error('Failed to connect X account: ' + error.message);
+        console.error('X auth error details:', error);
       }
     } catch (error) {
       toast.error('An unexpected error occurred');
