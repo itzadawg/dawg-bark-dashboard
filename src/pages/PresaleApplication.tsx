@@ -15,6 +15,7 @@ const PresaleApplication = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [authError, setAuthError] = useState(null);
+  const [debugLogs, setDebugLogs] = useState([]);
   const [formData, setFormData] = useState({
     email: '',
     telegram: '',
@@ -22,22 +23,26 @@ const PresaleApplication = () => {
     reason: ''
   });
 
-  // Debug function to help troubleshoot
+  // Enhanced debug function for better troubleshooting
   const debugAuthFlow = (message, data = null) => {
-    console.log(`[Auth Debug] ${message}`, data || '');
+    const timestamp = new Date().toISOString();
+    const logMessage = `${timestamp} - ${message}`;
+    console.log(`[Auth Debug] ${logMessage}`, data || '');
+    setDebugLogs(prev => [...prev, { time: timestamp, message, data: data ? JSON.stringify(data) : '' }]);
   };
 
   useEffect(() => {
     // Check if we have an error in the URL (from OAuth redirect)
     const queryParams = new URLSearchParams(location.search);
+    debugAuthFlow('URL Query Parameters', Object.fromEntries(queryParams.entries()));
+    
     const error = queryParams.get('error');
     const errorDescription = queryParams.get('error_description');
     
-    debugAuthFlow('Page loaded with query params', location.search);
-    
     if (error) {
-      console.error('Auth redirect error:', error, errorDescription);
-      setAuthError(`${error}: ${errorDescription || 'Unknown error'}`);
+      const errorMsg = `${error}: ${errorDescription || 'Unknown error'}`;
+      debugAuthFlow('Auth redirect error detected', errorMsg);
+      setAuthError(errorMsg);
       toast.error(`Authentication error: ${errorDescription || error}`);
     }
     
@@ -45,16 +50,19 @@ const PresaleApplication = () => {
       try {
         debugAuthFlow('Checking user session');
         const { data, error } = await supabase.auth.getSession();
-        console.log('Session data:', data);
+        debugAuthFlow('Session data received', data);
         
         if (error) {
-          console.error('Session error:', error);
+          debugAuthFlow('Session error', error);
           setAuthError(`Session error: ${error.message}`);
           return;
         }
         
         if (data.session) {
-          debugAuthFlow('User authenticated', data.session.user.id);
+          debugAuthFlow('Active session found', {
+            userId: data.session.user.id,
+            provider: data.session.user.app_metadata?.provider
+          });
           setIsAuthenticated(true);
           setUserInfo(data.session.user);
           
@@ -65,7 +73,7 @@ const PresaleApplication = () => {
           debugAuthFlow('No active session found');
         }
       } catch (error) {
-        console.error('Error checking user session:', error);
+        debugAuthFlow('Error checking session', error);
         setAuthError(`Error checking session: ${error.message}`);
       }
     };
@@ -73,9 +81,17 @@ const PresaleApplication = () => {
     checkUser();
     
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      debugAuthFlow('Auth state changed', { event, userId: session?.user?.id });
+      debugAuthFlow('Auth state changed', { 
+        event, 
+        userId: session?.user?.id,
+        provider: session?.user?.app_metadata?.provider 
+      });
       
       if (event === 'SIGNED_IN' && session) {
+        debugAuthFlow('Sign in successful', {
+          userId: session.user.id,
+          metadata: session.user.user_metadata
+        });
         setIsAuthenticated(true);
         setUserInfo(session.user);
         
@@ -85,12 +101,14 @@ const PresaleApplication = () => {
         
         toast.success('Successfully connected with X');
       } else if (event === 'SIGNED_OUT') {
+        debugAuthFlow('User signed out');
         setIsAuthenticated(false);
         setUserInfo(null);
       }
     });
     
     return () => {
+      debugAuthFlow('Cleaning up auth listener');
       authListener?.subscription.unsubscribe();
     };
   }, [location]);
@@ -105,12 +123,16 @@ const PresaleApplication = () => {
     setAuthError(null);
     
     try {
-      // Get the absolute URL for redirect
-      const currentUrl = window.location.href.split('?')[0]; // Remove any query params
-      const redirectUrl = currentUrl;
+      // Get the absolute URL for redirect - using window.location.origin to ensure proper domain
+      const origin = window.location.origin;
+      const path = '/presale-application';
+      const redirectUrl = `${origin}${path}`;
       
-      debugAuthFlow('Initiating Twitter auth with redirect URL', redirectUrl);
-      console.log('Using redirect URL:', redirectUrl);
+      debugAuthFlow('Initiating Twitter auth', {
+        redirectUrl,
+        windowLocation: window.location.href,
+        origin: window.location.origin
+      });
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
@@ -121,14 +143,19 @@ const PresaleApplication = () => {
       });
 
       if (error) {
+        debugAuthFlow('Twitter auth error', error);
         setAuthError(`Twitter auth error: ${error.message}`);
         toast.error('Failed to connect X account: ' + error.message);
         console.error('X auth error details:', error);
       } else {
-        debugAuthFlow('Auth initiated successfully');
-        console.log('Auth initiated successfully:', data);
+        debugAuthFlow('Auth initiated successfully', {
+          provider: 'twitter',
+          url: data?.url
+        });
+        // The user will be redirected to Twitter for authentication
       }
     } catch (error) {
+      debugAuthFlow('Unexpected error during auth', error);
       setAuthError(`Unexpected error: ${error.message}`);
       toast.error('An unexpected error occurred');
       console.error('X authentication error:', error);
@@ -140,9 +167,12 @@ const PresaleApplication = () => {
   const handleSignOut = async () => {
     setLoading(true);
     try {
+      debugAuthFlow('Signing out user');
       await supabase.auth.signOut();
+      debugAuthFlow('User signed out successfully');
       toast.success('Signed out successfully');
     } catch (error) {
+      debugAuthFlow('Sign out error', error);
       toast.error('Failed to sign out');
       console.error('Sign out error:', error);
     } finally {
@@ -161,6 +191,12 @@ const PresaleApplication = () => {
     setLoading(true);
     
     try {
+      debugAuthFlow('Submitting application', {
+        userId: userInfo?.id,
+        email: formData.email,
+        telegram: formData.telegram
+      });
+      
       const { error } = await supabase
         .from('presale_applications')
         .insert(
@@ -175,12 +211,15 @@ const PresaleApplication = () => {
         );
       
       if (error) {
+        debugAuthFlow('Application submission error', error);
         throw error;
       }
       
+      debugAuthFlow('Application submitted successfully');
       toast.success('Application submitted successfully!');
       setTimeout(() => navigate('/presale'), 2000);
     } catch (error) {
+      debugAuthFlow('Submit error', error);
       toast.error('Failed to submit application: ' + error.message);
       console.error('Submit error:', error);
     } finally {
@@ -199,7 +238,7 @@ const PresaleApplication = () => {
           </p>
         </div>
         
-        {/* Add debug info in development */}
+        {/* Authentication Error Display */}
         {authError && (
           <div className="p-4 mb-6 neo-brutal-border bg-red-50 text-red-700">
             <h3 className="font-bold">Authentication Error:</h3>
@@ -207,8 +246,36 @@ const PresaleApplication = () => {
           </div>
         )}
         
+        {/* Debug Logs Display */}
+        {debugLogs.length > 0 && (
+          <div className="p-4 mb-6 neo-brutal-border bg-gray-50 text-gray-700 overflow-auto max-h-60">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="font-bold">Debug Logs:</h3>
+              <button 
+                onClick={() => setDebugLogs([])}
+                className="text-xs bg-gray-200 hover:bg-gray-300 px-2 py-1 rounded"
+              >
+                Clear
+              </button>
+            </div>
+            <div className="text-xs font-mono">
+              {debugLogs.map((log, idx) => (
+                <div key={idx} className="mb-1 border-b border-gray-200 pb-1">
+                  <div><span className="opacity-70">{log.time}</span> - {log.message}</div>
+                  {log.data && <div className="text-blue-600 pl-4 break-words">{log.data}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
         {!isAuthenticated ? (
           <div className="text-center neo-brutal-border p-8 flex flex-col items-center">
+            <div className="mb-4 text-lg">
+              <p className="mb-1">Current URL: <span className="font-mono text-xs">{window.location.href}</span></p>
+              <p className="mb-1">Origin: <span className="font-mono text-xs">{window.location.origin}</span></p>
+              <p className="mb-6">Redirect Path: <span className="font-mono text-xs">/presale-application</span></p>
+            </div>
             <p className="mb-6 text-lg">Connect with X (Twitter) to access the application form</p>
             <Button 
               onClick={handleConnectX}
