@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -70,8 +71,8 @@ const PresaleApplication = () => {
     setLoading(true);
     
     try {
-      // Get the full URL for redirection - this should match what's configured in Supabase
-      const redirectUrl = window.location.origin + '/presale-application';
+      // Use the specified production redirect URL
+      const redirectUrl = 'https://itzadawg.com/presale-application';
       console.log('Redirect URL for Supabase auth:', redirectUrl);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
