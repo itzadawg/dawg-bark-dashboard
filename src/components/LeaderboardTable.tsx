@@ -87,9 +87,7 @@ const LeaderboardTable = () => {
                   <TrendingUpIcon className="ml-1 h-4 w-4 text-green-500" />
                 </TableCell>
               </TableRow>) : <TableRow>
-              <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
-                No tweet activity yet. Be the first to tweet about $DAWG!
-              </TableCell>
+              <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">No tweet activity yet. Be the first to tweet about $Dawg!</TableCell>
             </TableRow>}
         </TableBody>
       </Table>
