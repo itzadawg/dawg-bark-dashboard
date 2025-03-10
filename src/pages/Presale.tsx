@@ -1,12 +1,9 @@
-
 import React from 'react';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, ArrowRight } from 'lucide-react';
-
 const Presale = () => {
-  return (
-    <>
+  return <>
       <Header />
       <div className="min-h-screen px-4 md:px-8 py-12 max-w-7xl mx-auto">
         <div className="mb-12 text-center">
@@ -20,11 +17,7 @@ const Presale = () => {
         <div className="flex flex-col md:flex-row gap-8 mb-16 items-start">
           <div className="w-full md:w-1/2">
             <div className="neo-brutal-border overflow-hidden">
-              <img 
-                src="https://i.imghippo.com/files/nJX2719GY.webp" 
-                alt="DAWG Token" 
-                className="w-full h-auto"
-              />
+              <img alt="DAWG Token" className="w-full h-auto" src="/lovable-uploads/a10d58f1-ba3c-4807-b77d-57792190f4fd.png" />
             </div>
           </div>
           <div className="w-full md:w-1/2 space-y-6">
@@ -75,8 +68,6 @@ const Presale = () => {
           </Button>
         </div>
       </div>
-    </>
-  );
+    </>;
 };
-
 export default Presale;
