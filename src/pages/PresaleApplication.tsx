@@ -1,0 +1,188 @@
+
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Header from '../components/dashboard/Header';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { toast } from '@/components/ui/sonner';
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client
+const supabaseUrl = 'https://your-supabase-project-url.supabase.co';
+const supabaseAnonKey = 'your-supabase-anon-key';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+const PresaleApplication = () => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [formData, setFormData] = useState({
+    email: '',
+    telegram: '',
+    amount: '',
+    reason: ''
+  });
+
+  useEffect(() => {
+    // Check if user is authenticated
+    const checkUser = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      
+      if (error || !data.session) {
+        toast.error('Please connect your X account first');
+        navigate('/presale');
+        return;
+      }
+      
+      setUser(data.session.user);
+      setLoading(false);
+    };
+    
+    checkUser();
+  }, [navigate]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!user) {
+      toast.error('User not authenticated');
+      return;
+    }
+    
+    try {
+      setLoading(true);
+      
+      // Save application to Supabase
+      const { error } = await supabase
+        .from('presale_applications')
+        .insert([
+          { 
+            user_id: user.id,
+            x_username: user.user_metadata?.preferred_username || 'unknown',
+            profile_image: user.user_metadata?.avatar_url,
+            email: formData.email,
+            telegram: formData.telegram,
+            amount: formData.amount,
+            reason: formData.reason
+          }
+        ]);
+      
+      if (error) throw error;
+      
+      toast.success('Application submitted successfully!');
+      navigate('/presale');
+    } catch (error) {
+      toast.error('Error submitting application: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <>
+        <Header />
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-pulse">Loading...</div>
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Header />
+      <div className="min-h-screen px-4 md:px-8 py-12 max-w-3xl mx-auto">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl md:text-4xl font-black text-dawg-dark mb-4">Presale Application</h1>
+          <p className="text-lg text-gray-600">
+            Complete your details to participate in the DAWG presale
+          </p>
+        </div>
+        
+        {user && (
+          <div className="mb-8 flex items-center justify-center flex-col">
+            <img 
+              src={user.user_metadata?.avatar_url} 
+              alt="Profile" 
+              className="w-16 h-16 rounded-full neo-brutal-border"
+            />
+            <p className="mt-2 font-medium">@{user.user_metadata?.preferred_username}</p>
+          </div>
+        )}
+        
+        <form onSubmit={handleSubmit} className="space-y-6 neo-brutal-border p-6">
+          <div>
+            <label htmlFor="email" className="block mb-2 font-medium">Email Address</label>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              required
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="your@email.com"
+              className="neo-brutal-border"
+            />
+          </div>
+          
+          <div>
+            <label htmlFor="telegram" className="block mb-2 font-medium">Telegram Username</label>
+            <Input
+              id="telegram"
+              name="telegram"
+              required
+              value={formData.telegram}
+              onChange={handleChange}
+              placeholder="@username"
+              className="neo-brutal-border"
+            />
+          </div>
+          
+          <div>
+            <label htmlFor="amount" className="block mb-2 font-medium">Amount you want to invest (USD)</label>
+            <Input
+              id="amount"
+              name="amount"
+              type="number"
+              required
+              value={formData.amount}
+              onChange={handleChange}
+              placeholder="500"
+              className="neo-brutal-border"
+            />
+          </div>
+          
+          <div>
+            <label htmlFor="reason" className="block mb-2 font-medium">Why do you want to join the DAWG presale?</label>
+            <Textarea
+              id="reason"
+              name="reason"
+              required
+              value={formData.reason}
+              onChange={handleChange}
+              placeholder="Tell us why you're excited about DAWG..."
+              className="neo-brutal-border h-32"
+            />
+          </div>
+          
+          <Button 
+            type="submit"
+            disabled={loading}
+            className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary"
+          >
+            {loading ? 'Submitting...' : 'Submit Application'}
+          </Button>
+        </form>
+      </div>
+    </>
+  );
+};
+
+export default PresaleApplication;

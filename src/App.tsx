@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Minigame from "./pages/Minigame";
 import Presale from "./pages/Presale";
+import PresaleApplication from "./pages/PresaleApplication";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/" element={<Home />} />
           <Route path="/shameboard" element={<Index />} />
           <Route path="/presale" element={<Presale />} />
+          <Route path="/presale-application" element={<PresaleApplication />} />
           <Route path="/minigame" element={<Minigame />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

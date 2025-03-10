@@ -2,9 +2,37 @@
 import React from 'react';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, ArrowRight } from 'lucide-react';
+import { ArrowRight, Twitter } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { toast } from '@/components/ui/sonner';
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client
+const supabaseUrl = 'https://your-supabase-project-url.supabase.co';
+const supabaseAnonKey = 'your-supabase-anon-key';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const Presale = () => {
+  const navigate = useNavigate();
+
+  const handleConnectX = async () => {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'twitter',
+        options: {
+          redirectTo: window.location.origin + '/presale-application',
+        },
+      });
+
+      if (error) {
+        toast.error('Failed to connect X account: ' + error.message);
+      }
+    } catch (error) {
+      toast.error('An unexpected error occurred');
+      console.error('X authentication error:', error);
+    }
+  };
+
   return <>
       <Header />
       <div className="min-h-screen px-4 md:px-8 py-12 max-w-7xl mx-auto">
@@ -30,9 +58,12 @@ const Presale = () => {
                 className="w-64 h-auto"
               />
             </div>
-            <Button className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2">
-              <ShoppingCart className="h-5 w-5" />
-              Join Presale Now
+            <Button 
+              onClick={handleConnectX}
+              className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2"
+            >
+              <Twitter className="h-5 w-5" />
+              Connect your X account
             </Button>
           </div>
         </div>
@@ -43,8 +74,11 @@ const Presale = () => {
           <p className="mb-6 max-w-2xl mx-auto">
             Don't miss out on this exclusive opportunity to get DAWG tokens at the lowest possible price before public launch
           </p>
-          <Button className="py-6 px-8 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2 mx-auto">
-            Participate in Presale <ArrowRight className="h-5 w-5" />
+          <Button 
+            onClick={handleConnectX}
+            className="py-6 px-8 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2 mx-auto"
+          >
+            Connect with X <ArrowRight className="h-5 w-5" />
           </Button>
         </div>
       </div>
