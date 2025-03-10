@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 
 const PresaleApplication = () => {
   const navigate = useNavigate();
@@ -188,6 +189,16 @@ const PresaleApplication = () => {
     }
   };
 
+  // Get the Twitter profile picture URL from user metadata
+  const getProfilePictureUrl = () => {
+    if (!userInfo || !userInfo.user_metadata) return null;
+    
+    // Different providers might store the image URL at different paths
+    return userInfo.user_metadata.avatar_url || 
+           userInfo.user_metadata.picture ||
+           userInfo.user_metadata.profile_image_url;
+  };
+
   return (
     <>
       <Header />
@@ -221,8 +232,17 @@ const PresaleApplication = () => {
         ) : (
           <div className="space-y-6">
             <div className="neo-brutal-border p-4 flex items-center justify-between bg-dawg/10">
-              <div className="flex items-center gap-2">
-                <span>Connected as: @{userInfo?.user_metadata?.preferred_username || 'user'}</span>
+              <div className="flex items-center gap-3">
+                <div className="font-medium">Connected as:</div>
+                <div className="flex items-center gap-2">
+                  <Avatar className="h-8 w-8 border border-gray-200">
+                    <AvatarImage src={getProfilePictureUrl()} alt={userInfo?.user_metadata?.preferred_username || 'User'} />
+                    <AvatarFallback>
+                      {(userInfo?.user_metadata?.preferred_username || 'U').charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="font-medium">@{userInfo?.user_metadata?.preferred_username || 'user'}</span>
+                </div>
               </div>
               <Button 
                 variant="outline" 
