@@ -116,16 +116,16 @@ const PresaleApplication = () => {
       // Submit application to Supabase
       const { error } = await supabase
         .from('presale_applications')
-        .insert([
+        .insert(
           { 
             user_id: userInfo.id,
             email: formData.email,
             telegram: formData.telegram,
-            amount: formData.amount,
+            amount: Number(formData.amount), // Convert string to number
             reason: formData.reason,
             twitter_username: userInfo.user_metadata?.preferred_username || ''
           }
-        ]);
+        );
       
       if (error) {
         throw error;
