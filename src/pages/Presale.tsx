@@ -1,7 +1,9 @@
+
 import React from 'react';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
 import { ShoppingCart, ArrowRight } from 'lucide-react';
+
 const Presale = () => {
   return <>
       <Header />
@@ -23,6 +25,13 @@ const Presale = () => {
           <div className="w-full md:w-1/2 space-y-6">
             <div className="neo-brutal-box p-6">
               <h2 className="text-2xl font-bold mb-4">Presale Details</h2>
+              <div className="flex justify-center mb-6">
+                <img 
+                  src="/lovable-uploads/718d6294-9f6e-450a-a348-8e6978c36b54.png" 
+                  alt="DAWG mascot" 
+                  className="w-48 h-auto neo-brutal-border p-1"
+                />
+              </div>
               <div className="space-y-4">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Start Date:</span>
@@ -70,4 +79,5 @@ const Presale = () => {
       </div>
     </>;
 };
+
 export default Presale;
