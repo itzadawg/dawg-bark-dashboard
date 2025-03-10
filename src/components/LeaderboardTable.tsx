@@ -26,7 +26,7 @@ const LeaderboardTable = () => {
     // Call our edge function to get the leaderboard
     const { data, error } = await supabase.functions.invoke('fetch-tweets', {
       method: 'GET',
-      query: { action: 'leaderboard' }
+      body: { action: 'leaderboard' }
     });
     
     if (error) throw new Error(error.message);

@@ -11,6 +11,7 @@ import Minigame from "./pages/Minigame";
 import Presale from "./pages/Presale";
 import PresaleApplication from "./pages/PresaleApplication";
 import AdminDashboard from "./pages/AdminDashboard";
+import DawgBoard from "./pages/DawgBoard";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/presale-application" element={<PresaleApplication />} />
           <Route path="/minigame" element={<Minigame />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/dawgboard" element={<DawgBoard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
