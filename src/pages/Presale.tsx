@@ -5,18 +5,11 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Twitter } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { createClient } from '@supabase/supabase-js';
-
-// Initialize Supabase client
-const supabaseUrl = 'https://pibsyclrftbwwkkgztek.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBpYnN5Y2xyZnRid3dra2d6dGVrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDE1OTU2NjgsImV4cCI6MjA1NzE3MTY2OH0.iqkvsiGNLojybh4Jhje9khmNRgksu3p_0FBGDkAeREM';
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const Presale = () => {
   const navigate = useNavigate();
 
-  const handleConnectX = async () => {
-    // Navigate to the application form page
+  const handleApplyForPresale = () => {
     navigate('/presale-application');
   };
 
@@ -46,10 +39,11 @@ const Presale = () => {
               />
             </div>
             <Button 
-              onClick={handleConnectX}
+              onClick={handleApplyForPresale}
               className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2"
             >
               Apply for Presale
+              <Twitter className="h-5 w-5" />
             </Button>
           </div>
         </div>
@@ -61,7 +55,7 @@ const Presale = () => {
             Don't miss out on this exclusive opportunity to get DAWG tokens at the lowest possible price before public launch
           </p>
           <Button 
-            onClick={handleConnectX}
+            onClick={handleApplyForPresale}
             className="py-6 px-8 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2 mx-auto"
           >
             Apply Now <ArrowRight className="h-5 w-5" />

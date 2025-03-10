@@ -18,6 +18,7 @@ const PresaleApplication = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
   const [formData, setFormData] = useState({
     email: '',
     telegram: '',
@@ -29,17 +30,35 @@ const PresaleApplication = () => {
   useEffect(() => {
     const checkUser = async () => {
       const { data } = await supabase.auth.getSession();
-      if (data.session?.provider_token) {
+      if (data.session) {
         setIsAuthenticated(true);
+        setUserInfo(data.session.user);
+        
+        // Pre-fill email if available
+        if (data.session.user?.email) {
+          setFormData(prev => ({ ...prev, email: data.session.user.email }));
+        }
       }
     };
     
     checkUser();
     
-    // Subscribe to auth changes
+    // Handle auth state changes
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' && session?.provider_token) {
+      console.log('Auth state changed:', event, session);
+      if (event === 'SIGNED_IN' && session) {
         setIsAuthenticated(true);
+        setUserInfo(session.user);
+        
+        // Pre-fill email if available
+        if (session.user?.email) {
+          setFormData(prev => ({ ...prev, email: session.user.email }));
+        }
+        
+        toast.success('Successfully connected with X');
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+        setUserInfo(null);
       }
     });
     
@@ -66,11 +85,24 @@ const PresaleApplication = () => {
 
       if (error) {
         toast.error('Failed to connect X account: ' + error.message);
-        setLoading(false);
       }
     } catch (error) {
       toast.error('An unexpected error occurred');
       console.error('X authentication error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignOut = async () => {
+    setLoading(true);
+    try {
+      await supabase.auth.signOut();
+      toast.success('Signed out successfully');
+    } catch (error) {
+      toast.error('Failed to sign out');
+      console.error('Sign out error:', error);
+    } finally {
       setLoading(false);
     }
   };
@@ -78,15 +110,36 @@ const PresaleApplication = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    if (!isAuthenticated) {
+      toast.error('Please connect with X first');
+      return;
+    }
+    
     setLoading(true);
     
     try {
-      // Here you would submit the form data to your database
-      // For now, we'll just show a success message
+      // Submit application to Supabase
+      const { error } = await supabase
+        .from('presale_applications')
+        .insert([
+          { 
+            user_id: userInfo.id,
+            email: formData.email,
+            telegram: formData.telegram,
+            amount: formData.amount,
+            reason: formData.reason,
+            x_username: userInfo.user_metadata?.preferred_username || ''
+          }
+        ]);
+      
+      if (error) {
+        throw error;
+      }
+      
       toast.success('Application submitted successfully!');
       setTimeout(() => navigate('/presale'), 2000);
     } catch (error) {
-      toast.error('Failed to submit application');
+      toast.error('Failed to submit application: ' + error.message);
       console.error('Submit error:', error);
     } finally {
       setLoading(false);
@@ -117,69 +170,86 @@ const PresaleApplication = () => {
             </Button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-6 neo-brutal-border p-6">
-            <div>
-              <label htmlFor="email" className="block mb-2 font-medium">Email Address</label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="your@email.com"
-                className="neo-brutal-border"
-              />
+          <div className="space-y-6">
+            <div className="neo-brutal-border p-4 flex items-center justify-between bg-dawg/10">
+              <div className="flex items-center gap-2">
+                <Twitter className="h-5 w-5" />
+                <span>Connected as: @{userInfo?.user_metadata?.preferred_username || 'user'}</span>
+              </div>
+              <Button 
+                variant="outline" 
+                onClick={handleSignOut}
+                disabled={loading}
+                className="neo-brutal-border bg-white"
+              >
+                Disconnect
+              </Button>
             </div>
             
-            <div>
-              <label htmlFor="telegram" className="block mb-2 font-medium">Telegram Username</label>
-              <Input
-                id="telegram"
-                name="telegram"
-                required
-                value={formData.telegram}
-                onChange={handleChange}
-                placeholder="@username"
-                className="neo-brutal-border"
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="amount" className="block mb-2 font-medium">Amount you want to invest (USD)</label>
-              <Input
-                id="amount"
-                name="amount"
-                type="number"
-                required
-                value={formData.amount}
-                onChange={handleChange}
-                placeholder="500"
-                className="neo-brutal-border"
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="reason" className="block mb-2 font-medium">Why do you want to join the DAWG presale?</label>
-              <Textarea
-                id="reason"
-                name="reason"
-                required
-                value={formData.reason}
-                onChange={handleChange}
-                placeholder="Tell us why you're excited about DAWG..."
-                className="neo-brutal-border h-32"
-              />
-            </div>
-            
-            <Button 
-              type="submit"
-              disabled={loading}
-              className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary"
-            >
-              {loading ? 'Submitting...' : 'Submit Application'}
-            </Button>
-          </form>
+            <form onSubmit={handleSubmit} className="space-y-6 neo-brutal-border p-6">
+              <div>
+                <label htmlFor="email" className="block mb-2 font-medium">Email Address</label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="your@email.com"
+                  className="neo-brutal-border"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="telegram" className="block mb-2 font-medium">Telegram Username</label>
+                <Input
+                  id="telegram"
+                  name="telegram"
+                  required
+                  value={formData.telegram}
+                  onChange={handleChange}
+                  placeholder="@username"
+                  className="neo-brutal-border"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="amount" className="block mb-2 font-medium">Amount you want to invest (USD)</label>
+                <Input
+                  id="amount"
+                  name="amount"
+                  type="number"
+                  required
+                  value={formData.amount}
+                  onChange={handleChange}
+                  placeholder="500"
+                  className="neo-brutal-border"
+                />
+              </div>
+              
+              <div>
+                <label htmlFor="reason" className="block mb-2 font-medium">Why do you want to join the DAWG presale?</label>
+                <Textarea
+                  id="reason"
+                  name="reason"
+                  required
+                  value={formData.reason}
+                  onChange={handleChange}
+                  placeholder="Tell us why you're excited about DAWG..."
+                  className="neo-brutal-border h-32"
+                />
+              </div>
+              
+              <Button 
+                type="submit"
+                disabled={loading}
+                className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary"
+              >
+                {loading ? 'Submitting...' : 'Submit Application'}
+              </Button>
+            </form>
+          </div>
         )}
       </div>
     </>
