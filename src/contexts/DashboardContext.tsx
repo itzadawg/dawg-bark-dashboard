@@ -1,6 +1,6 @@
+
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
-export type ActivityLevel = 'none' | 'low' | 'medium' | 'high';
 type SortField = 'initial' | 'current' | 'balanceChange' | 'realizedPnL' | null;
 type SortDirection = 'asc' | 'desc' | null;
 
@@ -22,40 +22,6 @@ interface DashboardContextType {
   handleSort: (field: SortField) => void;
   handleToggleFumblers: () => void;
   handleToggleRevealed: () => void;
-  tableData: TableDataItem[];
-}
-
-export interface TableDataItem {
-  id: number;
-  name: string;
-  username: string;
-  address: string;
-  initial: string;
-  current: string;
-  balanceChange: string;
-  activity: ActivityLevel;
-  realizedPnL: string;
-  avatar: string;
-  emoji?: string;
-}
-
-export interface DashboardData {
-  fumblers: Array<{
-    id: number;
-    name: string;
-    amount: string;
-    avatar: string;
-  }>;
-  revealed: Array<{
-    id: number;
-    name: string;
-    balance: string;
-    percent: string;
-    time: string;
-    avatar: string;
-    emoji?: string;
-  }>;
-  tableData: TableDataItem[];
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
@@ -68,8 +34,6 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [animatingRevealed, setAnimatingRevealed] = useState<number[]>([]);
   const [sortField, setSortField] = useState<SortField>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
-
-  const data = getDashboardData();
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -152,8 +116,7 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
         setSortDirection,
         handleSort,
         handleToggleFumblers,
-        handleToggleRevealed,
-        tableData: data.tableData,
+        handleToggleRevealed
       }}
     >
       {children}
@@ -169,7 +132,8 @@ export const useDashboard = () => {
   return context;
 };
 
-export const getDashboardData = (): DashboardData => {
+// Mock data to be replaced with actual API calls later
+export const getDashboardData = () => {
   const fumblers = [{
     id: 1,
     name: '',
