@@ -59,22 +59,14 @@ const Presale = () => {
       setIsRedirecting(true);
       toast.info("Connecting to X...");
       
-      // Determine the correct redirect URL based on the current environment
-      let redirectUrl;
+      // Production redirect URL
+      let redirectUrl = 'https://itzadawg.com/presale-application';
       
-      // Check if we're on localhost
-      if (window.location.hostname === 'localhost' || window.location.hostname.includes('127.0.0.1')) {
-        // For local development, include port
+      // For localhost or preview domains, use the current origin
+      if (window.location.hostname === 'localhost' || 
+          window.location.hostname.includes('127.0.0.1') ||
+          window.location.hostname.includes('lovableproject.com')) {
         redirectUrl = `${window.location.origin}/presale-application`;
-      } 
-      // Check if we're on a preview domain
-      else if (window.location.hostname.includes('lovableproject.com')) {
-        // For preview environments, use the current origin
-        redirectUrl = `${window.location.origin}/presale-application`;
-      }
-      // Otherwise, use production URL
-      else {
-        redirectUrl = 'https://itzadawg.com/presale-application';
       }
       
       console.log('Using redirect URL:', redirectUrl);
