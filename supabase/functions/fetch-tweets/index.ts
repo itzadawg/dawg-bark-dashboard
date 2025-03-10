@@ -1,4 +1,3 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createHmac } from "node:crypto";
@@ -119,7 +118,6 @@ async function searchTweets(query: string, since_id?: string) {
   const baseUrl = "https://api.twitter.com/2/tweets/search/recent";
   let url = `${baseUrl}?query=${encodeURIComponent(query)}&tweet.fields=created_at,public_metrics&expansions=author_id&user.fields=name,username,profile_image_url`;
   
-  // Add since_id parameter if provided to only get tweets newer than the last processed tweet
   if (since_id) {
     url += `&since_id=${since_id}`;
   }
@@ -146,16 +144,13 @@ async function searchTweets(query: string, since_id?: string) {
   return response.json();
 }
 
-// Calculate points for a tweet based on engagement
 function calculateTweetPoints(tweet: any): number {
   const { public_metrics } = tweet;
   
   if (!public_metrics) return 1; // Base points if no metrics
   
-  // Points formula: 1 base point + engagement bonuses
   let points = 1; // Base point for tweeting
   
-  // Add points for engagement
   points += (public_metrics.retweet_count || 0) * 3;  // 3 points per retweet
   points += (public_metrics.reply_count || 0) * 2;    // 2 points per reply
   points += (public_metrics.like_count || 0);         // 1 point per like
@@ -164,7 +159,6 @@ function calculateTweetPoints(tweet: any): number {
   return points;
 }
 
-// Process tweets and update points in the database
 async function processTweets(tweets: any) {
   if (!tweets?.data || tweets.data.length === 0) {
     console.log("No tweets to process");
@@ -176,7 +170,6 @@ async function processTweets(tweets: any) {
   let processedCount = 0;
   let lastTweetId = null;
   
-  // Get the newest tweet ID to store for future pagination
   const sortedTweets = [...tweets.data].sort((a, b) => 
     new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
   );
@@ -185,7 +178,6 @@ async function processTweets(tweets: any) {
     lastTweetId = sortedTweets[0].id;
   }
   
-  // Create user map for easier author lookup
   const userMap = new Map();
   if (tweets.includes?.users) {
     tweets.includes.users.forEach((user: any) => {
@@ -193,11 +185,9 @@ async function processTweets(tweets: any) {
     });
   }
   
-  // Process each tweet
   for (const tweet of tweets.data) {
     const tweetId = tweet.id;
     
-    // Check if tweet was already processed
     const { data: existingTweet } = await supabase
       .from('processed_tweets')
       .select('*')
@@ -209,7 +199,6 @@ async function processTweets(tweets: any) {
       continue;
     }
     
-    // Get author information
     const author = userMap.get(tweet.author_id);
     if (!author) {
       console.log(`No author information for tweet ${tweetId}, skipping`);
@@ -220,7 +209,6 @@ async function processTweets(tweets: any) {
     const points = calculateTweetPoints(tweet);
     totalNewPoints += points;
     
-    // Transaction to update both tables atomically
     const { error } = await supabase.rpc('update_tweet_points', {
       p_tweet_id: tweetId,
       p_twitter_username: twitterUsername,
@@ -257,7 +245,6 @@ async function getLeaderboard() {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -265,10 +252,8 @@ serve(async (req) => {
   try {
     validateEnvironmentVariables();
     
-    // Check if body contains action parameter
     let action = 'fetch';
     
-    // Try to parse the request body for the action
     if (req.body) {
       try {
         const body = await req.json();
@@ -280,7 +265,6 @@ serve(async (req) => {
       }
     }
     
-    // If no action in body, check URL params
     if (action === 'fetch') {
       const url = new URL(req.url);
       action = url.searchParams.get('action') || 'fetch';
@@ -288,18 +272,14 @@ serve(async (req) => {
 
     console.log(`Processing action: ${action}`);
     
-    // Handle different actions
     if (action === 'leaderboard') {
-      // Return the current leaderboard
       const leaderboard = await getLeaderboard();
       return new Response(JSON.stringify({ leaderboard }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     } else {
-      // Default action: fetch and process tweets
       const supabase = initSupabaseClient();
       
-      // Get the latest tweet ID to use as since_id
       const { data: latestEntry } = await supabase
         .from('tweet_points')
         .select('last_tweet_id')
@@ -310,13 +290,10 @@ serve(async (req) => {
       const latestTweetId = latestEntry?.last_tweet_id;
       console.log(`Using last_tweet_id: ${latestTweetId || 'none'}`);
       
-      // Search for tweets containing $Dawg OR @itzadawg
       const searchResults = await searchTweets('($Dawg OR @itzadawg) -is:retweet', latestTweetId);
       
-      // Process the tweets and update points
       const processingResults = await processTweets(searchResults);
       
-      // Get updated leaderboard
       const leaderboard = await getLeaderboard();
       
       const response = {
