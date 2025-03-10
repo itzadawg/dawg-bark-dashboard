@@ -14,6 +14,7 @@ const PresaleApplication = () => {
   const [loading, setLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
+  const [authError, setAuthError] = useState(null);
   const [formData, setFormData] = useState({
     email: '',
     telegram: '',
@@ -21,45 +22,59 @@ const PresaleApplication = () => {
     reason: ''
   });
 
+  // Debug function to help troubleshoot
+  const debugAuthFlow = (message, data = null) => {
+    console.log(`[Auth Debug] ${message}`, data || '');
+  };
+
   useEffect(() => {
     // Check if we have an error in the URL (from OAuth redirect)
     const queryParams = new URLSearchParams(location.search);
     const error = queryParams.get('error');
     const errorDescription = queryParams.get('error_description');
     
+    debugAuthFlow('Page loaded with query params', location.search);
+    
     if (error) {
       console.error('Auth redirect error:', error, errorDescription);
+      setAuthError(`${error}: ${errorDescription || 'Unknown error'}`);
       toast.error(`Authentication error: ${errorDescription || error}`);
     }
     
     const checkUser = async () => {
       try {
+        debugAuthFlow('Checking user session');
         const { data, error } = await supabase.auth.getSession();
         console.log('Session data:', data);
         
         if (error) {
           console.error('Session error:', error);
+          setAuthError(`Session error: ${error.message}`);
           return;
         }
         
         if (data.session) {
+          debugAuthFlow('User authenticated', data.session.user.id);
           setIsAuthenticated(true);
           setUserInfo(data.session.user);
-          console.log('User authenticated:', data.session.user);
           
           if (data.session.user?.email) {
             setFormData(prev => ({ ...prev, email: data.session.user.email }));
           }
+        } else {
+          debugAuthFlow('No active session found');
         }
       } catch (error) {
         console.error('Error checking user session:', error);
+        setAuthError(`Error checking session: ${error.message}`);
       }
     };
     
     checkUser();
     
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log('Auth state changed:', event, session);
+      debugAuthFlow('Auth state changed', { event, userId: session?.user?.id });
+      
       if (event === 'SIGNED_IN' && session) {
         setIsAuthenticated(true);
         setUserInfo(session.user);
@@ -87,13 +102,14 @@ const PresaleApplication = () => {
 
   const handleConnectX = async () => {
     setLoading(true);
+    setAuthError(null);
     
     try {
-      // Determine the current origin for redirect URL
-      const origin = window.location.origin;
-      const path = '/presale-application';
-      const redirectUrl = `${origin}${path}`;
+      // Get the absolute URL for redirect
+      const currentUrl = window.location.href.split('?')[0]; // Remove any query params
+      const redirectUrl = currentUrl;
       
+      debugAuthFlow('Initiating Twitter auth with redirect URL', redirectUrl);
       console.log('Using redirect URL:', redirectUrl);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -105,12 +121,15 @@ const PresaleApplication = () => {
       });
 
       if (error) {
+        setAuthError(`Twitter auth error: ${error.message}`);
         toast.error('Failed to connect X account: ' + error.message);
         console.error('X auth error details:', error);
       } else {
+        debugAuthFlow('Auth initiated successfully');
         console.log('Auth initiated successfully:', data);
       }
     } catch (error) {
+      setAuthError(`Unexpected error: ${error.message}`);
       toast.error('An unexpected error occurred');
       console.error('X authentication error:', error);
     } finally {
@@ -179,6 +198,14 @@ const PresaleApplication = () => {
             Complete your details to participate in the DAWG presale
           </p>
         </div>
+        
+        {/* Add debug info in development */}
+        {authError && (
+          <div className="p-4 mb-6 neo-brutal-border bg-red-50 text-red-700">
+            <h3 className="font-bold">Authentication Error:</h3>
+            <p className="break-words">{authError}</p>
+          </div>
+        )}
         
         {!isAuthenticated ? (
           <div className="text-center neo-brutal-border p-8 flex flex-col items-center">
