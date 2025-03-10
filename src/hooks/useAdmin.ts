@@ -1,7 +1,6 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { toast } from 'sonner';
 
 export const useAdmin = () => {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
