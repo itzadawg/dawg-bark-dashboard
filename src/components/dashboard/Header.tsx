@@ -12,15 +12,15 @@ const Header: React.FC = () => {
         
         <nav className="flex space-x-2">
           <Link to="/presale" className={`neo-brutal-button flex items-center gap-2 ${location.pathname === '/presale' ? 'bg-dawg' : ''}`}>
-            <ShoppingCart size={18} />
+            
             <span>Presale</span>
           </Link>
           <Link to="/minigame" className={`neo-brutal-button flex items-center gap-2 ${location.pathname === '/minigame' ? 'bg-dawg' : ''}`}>
-            <Gamepad2 size={18} />
+            
             <span>Minigame</span>
           </Link>
           <Link to="/shameboard" className={`neo-brutal-button flex items-center gap-2 ${location.pathname === '/shameboard' ? 'bg-dawg' : ''}`}>
-            <AlertTriangle size={18} />
+            
             <span>Shameboard</span>
           </Link>
         </nav>
