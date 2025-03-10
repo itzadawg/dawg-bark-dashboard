@@ -17,7 +17,6 @@ export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
 
   const handleTwitterSignIn = async () => {
     try {
-      // Get the current URL for redirect without query parameters
       const redirectUrl = window.location.origin + window.location.pathname;
       console.log('Redirect URL for Twitter auth:', redirectUrl);
       
@@ -29,24 +28,19 @@ export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
       });
 
       if (error) {
-        toast.error('Failed to connect with Twitter: ' + error.message);
         console.error('Twitter auth error:', error);
       } else {
         console.log('Twitter auth initiated:', data);
       }
     } catch (error) {
-      toast.error('An unexpected error occurred');
       console.error('Authentication error:', error);
     }
   };
 
   useEffect(() => {
-    console.log('AdminProtected: isAdmin =', isAdmin, 'isLoading =', isLoading);
+    console.log('AdminProtected: isAdmin =', isAdmin, 'isLoading =', isLoading, 'userEmail =', userEmail);
     
-    // If we're done loading and the user is not an admin, show a toast message
     if (!isLoading && !isAdmin) {
-      toast.error('Admin access required');
-      // Use a short delay before redirecting
       const redirectTimer = setTimeout(() => navigate('/', { replace: true }), 2000);
       return () => clearTimeout(redirectTimer);
     }
@@ -69,20 +63,22 @@ export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
         <p className="text-center max-w-md mb-6">
           You need admin privileges to view this page. Please sign in with Twitter if you have admin access.
         </p>
-        {userEmail ? (
+        
+        <Button 
+          onClick={handleTwitterSignIn}
+          className="mb-4 flex items-center gap-2 bg-[#1DA1F2] hover:bg-[#0c85d0]"
+        >
+          <Twitter className="h-5 w-5" />
+          Sign in with Twitter
+        </Button>
+        
+        {userEmail && (
           <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
             <p>Signed in as: <strong>{userEmail}</strong></p>
             <p className="text-sm text-gray-500">This account doesn't have admin permissions.</p>
           </div>
-        ) : (
-          <Button 
-            onClick={handleTwitterSignIn}
-            className="mb-4 flex items-center gap-2 bg-[#1DA1F2] hover:bg-[#0c85d0]"
-          >
-            <Twitter className="h-5 w-5" />
-            Sign in with Twitter
-          </Button>
         )}
+        
         <Link to="/" className="text-dawg hover:underline">
           Return to Home
         </Link>
