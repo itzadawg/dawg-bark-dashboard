@@ -1,10 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Twitter } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -66,6 +66,7 @@ const PresaleApplication = () => {
     setLoading(true);
     
     try {
+      // Make sure we're using the exact same URL format as configured in Supabase
       const redirectUrl = 'https://itzadawg.com/presale-application';
       console.log('Redirect URL for Supabase auth:', redirectUrl);
       
@@ -166,7 +167,6 @@ const PresaleApplication = () => {
           <div className="space-y-6">
             <div className="neo-brutal-border p-4 flex items-center justify-between bg-dawg/10">
               <div className="flex items-center gap-2">
-                <Twitter className="h-5 w-5" />
                 <span>Connected as: @{userInfo?.user_metadata?.preferred_username || 'user'}</span>
               </div>
               <Button 
