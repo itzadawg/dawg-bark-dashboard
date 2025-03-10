@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Check, X, ExternalLink } from 'lucide-react';
+import { Check, X, ExternalLink, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,6 +13,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from '@/components/ui/badge';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Application {
   id: string;
@@ -36,6 +43,8 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
   onStatusChange 
 }) => {
   const [processing, setProcessing] = useState<string | null>(null);
+  const [selectedApp, setSelectedApp] = useState<Application | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
 
   const handleUpdateStatus = async (id: string, status: 'approved' | 'rejected') => {
     setProcessing(id);
@@ -74,6 +83,11 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
   const formatWalletAddress = (address) => {
     if (!address || address.length < 10) return address;
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+  };
+
+  const viewDetails = (app: Application) => {
+    setSelectedApp(app);
+    setDetailsOpen(true);
   };
 
   return (
@@ -124,6 +138,15 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                 <TableCell>{getStatusBadge(app.status)}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="bg-blue-50 hover:bg-blue-100 text-blue-700 flex items-center gap-1"
+                      onClick={() => viewDetails(app)}
+                    >
+                      <Eye className="h-4 w-4" />
+                      Details
+                    </Button>
                     {app.status === 'pending' && (
                       <>
                         <Button
@@ -155,6 +178,77 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
           )}
         </TableBody>
       </Table>
+
+      <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Application Details</DialogTitle>
+            <DialogDescription>
+              Submitted on {selectedApp && new Date(selectedApp.created_at).toLocaleString()}
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedApp && (
+            <div className="space-y-4 mt-4">
+              <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                <div className="font-semibold">Twitter:</div>
+                <div>{selectedApp.twitter_username ? `@${selectedApp.twitter_username}` : 'Not provided'}</div>
+                
+                <div className="font-semibold">Size:</div>
+                <div>{selectedApp.size}</div>
+                
+                <div className="font-semibold">Amount:</div>
+                <div>{selectedApp.amount} AVAX</div>
+                
+                <div className="font-semibold">Wallet Address:</div>
+                <div className="font-mono text-xs break-words">{selectedApp.wallet_address}</div>
+                
+                <div className="font-semibold">Status:</div>
+                <div>{getStatusBadge(selectedApp.status)}</div>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold mb-1">Why join the Dawg presale:</h4>
+                <p className="text-sm p-2 bg-gray-50 rounded">{selectedApp.reason}</p>
+              </div>
+              
+              <div>
+                <h4 className="font-semibold mb-1">How they plan to contribute:</h4>
+                <p className="text-sm p-2 bg-gray-50 rounded">{selectedApp.contribution}</p>
+              </div>
+              
+              {selectedApp.status === 'pending' && (
+                <div className="flex justify-end gap-2 pt-4">
+                  <Button
+                    variant="outline"
+                    className="bg-green-50 hover:bg-green-100 text-green-700 flex items-center gap-1"
+                    onClick={() => {
+                      handleUpdateStatus(selectedApp.id, 'approved');
+                      setDetailsOpen(false);
+                    }}
+                    disabled={processing === selectedApp.id}
+                  >
+                    <Check className="h-4 w-4" />
+                    Approve
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="bg-red-50 hover:bg-red-100 text-red-700 flex items-center gap-1"
+                    onClick={() => {
+                      handleUpdateStatus(selectedApp.id, 'rejected');
+                      setDetailsOpen(false);
+                    }}
+                    disabled={processing === selectedApp.id}
+                  >
+                    <X className="h-4 w-4" />
+                    Reject
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
