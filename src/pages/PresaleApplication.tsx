@@ -3,15 +3,20 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Loader2 } from 'lucide-react';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
 
 // Define application status type for type safety
 type ApplicationStatus = 'pending' | 'approved' | 'rejected' | null;
+
+// Define the investment size options
+type InvestmentSize = 'Smol Dawg' | 'Dawg' | 'Big Dawg';
 
 const PresaleApplication = () => {
   const navigate = useNavigate();
@@ -24,10 +29,10 @@ const PresaleApplication = () => {
   const [applicationStatus, setApplicationStatus] = useState<ApplicationStatus>(null);
   const [checkingApplication, setCheckingApplication] = useState(false);
   const [formData, setFormData] = useState({
-    email: '',
-    telegram: '',
-    amount: '',
-    reason: ''
+    reason: '',
+    contribution: '',
+    size: 'Dawg' as InvestmentSize,
+    walletAddress: ''
   });
 
   // Debug function to help troubleshoot
@@ -93,10 +98,6 @@ const PresaleApplication = () => {
           setIsAuthenticated(true);
           setUserInfo(data.session.user);
           
-          if (data.session.user?.email) {
-            setFormData(prev => ({ ...prev, email: data.session.user.email }));
-          }
-          
           // Check if user already has an application
           await checkExistingApplication(data.session.user.id);
         } else {
@@ -116,10 +117,6 @@ const PresaleApplication = () => {
       if (event === 'SIGNED_IN' && session) {
         setIsAuthenticated(true);
         setUserInfo(session.user);
-        
-        if (session.user?.email) {
-          setFormData(prev => ({ ...prev, email: session.user.email }));
-        }
         
         // Check if user already has an application
         checkExistingApplication(session.user.id);
@@ -141,6 +138,10 @@ const PresaleApplication = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSizeChange = (value: InvestmentSize) => {
+    setFormData(prev => ({ ...prev, size: value }));
   };
 
   const handleConnectX = async () => {
@@ -220,16 +221,27 @@ const PresaleApplication = () => {
     
     setLoading(true);
     
+    // Get amount based on selected size
+    const getAmountFromSize = (size: InvestmentSize) => {
+      switch (size) {
+        case 'Smol Dawg': return 7.5;
+        case 'Dawg': return 15;
+        case 'Big Dawg': return 30;
+        default: return 15;
+      }
+    };
+
     try {
       const { error } = await supabase
         .from('presale_applications')
         .insert(
           { 
             user_id: userInfo.id,
-            email: formData.email,
-            telegram: formData.telegram,
-            amount: Number(formData.amount),
             reason: formData.reason,
+            contribution: formData.contribution,
+            size: formData.size,
+            amount: getAmountFromSize(formData.size),
+            wallet_address: formData.walletAddress,
             twitter_username: userInfo.user_metadata?.preferred_username || ''
           }
         );
@@ -261,6 +273,12 @@ const PresaleApplication = () => {
     return userInfo.user_metadata.avatar_url || 
            userInfo.user_metadata.picture ||
            userInfo.user_metadata.profile_image_url;
+  };
+
+  // Format wallet address to show beginning and end with ellipsis in the middle
+  const formatWalletAddress = (address) => {
+    if (!address || address.length < 10) return address;
+    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
   };
 
   // Component for displaying the application status
@@ -311,21 +329,24 @@ const PresaleApplication = () => {
         <div className="flex flex-col space-y-4">
           {existingApplication && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <p className="font-semibold">Email:</p>
-                <p>{existingApplication.email}</p>
-              </div>
-              <div className="space-y-2">
-                <p className="font-semibold">Telegram:</p>
-                <p>{existingApplication.telegram}</p>
-              </div>
-              <div className="space-y-2">
-                <p className="font-semibold">Amount:</p>
-                <p>${existingApplication.amount}</p>
-              </div>
               <div className="space-y-2 md:col-span-2">
-                <p className="font-semibold">Reason:</p>
+                <p className="font-semibold">Why you want to join the DAWG presale:</p>
                 <p className="bg-white p-3 rounded border border-gray-200">{existingApplication.reason}</p>
+              </div>
+              
+              <div className="space-y-2 md:col-span-2">
+                <p className="font-semibold">How you plan to contribute:</p>
+                <p className="bg-white p-3 rounded border border-gray-200">{existingApplication.contribution}</p>
+              </div>
+              
+              <div className="space-y-2">
+                <p className="font-semibold">Selected size:</p>
+                <p>{existingApplication.size} ({existingApplication.amount} AVAX)</p>
+              </div>
+              
+              <div className="space-y-2">
+                <p className="font-semibold">Wallet address:</p>
+                <p className="font-mono">{formatWalletAddress(existingApplication.wallet_address)}</p>
               </div>
             </div>
           )}
@@ -405,59 +426,73 @@ const PresaleApplication = () => {
               </Button>
             </div>
             
-            <form onSubmit={handleSubmit} className="space-y-6 neo-brutal-border p-6">
+            <form onSubmit={handleSubmit} className="space-y-8 neo-brutal-border p-6">
               <div>
-                <label htmlFor="email" className="block mb-2 font-medium">Email Address</label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="your@email.com"
-                  className="neo-brutal-border"
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="telegram" className="block mb-2 font-medium">Telegram Username</label>
-                <Input
-                  id="telegram"
-                  name="telegram"
-                  required
-                  value={formData.telegram}
-                  onChange={handleChange}
-                  placeholder="@username"
-                  className="neo-brutal-border"
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="amount" className="block mb-2 font-medium">Amount you want to invest (USD)</label>
-                <Input
-                  id="amount"
-                  name="amount"
-                  type="number"
-                  required
-                  value={formData.amount}
-                  onChange={handleChange}
-                  placeholder="500"
-                  className="neo-brutal-border"
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="reason" className="block mb-2 font-medium">Why do you want to join the DAWG presale?</label>
+                <label htmlFor="reason" className="block mb-2 font-medium text-lg">Why do you want to join the DAWG presale?</label>
                 <Textarea
                   id="reason"
                   name="reason"
                   required
                   value={formData.reason}
                   onChange={handleChange}
-                  placeholder="Tell us why you're excited about DAWG..."
+                  placeholder="Share your reasons for joining the DAWG community..."
                   className="neo-brutal-border h-32"
                 />
+              </div>
+              
+              <div>
+                <label htmlFor="contribution" className="block mb-2 font-medium text-lg">How do you plan to contribute to the DAWG coin?</label>
+                <Textarea
+                  id="contribution"
+                  name="contribution"
+                  required
+                  value={formData.contribution}
+                  onChange={handleChange}
+                  placeholder="Tell us how you'll help grow the DAWG community..."
+                  className="neo-brutal-border h-32"
+                />
+              </div>
+              
+              <div>
+                <label className="block mb-2 font-medium text-lg">Choose your size</label>
+                <RadioGroup value={formData.size} onValueChange={handleSizeChange} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex items-center space-x-2 neo-brutal-border p-4 hover:bg-gray-50 cursor-pointer">
+                    <RadioGroupItem value="Smol Dawg" id="size-small" />
+                    <Label htmlFor="size-small" className="font-medium cursor-pointer flex-1">
+                      Smol Dawg <span className="block text-sm text-gray-500 mt-1">7.5 AVAX</span>
+                    </Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2 neo-brutal-border p-4 hover:bg-gray-50 cursor-pointer">
+                    <RadioGroupItem value="Dawg" id="size-medium" />
+                    <Label htmlFor="size-medium" className="font-medium cursor-pointer flex-1">
+                      Dawg <span className="block text-sm text-gray-500 mt-1">15 AVAX</span>
+                    </Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2 neo-brutal-border p-4 hover:bg-gray-50 cursor-pointer">
+                    <RadioGroupItem value="Big Dawg" id="size-large" />
+                    <Label htmlFor="size-large" className="font-medium cursor-pointer flex-1">
+                      Big Dawg <span className="block text-sm text-gray-500 mt-1">30 AVAX</span>
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+              
+              <div>
+                <label htmlFor="walletAddress" className="block mb-2 font-medium text-lg">Enter your AVAX C-Chain Wallet Address</label>
+                <Input
+                  id="walletAddress"
+                  name="walletAddress"
+                  required
+                  value={formData.walletAddress}
+                  onChange={handleChange}
+                  placeholder="0x..."
+                  className="neo-brutal-border font-mono"
+                />
+                <p className="text-sm text-gray-500 mt-1">
+                  Please ensure this is an AVAX C-Chain compatible address
+                </p>
               </div>
               
               <Button 
