@@ -48,6 +48,21 @@ export type Database = {
         }
         Relationships: []
       }
+      profiles: {
+        Row: {
+          id: string
+          is_admin: boolean | null
+        }
+        Insert: {
+          id: string
+          is_admin?: boolean | null
+        }
+        Update: {
+          id?: string
+          is_admin?: boolean | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
