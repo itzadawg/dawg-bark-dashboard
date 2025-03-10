@@ -19,8 +19,8 @@ export const useAdmin = () => {
           return;
         }
         
+        // If no session exists, set loading to false and return early
         if (!sessionData.session) {
-          // No session, not logged in
           setIsLoading(false);
           return;
         }
@@ -37,12 +37,13 @@ export const useAdmin = () => {
         
         if (error) {
           console.error('Error checking admin status:', error);
+          setIsLoading(false);
         } else {
           setIsAdmin(data?.is_admin || false);
+          setIsLoading(false);
         }
       } catch (error) {
         console.error('Unexpected error checking admin status:', error);
-      } finally {
         setIsLoading(false);
       }
     };
