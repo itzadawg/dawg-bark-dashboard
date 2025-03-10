@@ -23,40 +23,13 @@ const Presale = () => {
             </div>
           </div>
           <div className="w-full md:w-1/2 space-y-6">
-            <div className="neo-brutal-box p-6">
-              <h2 className="text-2xl font-bold mb-4">Presale Details</h2>
-              <div className="flex justify-center mb-6">
+            <div className="neo-brutal-border p-6 bg-transparent">
+              <div className="flex justify-center">
                 <img 
                   src="/lovable-uploads/718d6294-9f6e-450a-a348-8e6978c36b54.png" 
                   alt="DAWG mascot" 
-                  className="w-48 h-auto neo-brutal-border p-1"
+                  className="w-64 h-auto"
                 />
-              </div>
-              <div className="space-y-4">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Start Date:</span>
-                  <span className="font-bold">June 15, 2023</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">End Date:</span>
-                  <span className="font-bold">July 15, 2023</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Presale Price:</span>
-                  <span className="font-bold">0.00025 ETH</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Min Purchase:</span>
-                  <span className="font-bold">0.1 ETH</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Max Purchase:</span>
-                  <span className="font-bold">10 ETH</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Tokens Available:</span>
-                  <span className="font-bold">10,000,000 DAWG</span>
-                </div>
               </div>
             </div>
             <Button className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2">
