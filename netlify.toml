@@ -1,8 +1,0 @@
-
-# This file tells Netlify how to handle routes for a single-page application
-# All routes will be redirected to index.html to let React Router handle the routing
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200

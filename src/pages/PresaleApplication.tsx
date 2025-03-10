@@ -1,16 +1,21 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { toast } from 'sonner';
-import { supabase } from '@/lib/supabase';
+import { toast } from '@/components/ui/sonner';
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client
+const supabaseUrl = 'https://your-supabase-project-url.supabase.co';
+const supabaseAnonKey = 'your-supabase-anon-key';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const PresaleApplication = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [authChecked, setAuthChecked] = useState(false);
   const [user, setUser] = useState(null);
   const [formData, setFormData] = useState({
     email: '',
@@ -22,43 +27,16 @@ const PresaleApplication = () => {
   useEffect(() => {
     // Check if user is authenticated
     const checkUser = async () => {
-      try {
-        // Log URL for debugging
-        console.log('Application Page URL:', window.location.href);
-        
-        // Check for session
-        const { data, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error('Session check error:', error);
-          toast.error('Authentication error: ' + error.message);
-          setAuthChecked(true);
-          setLoading(false);
-          return;
-        }
-        
-        if (!data.session) {
-          console.log('No active session found, redirecting to presale page');
-          toast.error('Please connect your X account first');
-          navigate('/presale');
-          return;
-        }
-        
-        console.log('Session found:', data.session);
-        setUser(data.session.user);
-        
-        // Pre-fill email if available
-        if (data.session.user.email) {
-          setFormData(prev => ({ ...prev, email: data.session.user.email }));
-        }
-        
-      } catch (error) {
-        console.error('Auth check error:', error);
-        toast.error('An unexpected error occurred');
-      } finally {
-        setAuthChecked(true);
-        setLoading(false);
+      const { data, error } = await supabase.auth.getSession();
+      
+      if (error || !data.session) {
+        toast.error('Please connect your X account first');
+        navigate('/presale');
+        return;
       }
+      
+      setUser(data.session.user);
+      setLoading(false);
     };
     
     checkUser();
@@ -100,19 +78,18 @@ const PresaleApplication = () => {
       toast.success('Application submitted successfully!');
       navigate('/presale');
     } catch (error) {
-      console.error('Submission error:', error);
       toast.error('Error submitting application: ' + error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading && !authChecked) {
+  if (loading) {
     return (
       <>
         <Header />
         <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-pulse">Checking authentication...</div>
+          <div className="animate-pulse">Loading...</div>
         </div>
       </>
     );

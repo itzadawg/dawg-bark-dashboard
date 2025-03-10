@@ -1,89 +1,33 @@
-import React, { useEffect, useState } from 'react';
+
+import React from 'react';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Twitter } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { supabase } from '@/lib/supabase';
+import { toast } from '@/components/ui/sonner';
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client
+const supabaseUrl = 'https://your-supabase-project-url.supabase.co';
+const supabaseAnonKey = 'your-supabase-anon-key';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const Presale = () => {
   const navigate = useNavigate();
-  const [isRedirecting, setIsRedirecting] = useState(false);
-  const [debugInfo, setDebugInfo] = useState({});
-  const [user, setUser] = useState(null);
-  
-  // Check for auth state and URL params on load
-  useEffect(() => {
-    const checkSession = async () => {
-      // Debug: Log full URL
-      console.log('Current URL:', window.location.href);
-      
-      const url = new URL(window.location.href);
-      const errorParam = url.searchParams.get('error');
-      const errorDescription = url.searchParams.get('error_description');
-      const code = url.searchParams.get('code');
-      
-      // Log parameters to help diagnose
-      setDebugInfo({
-        error: errorParam,
-        errorDescription: errorDescription,
-        hasCode: !!code,
-        host: window.location.host,
-        origin: window.location.origin
-      });
-      
-      if (errorParam) {
-        toast.error(`Authentication error: ${errorDescription || errorParam}`);
-        // Clean up the URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-      }
-
-      // Check if user is already logged in
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        setUser(session.user);
-        toast.success("You're already logged in with X");
-      }
-    };
-    
-    checkSession();
-  }, []);
 
   const handleConnectX = async () => {
     try {
-      setIsRedirecting(true);
-      toast.info("Connecting to X...");
-      
-      // Production redirect URL
-      let redirectUrl = 'https://itzadawg.com/presale-application';
-      
-      // For localhost or preview domains, use the current origin
-      if (window.location.hostname === 'localhost' || 
-          window.location.hostname.includes('127.0.0.1') ||
-          window.location.hostname.includes('lovableproject.com')) {
-        redirectUrl = `${window.location.origin}/presale-application`;
-      }
-      
-      console.log('Using redirect URL:', redirectUrl);
-      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
         options: {
-          redirectTo: redirectUrl,
-          scopes: 'tweet.read users.read',
+          redirectTo: window.location.origin + '/presale-application',
         },
       });
 
       if (error) {
-        setIsRedirecting(false);
         toast.error('Failed to connect X account: ' + error.message);
-        console.error('Twitter auth error:', error);
-      } else {
-        console.log('Auth started successfully:', data);
-        // We don't need to do anything else here as Supabase will handle the redirect
       }
     } catch (error) {
-      setIsRedirecting(false);
       toast.error('An unexpected error occurred');
       console.error('X authentication error:', error);
     }
@@ -98,31 +42,6 @@ const Presale = () => {
             Get early access to the DAWG token before public launch
           </p>
         </div>
-
-        {/* Debug information - Only show in development */}
-        {Object.keys(debugInfo).length > 0 && (
-          <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded">
-            <h3 className="font-bold">Debug Info:</h3>
-            <pre className="text-xs overflow-auto">{JSON.stringify(debugInfo, null, 2)}</pre>
-          </div>
-        )}
-
-        {/* User info display */}
-        {user && (
-          <div className="mb-8 p-4 bg-green-100 border border-green-400 rounded text-center">
-            <h3 className="font-bold">Connected as:</h3>
-            <div className="flex items-center justify-center mt-2">
-              {user.user_metadata?.avatar_url && (
-                <img 
-                  src={user.user_metadata.avatar_url} 
-                  alt="Profile" 
-                  className="w-10 h-10 rounded-full mr-2"
-                />
-              )}
-              <span>{user.user_metadata?.preferred_username || user.email || 'X User'}</span>
-            </div>
-          </div>
-        )}
 
         {/* Hero Section */}
         <div className="flex flex-col md:flex-row gap-8 mb-16 items-start">
@@ -139,23 +58,13 @@ const Presale = () => {
                 className="w-64 h-auto"
               />
             </div>
-            {user ? (
-              <Button 
-                onClick={() => navigate('/presale-application')}
-                className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2"
-              >
-                Continue to Application <ArrowRight className="h-5 w-5" />
-              </Button>
-            ) : (
-              <Button 
-                onClick={handleConnectX}
-                disabled={isRedirecting}
-                className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2"
-              >
-                <Twitter className="h-5 w-5" />
-                {isRedirecting ? 'Connecting...' : 'Connect your X account'}
-              </Button>
-            )}
+            <Button 
+              onClick={handleConnectX}
+              className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2"
+            >
+              <Twitter className="h-5 w-5" />
+              Connect your X account
+            </Button>
           </div>
         </div>
 
@@ -165,22 +74,12 @@ const Presale = () => {
           <p className="mb-6 max-w-2xl mx-auto">
             Don't miss out on this exclusive opportunity to get DAWG tokens at the lowest possible price before public launch
           </p>
-          {user ? (
-            <Button 
-              onClick={() => navigate('/presale-application')}
-              className="py-6 px-8 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2 mx-auto"
-            >
-              Continue to Application <ArrowRight className="h-5 w-5" />
-            </Button>
-          ) : (
-            <Button 
-              onClick={handleConnectX}
-              disabled={isRedirecting}
-              className="py-6 px-8 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2 mx-auto"
-            >
-              {isRedirecting ? 'Connecting...' : 'Connect with X'} <ArrowRight className="h-5 w-5" />
-            </Button>
-          )}
+          <Button 
+            onClick={handleConnectX}
+            className="py-6 px-8 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2 mx-auto"
+          >
+            Connect with X <ArrowRight className="h-5 w-5" />
+          </Button>
         </div>
       </div>
     </>;
