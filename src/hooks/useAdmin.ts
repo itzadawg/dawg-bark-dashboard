@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
@@ -9,6 +9,7 @@ export const useAdmin = () => {
   const [userId, setUserId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const sessionChecked = useRef(false);
 
   const checkAdminStatus = async () => {
     try {
@@ -52,6 +53,7 @@ export const useAdmin = () => {
       
       setIsAdmin(!!data?.is_admin);
       console.log('Admin status set:', !!data?.is_admin);
+      sessionChecked.current = true;
       
     } catch (error) {
       console.error('Unexpected error:', error);
@@ -79,6 +81,7 @@ export const useAdmin = () => {
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth state changed:', event);
       
+      // Only update admin status for these events
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         checkAdminStatus();
       } 
