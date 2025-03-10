@@ -1,5 +1,5 @@
 
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAdmin } from '@/hooks/useAdmin';
 import { Loader2, AlertTriangle, Twitter, RefreshCw } from 'lucide-react';
@@ -14,132 +14,121 @@ interface AdminProtectedProps {
 export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
   const { isAdmin, isLoading, userEmail, error, checkAdminStatus } = useAdmin();
   const navigate = useNavigate();
-  const [isTwitterAuthInProgress, setIsTwitterAuthInProgress] = useState(false);
+  const [authInProgress, setAuthInProgress] = React.useState(false);
+
+  // Check for auth redirect in URL
+  useEffect(() => {
+    const hashParams = new URLSearchParams(window.location.hash.substring(1));
+    if (hashParams.has('access_token')) {
+      // Give supabase client time to process the token
+      const timeout = setTimeout(() => {
+        checkAdminStatus();
+      }, 500);
+      
+      return () => clearTimeout(timeout);
+    }
+  }, [checkAdminStatus]);
 
   const handleTwitterSignIn = async () => {
     try {
-      setIsTwitterAuthInProgress(true);
-      const redirectUrl = window.location.origin + '/admin';
-      console.log('Redirect URL for Twitter auth:', redirectUrl);
+      setAuthInProgress(true);
+      toast.info('Redirecting to Twitter login...');
       
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const redirectUrl = `${window.location.origin}/admin`;
+      console.log('Redirect URL:', redirectUrl);
+      
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
         options: {
           redirectTo: redirectUrl,
         },
       });
 
-      if (error) {
-        console.error('Twitter auth error:', error);
-        toast.error('Twitter authentication failed. Please try again.');
-        setIsTwitterAuthInProgress(false);
-      } else {
-        console.log('Twitter auth initiated:', data);
-        // Don't set authInProgress to false here as we're redirecting
-        // The page will reload after auth, which will reset this state
-      }
-    } catch (error) {
-      console.error('Authentication error:', error);
-      toast.error('Authentication failed. Please try again.');
-      setIsTwitterAuthInProgress(false);
+      if (error) throw error;
+      
+    } catch (error: any) {
+      console.error('Twitter auth error:', error);
+      toast.error('Authentication failed: ' + error.message);
+      setAuthInProgress(false);
     }
   };
 
-  const handleRetry = () => {
-    setIsTwitterAuthInProgress(false);
-    checkAdminStatus();
-  };
+  // Always show the Twitter login button for ease of access
+  const renderTwitterButton = () => (
+    <Button 
+      onClick={handleTwitterSignIn}
+      disabled={authInProgress}
+      className="flex items-center gap-2 bg-[#1DA1F2] hover:bg-[#0c85d0]"
+    >
+      {authInProgress ? <Loader2 className="h-4 w-4 animate-spin" /> : <Twitter className="h-4 w-4" />}
+      {authInProgress ? 'Connecting...' : 'Sign in with Twitter'}
+    </Button>
+  );
 
-  useEffect(() => {
-    // Check for auth callback in URL to detect returning from Twitter auth
-    const hashParams = new URLSearchParams(window.location.hash.substring(1));
-    if (hashParams.has('access_token')) {
-      console.log('Detected auth callback in URL');
-      // Give a moment for auth state to update before checking admin status
-      const timer = setTimeout(() => {
-        checkAdminStatus();
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [checkAdminStatus]);
-
-  // Show loading state
   if (isLoading) {
     return (
-      <div className="flex flex-col justify-center items-center h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-dawg mb-4" />
-        <span>Checking admin status...</span>
-        <p className="text-sm text-gray-500 mt-2">
-          This should only take a moment...
-        </p>
-        <Button 
-          variant="outline" 
-          onClick={handleRetry} 
-          className="mt-4"
-        >
-          <RefreshCw className="h-4 w-4 mr-2" />
-          Retry
-        </Button>
-      </div>
-    );
-  }
-
-  if (isTwitterAuthInProgress) {
-    return (
-      <div className="flex flex-col justify-center items-center h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-dawg mb-4" />
-        <span>Authenticating with Twitter...</span>
-        <p className="text-sm text-gray-500 mt-2">
-          You will be redirected to Twitter...
-        </p>
-      </div>
-    );
-  }
-
-  // Show error state if there's an error
-  if (error) {
-    return (
-      <div className="flex flex-col justify-center items-center h-screen">
-        <AlertTriangle className="h-8 w-8 text-red-500 mb-4" />
-        <h2 className="text-xl font-bold mb-2">Authentication Error</h2>
-        <p className="text-center max-w-md mb-4 text-gray-600">{error}</p>
-        <div className="flex space-x-4">
-          <Button onClick={handleRetry} variant="outline">
+      <div className="flex flex-col justify-center items-center h-screen p-4">
+        <Loader2 className="h-12 w-12 animate-spin text-dawg mb-4" />
+        <h2 className="text-xl font-bold mb-2">Checking Admin Status</h2>
+        <p className="text-gray-600 text-center mb-6">This should only take a moment...</p>
+        
+        <div className="flex flex-col items-center gap-4">
+          <Button onClick={checkAdminStatus} variant="outline">
             <RefreshCw className="h-4 w-4 mr-2" />
             Retry
           </Button>
-          <Button 
-            onClick={handleTwitterSignIn}
-            className="flex items-center gap-2 bg-[#1DA1F2] hover:bg-[#0c85d0]"
+          
+          {renderTwitterButton()}
+          
+          <Link 
+            to="/" 
+            className="text-sm text-gray-500 hover:underline mt-2"
           >
-            <Twitter className="h-4 w-4" />
-            Sign in with Twitter
-          </Button>
+            Return to Home
+          </Link>
         </div>
       </div>
     );
   }
 
-  // User is admin, show children with the Twitter sign-in button in the top right
+  if (error) {
+    return (
+      <div className="flex flex-col justify-center items-center h-screen p-4">
+        <AlertTriangle className="h-12 w-12 text-red-500 mb-4" />
+        <h2 className="text-xl font-bold mb-2">Authentication Error</h2>
+        <p className="text-center max-w-md mb-6 text-gray-600">{error}</p>
+        
+        <div className="flex flex-col items-center gap-4">
+          <Button onClick={checkAdminStatus} variant="outline">
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Try Again
+          </Button>
+          
+          {renderTwitterButton()}
+          
+          <Link 
+            to="/" 
+            className="text-sm text-gray-500 hover:underline mt-2"
+          >
+            Return to Home
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (isAdmin) {
     return (
       <div>
         <div className="fixed top-4 right-4 z-50">
-          <Button 
-            onClick={handleTwitterSignIn}
-            className="flex items-center gap-2 bg-[#1DA1F2] hover:bg-[#0c85d0]"
-            size="sm"
-          >
-            <Twitter className="h-4 w-4" />
-            Twitter Sign In
-          </Button>
+          {renderTwitterButton()}
         </div>
         {children}
       </div>
     );
   }
 
-  // User is not an admin, show access required message with the Twitter sign-in button
+  // Not an admin
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <AlertTriangle className="h-16 w-16 text-red-500 mb-4" />
@@ -148,24 +137,20 @@ export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
         You need admin privileges to view this page. Please sign in with Twitter if you have admin access.
       </p>
       
-      <Button 
-        onClick={handleTwitterSignIn}
-        className="mb-4 flex items-center gap-2 bg-[#1DA1F2] hover:bg-[#0c85d0]"
-      >
-        <Twitter className="h-5 w-5" />
-        Sign in with Twitter
-      </Button>
-      
-      {userEmail && (
-        <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-          <p>Signed in as: <strong>{userEmail}</strong></p>
-          <p className="text-sm text-gray-500">This account doesn't have admin permissions.</p>
-        </div>
-      )}
-      
-      <Link to="/" className="text-dawg hover:underline">
-        Return to Home
-      </Link>
+      <div className="flex flex-col items-center gap-4">
+        {renderTwitterButton()}
+        
+        {userEmail && (
+          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md text-center">
+            <p>Signed in as: <strong>{userEmail}</strong></p>
+            <p className="text-sm text-gray-500">This account doesn't have admin permissions.</p>
+          </div>
+        )}
+        
+        <Link to="/" className="text-dawg hover:underline mt-2">
+          Return to Home
+        </Link>
+      </div>
     </div>
   );
 };

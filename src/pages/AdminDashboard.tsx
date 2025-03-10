@@ -106,61 +106,21 @@ const AdminDashboard: React.FC = () => {
                   </TabsList>
                 </div>
                 
-                <TabsContent value="all" className="mt-0">
-                  {loading ? (
-                    <div className="flex justify-center items-center p-12">
-                      <Loader2 className="h-8 w-8 animate-spin text-dawg" />
-                      <span className="ml-2">Loading applications...</span>
-                    </div>
-                  ) : (
-                    <ApplicationTable 
-                      applications={applications} 
-                      onStatusChange={fetchApplications} 
-                    />
-                  )}
-                </TabsContent>
-                
-                <TabsContent value="pending" className="mt-0">
-                  {loading ? (
-                    <div className="flex justify-center items-center p-12">
-                      <Loader2 className="h-8 w-8 animate-spin text-dawg" />
-                      <span className="ml-2">Loading pending applications...</span>
-                    </div>
-                  ) : (
-                    <ApplicationTable 
-                      applications={applications} 
-                      onStatusChange={fetchApplications} 
-                    />
-                  )}
-                </TabsContent>
-                
-                <TabsContent value="approved" className="mt-0">
-                  {loading ? (
-                    <div className="flex justify-center items-center p-12">
-                      <Loader2 className="h-8 w-8 animate-spin text-dawg" />
-                      <span className="ml-2">Loading approved applications...</span>
-                    </div>
-                  ) : (
-                    <ApplicationTable 
-                      applications={applications} 
-                      onStatusChange={fetchApplications} 
-                    />
-                  )}
-                </TabsContent>
-                
-                <TabsContent value="rejected" className="mt-0">
-                  {loading ? (
-                    <div className="flex justify-center items-center p-12">
-                      <Loader2 className="h-8 w-8 animate-spin text-dawg" />
-                      <span className="ml-2">Loading rejected applications...</span>
-                    </div>
-                  ) : (
-                    <ApplicationTable 
-                      applications={applications} 
-                      onStatusChange={fetchApplications} 
-                    />
-                  )}
-                </TabsContent>
+                {['all', 'pending', 'approved', 'rejected'].map((status) => (
+                  <TabsContent key={status} value={status} className="mt-0">
+                    {loading ? (
+                      <div className="flex justify-center items-center p-12">
+                        <Loader2 className="h-8 w-8 animate-spin text-dawg" />
+                        <span className="ml-2">Loading applications...</span>
+                      </div>
+                    ) : (
+                      <ApplicationTable 
+                        applications={applications} 
+                        onStatusChange={fetchApplications} 
+                      />
+                    )}
+                  </TabsContent>
+                ))}
               </Tabs>
             </div>
           </TabsContent>
