@@ -8,6 +8,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
+import { Loader2 } from 'lucide-react';
+
+// Define application status type for type safety
+type ApplicationStatus = 'pending' | 'approved' | 'rejected' | null;
 
 const PresaleApplication = () => {
   const navigate = useNavigate();
@@ -16,6 +20,9 @@ const PresaleApplication = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [authError, setAuthError] = useState(null);
+  const [existingApplication, setExistingApplication] = useState(null);
+  const [applicationStatus, setApplicationStatus] = useState<ApplicationStatus>(null);
+  const [checkingApplication, setCheckingApplication] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     telegram: '',
@@ -26,6 +33,33 @@ const PresaleApplication = () => {
   // Debug function to help troubleshoot
   const debugAuthFlow = (message, data = null) => {
     console.log(`[Auth Debug] ${message}`, data || '');
+  };
+
+  // Check if user has an existing application
+  const checkExistingApplication = async (userId) => {
+    try {
+      setCheckingApplication(true);
+      const { data, error } = await supabase
+        .from('presale_applications')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+      
+      if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned"
+        console.error('Error checking application:', error);
+        return;
+      }
+      
+      if (data) {
+        console.log('Found existing application:', data);
+        setExistingApplication(data);
+        setApplicationStatus(data.status as ApplicationStatus);
+      }
+    } catch (error) {
+      console.error('Error in checkExistingApplication:', error);
+    } finally {
+      setCheckingApplication(false);
+    }
   };
 
   useEffect(() => {
@@ -62,6 +96,9 @@ const PresaleApplication = () => {
           if (data.session.user?.email) {
             setFormData(prev => ({ ...prev, email: data.session.user.email }));
           }
+          
+          // Check if user already has an application
+          await checkExistingApplication(data.session.user.id);
         } else {
           debugAuthFlow('No active session found');
         }
@@ -84,10 +121,15 @@ const PresaleApplication = () => {
           setFormData(prev => ({ ...prev, email: session.user.email }));
         }
         
+        // Check if user already has an application
+        checkExistingApplication(session.user.id);
+        
         toast.success('Successfully connected with X');
       } else if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);
         setUserInfo(null);
+        setExistingApplication(null);
+        setApplicationStatus(null);
       }
     });
     
@@ -159,6 +201,23 @@ const PresaleApplication = () => {
       return;
     }
     
+    // Double-check that the user doesn't already have an application
+    try {
+      const { data, error } = await supabase
+        .from('presale_applications')
+        .select('id')
+        .eq('user_id', userInfo.id)
+        .single();
+      
+      if (data) {
+        toast.error('You have already submitted an application');
+        await checkExistingApplication(userInfo.id);
+        return;
+      }
+    } catch (error) {
+      console.error('Error checking for existing application:', error);
+    }
+    
     setLoading(true);
     
     try {
@@ -180,6 +239,11 @@ const PresaleApplication = () => {
       }
       
       toast.success('Application submitted successfully!');
+      
+      // Update local state to show pending status
+      await checkExistingApplication(userInfo.id);
+      
+      // Optionally navigate after a short delay to allow user to see the toast
       setTimeout(() => navigate('/presale'), 2000);
     } catch (error) {
       toast.error('Failed to submit application: ' + error.message);
@@ -197,6 +261,85 @@ const PresaleApplication = () => {
     return userInfo.user_metadata.avatar_url || 
            userInfo.user_metadata.picture ||
            userInfo.user_metadata.profile_image_url;
+  };
+
+  // Component for displaying the application status
+  const ApplicationStatusDisplay = () => {
+    const getStatusContent = () => {
+      switch (applicationStatus) {
+        case 'pending':
+          return {
+            title: 'Application Under Review',
+            description: 'Your application is being reviewed by our team. We will notify you once a decision has been made.',
+            bgColor: 'bg-yellow-50',
+            borderColor: 'border-yellow-300',
+            textColor: 'text-yellow-800'
+          };
+        case 'approved':
+          return {
+            title: 'Application Approved!',
+            description: 'Congratulations! Your presale application has been approved. Our team will contact you with next steps.',
+            bgColor: 'bg-green-50',
+            borderColor: 'border-green-300',
+            textColor: 'text-green-800'
+          };
+        case 'rejected':
+          return {
+            title: 'Application Not Approved',
+            description: 'We regret to inform you that your application was not approved at this time. You may contact our team for more information.',
+            bgColor: 'bg-red-50',
+            borderColor: 'border-red-300',
+            textColor: 'text-red-800'
+          };
+        default:
+          return {
+            title: 'Application Status Unknown',
+            description: 'There was an issue retrieving your application status. Please try again or contact support.',
+            bgColor: 'bg-gray-50',
+            borderColor: 'border-gray-300',
+            textColor: 'text-gray-800'
+          };
+      }
+    };
+
+    const status = getStatusContent();
+
+    return (
+      <div className={`neo-brutal-border p-8 ${status.bgColor} ${status.borderColor} mb-6`}>
+        <h2 className={`text-2xl font-bold mb-3 ${status.textColor}`}>{status.title}</h2>
+        <p className="mb-4">{status.description}</p>
+        <div className="flex flex-col space-y-4">
+          {existingApplication && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <p className="font-semibold">Email:</p>
+                <p>{existingApplication.email}</p>
+              </div>
+              <div className="space-y-2">
+                <p className="font-semibold">Telegram:</p>
+                <p>{existingApplication.telegram}</p>
+              </div>
+              <div className="space-y-2">
+                <p className="font-semibold">Amount:</p>
+                <p>${existingApplication.amount}</p>
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <p className="font-semibold">Reason:</p>
+                <p className="bg-white p-3 rounded border border-gray-200">{existingApplication.reason}</p>
+              </div>
+            </div>
+          )}
+          <div className="pt-4">
+            <Button 
+              onClick={() => navigate('/presale')}
+              className="neo-brutal-border bg-dawg hover:bg-dawg-secondary"
+            >
+              Return to Presale Page
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -229,6 +372,14 @@ const PresaleApplication = () => {
               {loading ? 'Connecting...' : 'Connect with X'}
             </Button>
           </div>
+        ) : checkingApplication ? (
+          <div className="text-center neo-brutal-border p-8 flex flex-col items-center">
+            <Loader2 className="h-8 w-8 animate-spin text-dawg mb-4" />
+            <p>Checking application status...</p>
+          </div>
+        ) : existingApplication ? (
+          // Display application status if user already applied
+          <ApplicationStatusDisplay />
         ) : (
           <div className="space-y-6">
             <div className="neo-brutal-border p-4 flex items-center justify-between bg-dawg/10">
