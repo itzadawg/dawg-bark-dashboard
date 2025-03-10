@@ -12,15 +12,14 @@ export const useAdmin = () => {
   useEffect(() => {
     const checkAdminStatus = async () => {
       try {
-        setIsLoading(true);
-        console.log('Checking admin status...');
+        console.log('Started checking admin status...');
         
         // Get current session
         const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
         
         if (sessionError) {
           console.error('Error getting session:', sessionError);
-          toast.error('Error verifying admin status');
+          setIsAdmin(false);
           setIsLoading(false);
           return;
         }
@@ -28,6 +27,7 @@ export const useAdmin = () => {
         // If no session exists, set loading to false and return early
         if (!sessionData.session) {
           console.log('No active session found');
+          setIsAdmin(false);
           setIsLoading(false);
           return;
         }
@@ -35,11 +35,8 @@ export const useAdmin = () => {
         const currentUserId = sessionData.session.user.id;
         const userEmail = sessionData.session.user.email;
         
-        // Log detailed user information for debugging
         console.log('Current user ID:', currentUserId);
         console.log('User email:', userEmail);
-        console.log('Auth provider:', sessionData.session.user.app_metadata.provider);
-        console.log('User metadata:', sessionData.session.user.user_metadata);
         
         setUserId(currentUserId);
         setUserEmail(userEmail);
@@ -53,24 +50,21 @@ export const useAdmin = () => {
         
         if (error) {
           console.error('Error checking admin status:', error);
-          toast.error('Error checking admin permissions');
           setIsAdmin(false);
-        } else {
-          const adminStatus = !!data?.is_admin;
-          console.log('Admin status from database:', adminStatus);
-          
-          if (adminStatus) {
-            toast.success('Admin access granted');
-          }
-          
-          setIsAdmin(adminStatus);
+          setIsLoading(false);
+          return;
         }
+        
+        const adminStatus = !!data?.is_admin;
+        console.log('Admin status from database:', adminStatus);
+        setIsAdmin(adminStatus);
+        
       } catch (error) {
         console.error('Unexpected error checking admin status:', error);
-        toast.error('Unexpected error checking admin status');
         setIsAdmin(false);
       } finally {
         setIsLoading(false);
+        console.log('Finished checking admin status');
       }
     };
     
@@ -80,11 +74,13 @@ export const useAdmin = () => {
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('Auth state changed:', event);
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        setIsLoading(true);
         await checkAdminStatus();
       } else if (event === 'SIGNED_OUT') {
         setIsAdmin(false);
         setUserId(null);
         setUserEmail(null);
+        setIsLoading(false);
       }
     });
     

@@ -1,9 +1,8 @@
 
-import React, { ReactNode, useEffect } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAdmin } from '@/hooks/useAdmin';
 import { Loader2, AlertTriangle, Twitter } from 'lucide-react';
-import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -14,10 +13,12 @@ interface AdminProtectedProps {
 export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
   const { isAdmin, isLoading, userEmail } = useAdmin();
   const navigate = useNavigate();
+  const [authInProgress, setAuthInProgress] = useState(false);
 
   const handleTwitterSignIn = async () => {
     try {
-      const redirectUrl = window.location.origin + window.location.pathname;
+      setAuthInProgress(true);
+      const redirectUrl = window.location.origin + '/admin';
       console.log('Redirect URL for Twitter auth:', redirectUrl);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
@@ -29,35 +30,44 @@ export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
 
       if (error) {
         console.error('Twitter auth error:', error);
+        setAuthInProgress(false);
       } else {
         console.log('Twitter auth initiated:', data);
+        // Don't set authInProgress to false here as we're redirecting
       }
     } catch (error) {
       console.error('Authentication error:', error);
+      setAuthInProgress(false);
     }
   };
 
   useEffect(() => {
     console.log('AdminProtected: isAdmin =', isAdmin, 'isLoading =', isLoading, 'userEmail =', userEmail);
     
+    // Only redirect if we're not loading and the user is not an admin
     if (!isLoading && !isAdmin) {
-      const redirectTimer = setTimeout(() => navigate('/', { replace: true }), 2000);
-      return () => clearTimeout(redirectTimer);
+      console.log('User is not an admin. Will show non-admin content.');
+      // Don't navigate automatically - we'll show the admin access required screen instead
     }
   }, [isAdmin, isLoading, navigate]);
 
-  if (isLoading) {
+  // Show loading state
+  if (isLoading || authInProgress) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-dawg" />
-        <span className="ml-2">Checking admin status...</span>
+      <div className="flex flex-col justify-center items-center h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-dawg mb-4" />
+        <span>{isLoading ? "Checking admin status..." : "Authenticating with Twitter..."}</span>
+        <p className="text-sm text-gray-500 mt-2">
+          {isLoading ? "This should only take a moment..." : "You will be redirected to Twitter..."}
+        </p>
       </div>
     );
   }
 
+  // Show not admin message
   if (!isAdmin) {
     return (
-      <div className="flex flex-col items-center justify-center h-screen p-4">
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
         <AlertTriangle className="h-16 w-16 text-red-500 mb-4" />
         <h1 className="text-2xl font-bold mb-4">Admin Access Required</h1>
         <p className="text-center max-w-md mb-6">
@@ -86,5 +96,6 @@ export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
     );
   }
 
+  // User is admin, show children
   return <>{children}</>;
 };
