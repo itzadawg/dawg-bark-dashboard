@@ -15,12 +15,26 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 const Presale = () => {
   const navigate = useNavigate();
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [debugInfo, setDebugInfo] = useState({});
   
   // Check for auth errors in URL params
   useEffect(() => {
+    // Debug: Log full URL
+    console.log('Current URL:', window.location.href);
+    
     const url = new URL(window.location.href);
     const errorParam = url.searchParams.get('error');
     const errorDescription = url.searchParams.get('error_description');
+    const code = url.searchParams.get('code');
+    
+    // Log parameters to help diagnose
+    setDebugInfo({
+      error: errorParam,
+      errorDescription: errorDescription,
+      hasCode: !!code,
+      host: window.location.host,
+      origin: window.location.origin
+    });
     
     if (errorParam) {
       toast.error(`Authentication error: ${errorDescription || errorParam}`);
@@ -32,18 +46,26 @@ const Presale = () => {
   const handleConnectX = async () => {
     try {
       setIsRedirecting(true);
+      toast.info("Connecting to X...");
       
-      // Configure the redirect URL based on environment
-      const redirectUrl = window.location.hostname === 'localhost' 
-        ? `${window.location.origin}/presale-application`
-        : 'https://itzadawg.com/presale-application';
+      // Get current absolute URL for the redirect
+      const isLocalhost = window.location.hostname === 'localhost' || 
+                          window.location.hostname === '127.0.0.1';
       
+      // Make sure it's an absolute URL and correctly formatted
+      const baseUrl = isLocalhost 
+        ? window.location.origin 
+        : 'https://itzadawg.com';
+      
+      const redirectUrl = `${baseUrl}/presale-application`;
       console.log('Redirecting to:', redirectUrl);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
         options: {
           redirectTo: redirectUrl,
+          // Ensure we don't have any URL issues with encoding
+          scopes: 'tweet.read users.read',
         },
       });
 
@@ -51,6 +73,8 @@ const Presale = () => {
         setIsRedirecting(false);
         toast.error('Failed to connect X account: ' + error.message);
         console.error('Twitter auth error:', error);
+      } else {
+        console.log('Auth started successfully:', data);
       }
     } catch (error) {
       setIsRedirecting(false);
@@ -68,6 +92,14 @@ const Presale = () => {
             Get early access to the DAWG token before public launch
           </p>
         </div>
+
+        {/* Debug information - Only show in development */}
+        {Object.keys(debugInfo).length > 0 && import.meta.env.DEV && (
+          <div className="mb-4 p-4 bg-yellow-100 border border-yellow-400 rounded">
+            <h3 className="font-bold">Debug Info:</h3>
+            <pre className="text-xs overflow-auto">{JSON.stringify(debugInfo, null, 2)}</pre>
+          </div>
+        )}
 
         {/* Hero Section */}
         <div className="flex flex-col md:flex-row gap-8 mb-16 items-start">
