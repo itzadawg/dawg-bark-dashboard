@@ -1,3 +1,4 @@
+
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createHmac } from "node:crypto";
@@ -264,7 +265,7 @@ serve(async (req) => {
   try {
     validateEnvironmentVariables();
     
-    // Parse request parameters
+    // Parse URL to get query parameters
     const url = new URL(req.url);
     const action = url.searchParams.get('action') || 'fetch';
     
