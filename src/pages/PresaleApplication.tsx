@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -21,7 +20,6 @@ const PresaleApplication = () => {
     reason: ''
   });
 
-  // Check if user is authenticated with Twitter
   useEffect(() => {
     const checkUser = async () => {
       const { data } = await supabase.auth.getSession();
@@ -29,7 +27,6 @@ const PresaleApplication = () => {
         setIsAuthenticated(true);
         setUserInfo(data.session.user);
         
-        // Pre-fill email if available
         if (data.session.user?.email) {
           setFormData(prev => ({ ...prev, email: data.session.user.email }));
         }
@@ -38,14 +35,12 @@ const PresaleApplication = () => {
     
     checkUser();
     
-    // Handle auth state changes
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       console.log('Auth state changed:', event, session);
       if (event === 'SIGNED_IN' && session) {
         setIsAuthenticated(true);
         setUserInfo(session.user);
         
-        // Pre-fill email if available
         if (session.user?.email) {
           setFormData(prev => ({ ...prev, email: session.user.email }));
         }
@@ -71,7 +66,6 @@ const PresaleApplication = () => {
     setLoading(true);
     
     try {
-      // Use the specified production redirect URL
       const redirectUrl = 'https://itzadawg.com/presale-application';
       console.log('Redirect URL for Supabase auth:', redirectUrl);
       
@@ -119,7 +113,6 @@ const PresaleApplication = () => {
     setLoading(true);
     
     try {
-      // Submit application to Supabase
       const { error } = await supabase
         .from('presale_applications')
         .insert(
@@ -127,7 +120,7 @@ const PresaleApplication = () => {
             user_id: userInfo.id,
             email: formData.email,
             telegram: formData.telegram,
-            amount: Number(formData.amount), // Convert string to number
+            amount: Number(formData.amount),
             reason: formData.reason,
             twitter_username: userInfo.user_metadata?.preferred_username || ''
           }
@@ -167,7 +160,6 @@ const PresaleApplication = () => {
               className="py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2 max-w-md"
             >
               {loading ? 'Connecting...' : 'Connect with X'}
-              <Twitter className="h-5 w-5" />
             </Button>
           </div>
         ) : (
