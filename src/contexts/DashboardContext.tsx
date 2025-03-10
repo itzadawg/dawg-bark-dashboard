@@ -22,6 +22,7 @@ interface DashboardContextType {
   handleSort: (field: SortField) => void;
   handleToggleFumblers: () => void;
   handleToggleRevealed: () => void;
+  tableData: TableDataItem[];
 }
 
 export interface TableDataItem {
@@ -67,6 +68,8 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
   const [animatingRevealed, setAnimatingRevealed] = useState<number[]>([]);
   const [sortField, setSortField] = useState<SortField>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+
+  const data = getDashboardData();
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -149,7 +152,8 @@ export const DashboardProvider: React.FC<{ children: ReactNode }> = ({ children 
         setSortDirection,
         handleSort,
         handleToggleFumblers,
-        handleToggleRevealed
+        handleToggleRevealed,
+        tableData: data.tableData,
       }}
     >
       {children}
@@ -165,7 +169,6 @@ export const useDashboard = () => {
   return context;
 };
 
-// Mock data to be replaced with actual API calls later
 export const getDashboardData = (): DashboardData => {
   const fumblers = [{
     id: 1,
