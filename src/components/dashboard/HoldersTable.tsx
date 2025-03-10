@@ -1,199 +1,166 @@
+import React from 'react';
+import { useDashboard } from '@/contexts/DashboardContext';
+import { ChevronUp, ChevronDown, ArrowRight, ArrowUpRight, ArrowDownRight } from 'lucide-react';
+import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from '@/lib/utils';
 
-import React, { useState } from 'react';
-import { AlertTriangle, Eye, EyeOff, Info } from 'lucide-react';
-import TableRow from '../TableRow';
-import TableHeader from './TableHeader';
-import { useDashboard, getDashboardData } from '../../contexts/DashboardContext';
-import { Button } from '../ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '../ui/dialog';
-import { Badge } from '../ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader as UITableHeader,
-  TableRow as UITableRow,
-} from '../ui/table';
+type ActivityLevel = 'none' | 'low' | 'medium' | 'high';
 
-// Define a type for activity values to avoid type errors
-type ActivityLevel = 'high' | 'medium' | 'low' | 'none';
+type TableData = {
+  id: number;
+  name: string;
+  username: string;
+  address: string;
+  initial: string;
+  current: string;
+  balanceChange: string;
+  activity: ActivityLevel;
+  realizedPnL: string;
+  avatar: string;
+  emoji?: string;
+};
 
-const HoldersTable: React.FC = () => {
-  const { showMasked, setShowMasked } = useDashboard();
-  const { tableData } = getDashboardData();
-  const [selectedHolder, setSelectedHolder] = useState<typeof tableData[0] | null>(null);
+const TableRow = ({ 
+  data, 
+  showMasked 
+}: { 
+  data: TableData; 
+  showMasked: boolean;
+}) => {
+  const {
+    name,
+    username,
+    address,
+    initial,
+    current,
+    balanceChange,
+    activity,
+    realizedPnL,
+    avatar,
+    emoji
+  } = data;
+
+  const activityClass = activity === 'high' ? 'bg-green-500' : activity === 'medium' ? 'bg-yellow-500' : activity === 'low' ? 'bg-red-500' : 'bg-gray-300';
+  const activityLabel = activity === 'high' ? 'High' : activity === 'medium' ? 'Medium' : activity === 'low' ? 'Low' : 'None';
 
   return (
-    <div className="overflow-hidden neo-brutal-box p-0">
-      <div className="flex justify-between items-center bg-dawg p-4 neo-brutal-border">
-        <h2 className="text-xl font-bold flex items-center gap-2">
-          <AlertTriangle className="h-5 w-5" />
-          DAWG Holders
-        </h2>
-        <Button 
-          variant="outline"
-          className="neo-brutal-button bg-white hover:bg-dawg-light text-dawg-dark font-medium text-sm flex gap-2 items-center"
-          onClick={() => setShowMasked(!showMasked)}
-        >
-          {showMasked ? <EyeOff size={16} /> : <Eye size={16} />}
-          {showMasked ? 'Hide' : 'Show'} masked entries
-        </Button>
+    <div className="grid grid-cols-7 px-4 py-5 border-b">
+      <div className="flex items-center space-x-3">
+        <img src={avatar} alt="Avatar" className="w-8 h-8 rounded-full" />
+        <div>
+          <div className="font-bold">{showMasked ? 'Fumbler' : name} {emoji}</div>
+          <div className="text-sm opacity-50">@{username}</div>
+        </div>
       </div>
-      <div className="w-full overflow-x-auto">
-        <table className="w-full border-collapse table-fixed">
-          <thead>
-            <TableHeader />
-          </thead>
-          <tbody>
-            {tableData.map(row => (
-              <TableRow 
-                key={row.id}
-                name={row.name} 
-                username={row.username} 
-                address={row.address} 
-                initial={row.initial} 
-                current={row.current} 
-                balanceChange={row.balanceChange} 
-                activity={row.activity} 
-                realizedPnL={row.realizedPnL} 
-                avatar={row.avatar} 
-                emoji={row.emoji}
-                onViewDetails={() => setSelectedHolder(row)}
-              />
-            ))}
-          </tbody>
-        </table>
+      <div>{showMasked ? 'Fumbler' : address}</div>
+      <div>{showMasked ? 'Fumbler' : initial}</div>
+      <div>{showMasked ? 'Fumbler' : current}</div>
+      <div className="flex items-center">
+        {showMasked ? 'Fumbler' : balanceChange}
+        {balanceChange?.includes('-') ? <ArrowDownRight className="ml-1 w-4 h-4 text-red-500" /> : <ArrowUpRight className="ml-1 w-4 h-4 text-green-500" />}
       </div>
+      <div className="flex items-center">
+        <span className={cn("w-3 h-3 rounded-full mr-2", activityClass)}></span>
+        {activityLabel}
+      </div>
+      <div>{showMasked ? 'Fumbler' : realizedPnL}</div>
+    </div>
+  );
+};
 
-      {/* Holder Details Dialog */}
-      <Dialog>
-        <DialogContent className="max-w-3xl neo-brutal-box p-0 border-2 border-black">
-          {selectedHolder && (
-            <>
-              <DialogHeader className="bg-dawg p-4 neo-brutal-border">
-                <DialogTitle className="text-xl font-bold flex items-center gap-2">
-                  <Info className="h-5 w-5" />
-                  Holder Details
-                </DialogTitle>
-                <DialogDescription className="text-dawg-dark">
-                  Detailed information about this DAWG holder
-                </DialogDescription>
-              </DialogHeader>
-              <div className="p-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-16 h-16 rounded-full neo-brutal-border bg-transparent flex items-center justify-center">
-                        {selectedHolder.avatar && (
-                          <img src={selectedHolder.avatar} alt="Avatar" className="w-full h-full rounded-full object-cover" />
-                        )}
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-lg font-bold">{selectedHolder.name}</h3>
-                          {selectedHolder.emoji && <span className="text-xl">{selectedHolder.emoji}</span>}
-                        </div>
-                        <p className="text-sm text-dawg-dark/70">{selectedHolder.username}</p>
-                      </div>
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-dawg-dark/70">Wallet Address</p>
-                      <p className="font-mono text-sm break-all">{selectedHolder.address}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm font-semibold text-dawg-dark/70">Initial Balance</p>
-                        <p className="font-mono font-bold">{selectedHolder.initial}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-dawg-dark/70">Current Balance</p>
-                        <p className="font-mono font-bold">{selectedHolder.current}</p>
-                      </div>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="text-sm font-semibold text-dawg-dark/70">Balance Change</p>
-                        <p className={`font-mono font-bold ${parseFloat(selectedHolder.balanceChange.replace('%', '')) < 0 ? 'text-red-500' : 'text-green-500'}`}>
-                          {selectedHolder.balanceChange}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-semibold text-dawg-dark/70">Realized PnL</p>
-                        <p className="font-mono font-bold">{selectedHolder.realizedPnL}</p>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <p className="text-sm font-semibold text-dawg-dark/70">Activity Level</p>
-                      <div className="flex items-center gap-2 mt-1">
-                        {selectedHolder.activity === 'high' && <Badge className="bg-dawg-accent">High</Badge>}
-                        {selectedHolder.activity === 'medium' && <Badge className="bg-dawg">Medium</Badge>}
-                        {selectedHolder.activity === 'low' && <Badge className="bg-dawg-light">Low</Badge>}
-                        {selectedHolder.activity === 'none' && <Badge className="bg-gray-300">None</Badge>}
-                        <div className="w-24 h-2 bg-dawg-dark">
-                          <div className={`h-full bg-dawg-accent ${
-                            selectedHolder.activity as ActivityLevel === 'high' ? 'w-full' : 
-                            selectedHolder.activity as ActivityLevel === 'medium' ? 'w-2/3' : 
-                            selectedHolder.activity as ActivityLevel === 'low' ? 'w-1/3' : 'w-0'
-                          }`}></div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="mt-6 pt-6 border-t border-gray-200">
-                  <h4 className="font-semibold mb-2">Recent Transactions</h4>
-                  <div className="neo-brutal-box p-0 overflow-hidden">
-                    <Table>
-                      <UITableHeader>
-                        <UITableRow className="bg-dawg-light">
-                          <TableHead>Date</TableHead>
-                          <TableHead>Type</TableHead>
-                          <TableHead>Amount</TableHead>
-                          <TableHead>Status</TableHead>
-                        </UITableRow>
-                      </UITableHeader>
-                      <TableBody>
-                        <UITableRow>
-                          <TableCell className="font-mono">2025-03-09</TableCell>
-                          <TableCell>Buy</TableCell>
-                          <TableCell className="font-mono">+50.00 DAWG</TableCell>
-                          <TableCell><Badge variant="outline" className="bg-green-100 text-green-800">Completed</Badge></TableCell>
-                        </UITableRow>
-                        <UITableRow>
-                          <TableCell className="font-mono">2025-03-07</TableCell>
-                          <TableCell>Sell</TableCell>
-                          <TableCell className="font-mono">-10.00 DAWG</TableCell>
-                          <TableCell><Badge variant="outline" className="bg-green-100 text-green-800">Completed</Badge></TableCell>
-                        </UITableRow>
-                        <UITableRow>
-                          <TableCell className="font-mono">2025-03-05</TableCell>
-                          <TableCell>Transfer</TableCell>
-                          <TableCell className="font-mono">-5.00 DAWG</TableCell>
-                          <TableCell><Badge variant="outline" className="bg-green-100 text-green-800">Completed</Badge></TableCell>
-                        </UITableRow>
-                      </TableBody>
-                    </Table>
-                  </div>
-                </div>
-              </div>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+const TableHeader = ({ field, label }: { field: string; label: string }) => {
+  const { sortField, sortDirection, handleSort } = useDashboard();
+  const isActive = sortField === field;
+  const isAscending = isActive && sortDirection === 'asc';
+
+  return (
+    <div className="px-4 py-3 border-b bg-muted/40 cursor-pointer select-none" onClick={() => handleSort(field as any)}>
+      <div className="flex items-center justify-between">
+        {label}
+        {isActive && (
+          <>
+            {isAscending ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// Main component
+const HoldersTable = () => {
+  const { showMasked } = useDashboard();
+  const { sortField, sortDirection } = useDashboard();
+  const { tableData } = useDashboard();
+
+  const [isLoading, setIsLoading] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+  }, []);
+
+  // Render loading state
+  if (isLoading) {
+    return (
+      <div className="w-full overflow-hidden border rounded-lg bg-background shadow">
+        <div className="p-4 border-b">
+          <Skeleton className="h-8 w-64" />
+        </div>
+        <div className="flex flex-col">
+          <div className="grid grid-cols-7 px-4 py-3 border-b bg-muted/40">
+            {[...Array(7)].map((_, i) => (
+              <Skeleton key={i} className="h-5 w-20" />
+            ))}
+          </div>
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="grid grid-cols-7 px-4 py-5 border-b">
+              {[...Array(7)].map((_, j) => (
+                <Skeleton key={j} className="h-5 w-24" />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  // Calculate activity level
+  const getActivityClass = (activity: ActivityLevel) => {
+    if (activity === 'high') return 'bg-green-500';
+    if (activity === 'medium') return 'bg-yellow-500';
+    if (activity === 'low') return 'bg-red-500';
+    return 'bg-gray-300';
+  };
+
+  const getActivityLabel = (activity: ActivityLevel) => {
+    if (activity === 'high') return 'High';
+    if (activity === 'medium') return 'Medium';
+    if (activity === 'low') return 'Low';
+    return 'None';
+  };
+
+  return (
+    <div className="w-full overflow-hidden border rounded-lg bg-background shadow">
+      <div className="p-4 border-b">
+        <h3 className="text-lg font-semibold">Holders</h3>
+      </div>
+      <div className="flex flex-col">
+        <div className="grid grid-cols-7 px-4 py-3 font-bold text-sm">
+          <TableHeader field="name" label="Name" />
+          <TableHeader field="address" label="Address" />
+          <TableHeader field="initial" label="Initial" />
+          <TableHeader field="current" label="Current" />
+          <TableHeader field="balanceChange" label="Balance Change" />
+          <TableHeader field="activity" label="Activity" />
+          <TableHeader field="realizedPnL" label="Realized P&L" />
+        </div>
+        {tableData.map((data) => (
+          <TableRow key={data.id} data={data} showMasked={showMasked} />
+        ))}
+      </div>
     </div>
   );
 };

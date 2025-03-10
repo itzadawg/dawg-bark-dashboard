@@ -1,8 +1,10 @@
-import React from 'react';
+
+import React, { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { TrophyIcon, TrendingUpIcon, AlertTriangleIcon } from 'lucide-react';
+
 type TweetPoints = {
   id: string;
   twitter_username: string;
@@ -11,30 +13,62 @@ type TweetPoints = {
   created_at: string;
   updated_at: string;
 };
+
 const LeaderboardTable = () => {
   const fetchLeaderboard = async () => {
     const {
       data,
       error
-    } = await supabase.functions.invoke('fetch-tweets?action=leaderboard', {
+    } = await supabase.functions.invoke('fetch-tweets', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json'
+      },
+      params: {
+        action: 'leaderboard'
       }
     });
+    
     if (error) throw new Error(error.message);
     return data.leaderboard as TweetPoints[];
   };
+
   const {
     data: leaderboard,
     isLoading,
     isError,
-    error
+    error,
+    refetch
   } = useQuery({
     queryKey: ['leaderboard'],
     queryFn: fetchLeaderboard,
     refetchInterval: 60000 // Refresh every minute
   });
+
+  // Set up a real-time listener for tweet_points table updates
+  useEffect(() => {
+    const channel = supabase
+      .channel('tweet_points_changes')
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // Listen for all events (INSERT, UPDATE, DELETE)
+          schema: 'public',
+          table: 'tweet_points'
+        },
+        () => {
+          console.log('Tweet points changed, refreshing leaderboard');
+          refetch(); // Refresh the data when the tweet_points table changes
+        }
+      )
+      .subscribe();
+      
+    // Cleanup subscription when component unmounts
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [refetch]);
+
   if (isLoading) {
     return <div className="p-8 flex justify-center">
         <div className="animate-pulse flex space-x-4">
@@ -49,6 +83,7 @@ const LeaderboardTable = () => {
         </div>
       </div>;
   }
+
   if (isError) {
     return <div className="p-8 flex flex-col items-center text-red-500">
         <AlertTriangleIcon className="h-12 w-12 mb-2" />
@@ -56,9 +91,9 @@ const LeaderboardTable = () => {
         <p>{error?.message || 'Unknown error occurred'}</p>
       </div>;
   }
+
   return <div className="w-full overflow-hidden rounded-lg border bg-background shadow">
       <div className="p-4 flex items-center border-b">
-        
         <h3 className="text-lg font-semibold">Dawg Tweet Leaderboard</h3>
       </div>
       
@@ -93,4 +128,5 @@ const LeaderboardTable = () => {
       </Table>
     </div>;
 };
+
 export default LeaderboardTable;
