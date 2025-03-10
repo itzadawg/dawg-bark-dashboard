@@ -23,14 +23,12 @@ const Presale = () => {
             </div>
           </div>
           <div className="w-full md:w-1/2 space-y-6">
-            <div className="neo-brutal-border p-6 bg-transparent">
-              <div className="flex justify-center">
-                <img 
-                  src="/lovable-uploads/718d6294-9f6e-450a-a348-8e6978c36b54.png" 
-                  alt="DAWG mascot" 
-                  className="w-64 h-auto"
-                />
-              </div>
+            <div className="p-2 neo-brutal-border bg-transparent flex justify-center items-center">
+              <img 
+                src="/lovable-uploads/718d6294-9f6e-450a-a348-8e6978c36b54.png" 
+                alt="DAWG mascot" 
+                className="w-64 h-auto"
+              />
             </div>
             <Button className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2">
               <ShoppingCart className="h-5 w-5" />
