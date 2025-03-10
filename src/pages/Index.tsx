@@ -8,6 +8,7 @@ import FumblersSection from '../components/dashboard/FumblersSection';
 import RevealedSection from '../components/dashboard/RevealedSection';
 import SearchBar from '../components/dashboard/SearchBar';
 import HoldersTable from '../components/dashboard/HoldersTable';
+import LeaderboardTable from '../components/LeaderboardTable';
 
 const Index = () => {
   return (
@@ -26,8 +27,8 @@ const Index = () => {
             <HoldersTable />
           </div>
 
-          <div className="col-span-6 lg:col-span-2 flex justify-center lg:justify-end">
-            {/* Sidebar content, if any */}
+          <div className="col-span-6 lg:col-span-2 space-y-6">
+            <LeaderboardTable />
           </div>
         </div>
       </div>

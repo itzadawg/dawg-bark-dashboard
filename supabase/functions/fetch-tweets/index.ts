@@ -1,12 +1,15 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createHmac } from "node:crypto";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.23.0";
 
 const API_KEY = Deno.env.get("TWITTER_CONSUMER_KEY")?.trim();
 const API_SECRET = Deno.env.get("TWITTER_CONSUMER_SECRET")?.trim();
 const ACCESS_TOKEN = Deno.env.get("TWITTER_ACCESS_TOKEN")?.trim();
 const ACCESS_TOKEN_SECRET = Deno.env.get("TWITTER_ACCESS_TOKEN_SECRET")?.trim();
+const SUPABASE_URL = Deno.env.get("SUPABASE_URL")?.trim();
+const SUPABASE_ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY")?.trim();
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")?.trim();
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -26,7 +29,29 @@ function validateEnvironmentVariables() {
   if (!ACCESS_TOKEN_SECRET) {
     throw new Error("Missing TWITTER_ACCESS_TOKEN_SECRET environment variable");
   }
+  if (!SUPABASE_URL) {
+    throw new Error("Missing SUPABASE_URL environment variable");
+  }
+  if (!SUPABASE_ANON_KEY) {
+    throw new Error("Missing SUPABASE_ANON_KEY environment variable");
+  }
+  if (!SUPABASE_SERVICE_ROLE_KEY) {
+    throw new Error("Missing SUPABASE_SERVICE_ROLE_KEY environment variable");
+  }
 }
+
+// Initialize Supabase client with service role key for database operations
+const initSupabaseClient = () => {
+  return createClient(
+    SUPABASE_URL!,
+    SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        persistSession: false,
+      }
+    }
+  );
+};
 
 function generateOAuthSignature(
   method: string,
@@ -89,9 +114,15 @@ function generateOAuthHeader(method: string, url: string, params: Record<string,
   );
 }
 
-async function searchTweets(query: string) {
+async function searchTweets(query: string, since_id?: string) {
   const baseUrl = "https://api.twitter.com/2/tweets/search/recent";
-  const url = `${baseUrl}?query=${encodeURIComponent(query)}&tweet.fields=created_at,public_metrics&expansions=author_id&user.fields=name,username,profile_image_url`;
+  let url = `${baseUrl}?query=${encodeURIComponent(query)}&tweet.fields=created_at,public_metrics&expansions=author_id&user.fields=name,username,profile_image_url`;
+  
+  // Add since_id parameter if provided to only get tweets newer than the last processed tweet
+  if (since_id) {
+    url += `&since_id=${since_id}`;
+  }
+  
   const method = "GET";
 
   const oauthHeader = generateOAuthHeader(method, baseUrl);
@@ -114,6 +145,116 @@ async function searchTweets(query: string) {
   return response.json();
 }
 
+// Calculate points for a tweet based on engagement
+function calculateTweetPoints(tweet: any): number {
+  const { public_metrics } = tweet;
+  
+  if (!public_metrics) return 1; // Base points if no metrics
+  
+  // Points formula: 1 base point + engagement bonuses
+  let points = 1; // Base point for tweeting
+  
+  // Add points for engagement
+  points += (public_metrics.retweet_count || 0) * 3;  // 3 points per retweet
+  points += (public_metrics.reply_count || 0) * 2;    // 2 points per reply
+  points += (public_metrics.like_count || 0);         // 1 point per like
+  points += (public_metrics.quote_count || 0) * 2;    // 2 points per quote
+  
+  return points;
+}
+
+// Process tweets and update points in the database
+async function processTweets(tweets: any) {
+  if (!tweets?.data || tweets.data.length === 0) {
+    console.log("No tweets to process");
+    return { processedCount: 0, newPoints: 0, lastTweetId: null };
+  }
+  
+  const supabase = initSupabaseClient();
+  let totalNewPoints = 0;
+  let processedCount = 0;
+  let lastTweetId = null;
+  
+  // Get the newest tweet ID to store for future pagination
+  const sortedTweets = [...tweets.data].sort((a, b) => 
+    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+  
+  if (sortedTweets.length > 0) {
+    lastTweetId = sortedTweets[0].id;
+  }
+  
+  // Create user map for easier author lookup
+  const userMap = new Map();
+  if (tweets.includes?.users) {
+    tweets.includes.users.forEach((user: any) => {
+      userMap.set(user.id, user);
+    });
+  }
+  
+  // Process each tweet
+  for (const tweet of tweets.data) {
+    const tweetId = tweet.id;
+    
+    // Check if tweet was already processed
+    const { data: existingTweet } = await supabase
+      .from('processed_tweets')
+      .select('*')
+      .eq('tweet_id', tweetId)
+      .maybeSingle();
+      
+    if (existingTweet) {
+      console.log(`Tweet ${tweetId} already processed, skipping`);
+      continue;
+    }
+    
+    // Get author information
+    const author = userMap.get(tweet.author_id);
+    if (!author) {
+      console.log(`No author information for tweet ${tweetId}, skipping`);
+      continue;
+    }
+    
+    const twitterUsername = author.username;
+    const points = calculateTweetPoints(tweet);
+    totalNewPoints += points;
+    
+    // Transaction to update both tables atomically
+    const { error } = await supabase.rpc('update_tweet_points', {
+      p_tweet_id: tweetId,
+      p_twitter_username: twitterUsername,
+      p_points: points,
+      p_last_tweet_id: lastTweetId
+    });
+    
+    if (error) {
+      console.error(`Error processing tweet ${tweetId}:`, error);
+      continue;
+    }
+    
+    processedCount++;
+  }
+  
+  return { processedCount, newPoints: totalNewPoints, lastTweetId };
+}
+
+async function getLeaderboard() {
+  const supabase = initSupabaseClient();
+  
+  const { data, error } = await supabase
+    .from('tweet_points')
+    .select('*')
+    .order('points', { ascending: false })
+    .limit(20);
+    
+  if (error) {
+    console.error("Error fetching leaderboard:", error);
+    throw new Error(`Error fetching leaderboard: ${error.message}`);
+  }
+  
+  return data;
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -122,15 +263,52 @@ serve(async (req) => {
 
   try {
     validateEnvironmentVariables();
-
-    // Search for tweets containing $Dawg OR @itzadawg
-    const searchResults = await searchTweets('($Dawg OR @itzadawg) -is:retweet');
     
-    console.log("Search results:", JSON.stringify(searchResults, null, 2));
-
-    return new Response(JSON.stringify(searchResults), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    // Parse request parameters
+    const url = new URL(req.url);
+    const action = url.searchParams.get('action') || 'fetch';
+    
+    // Handle different actions
+    if (action === 'leaderboard') {
+      // Return the current leaderboard
+      const leaderboard = await getLeaderboard();
+      return new Response(JSON.stringify({ leaderboard }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    } else {
+      // Default action: fetch and process tweets
+      const supabase = initSupabaseClient();
+      
+      // Get the latest tweet ID to use as since_id
+      const { data: latestEntry } = await supabase
+        .from('tweet_points')
+        .select('last_tweet_id')
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      
+      const latestTweetId = latestEntry?.last_tweet_id;
+      console.log(`Using last_tweet_id: ${latestTweetId || 'none'}`);
+      
+      // Search for tweets containing $Dawg OR @itzadawg
+      const searchResults = await searchTweets('($Dawg OR @itzadawg) -is:retweet', latestTweetId);
+      
+      // Process the tweets and update points
+      const processingResults = await processTweets(searchResults);
+      
+      // Get updated leaderboard
+      const leaderboard = await getLeaderboard();
+      
+      const response = {
+        tweets: searchResults,
+        processing: processingResults,
+        leaderboard
+      };
+      
+      return new Response(JSON.stringify(response), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
   } catch (error: any) {
     console.error("Error in fetch-tweets function:", error);
     return new Response(
