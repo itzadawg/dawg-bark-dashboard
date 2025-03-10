@@ -1,16 +1,8 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { TrophyIcon, TrendingUpIcon, AlertTriangleIcon } from 'lucide-react';
-
 type TweetPoints = {
   id: string;
   twitter_username: string;
@@ -19,34 +11,32 @@ type TweetPoints = {
   created_at: string;
   updated_at: string;
 };
-
 const LeaderboardTable = () => {
   const fetchLeaderboard = async () => {
-    const { data, error } = await supabase.functions.invoke('fetch-tweets?action=leaderboard', {
+    const {
+      data,
+      error
+    } = await supabase.functions.invoke('fetch-tweets?action=leaderboard', {
       method: 'GET',
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       }
     });
-    
     if (error) throw new Error(error.message);
     return data.leaderboard as TweetPoints[];
   };
-
-  const { 
-    data: leaderboard, 
-    isLoading, 
+  const {
+    data: leaderboard,
+    isLoading,
     isError,
     error
   } = useQuery({
     queryKey: ['leaderboard'],
     queryFn: fetchLeaderboard,
-    refetchInterval: 60000, // Refresh every minute
+    refetchInterval: 60000 // Refresh every minute
   });
-
   if (isLoading) {
-    return (
-      <div className="p-8 flex justify-center">
+    return <div className="p-8 flex justify-center">
         <div className="animate-pulse flex space-x-4">
           <div className="h-12 w-12 bg-gray-300 rounded-full"></div>
           <div className="flex-1 space-y-4 py-1">
@@ -57,25 +47,19 @@ const LeaderboardTable = () => {
             </div>
           </div>
         </div>
-      </div>
-    );
+      </div>;
   }
-
   if (isError) {
-    return (
-      <div className="p-8 flex flex-col items-center text-red-500">
+    return <div className="p-8 flex flex-col items-center text-red-500">
         <AlertTriangleIcon className="h-12 w-12 mb-2" />
         <h3 className="text-lg font-semibold">Error loading leaderboard</h3>
         <p>{error?.message || 'Unknown error occurred'}</p>
-      </div>
-    );
+      </div>;
   }
-
-  return (
-    <div className="w-full overflow-hidden rounded-lg border bg-background shadow">
+  return <div className="w-full overflow-hidden rounded-lg border bg-background shadow">
       <div className="p-4 flex items-center border-b">
-        <TrophyIcon className="mr-2 h-5 w-5 text-yellow-500" />
-        <h3 className="text-lg font-semibold">$DAWG Tweet Leaderboard</h3>
+        
+        <h3 className="text-lg font-semibold">Dawg Tweet Leaderboard</h3>
       </div>
       
       <Table>
@@ -88,27 +72,12 @@ const LeaderboardTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {leaderboard && leaderboard.length > 0 ? (
-            leaderboard.map((entry, index) => (
-              <TableRow key={entry.id}>
+          {leaderboard && leaderboard.length > 0 ? leaderboard.map((entry, index) => <TableRow key={entry.id}>
                 <TableCell className="font-medium">
-                  {index === 0 ? (
-                    <span className="flex items-center justify-center w-6 h-6 bg-yellow-100 text-yellow-800 rounded-full">1</span>
-                  ) : index === 1 ? (
-                    <span className="flex items-center justify-center w-6 h-6 bg-gray-100 text-gray-800 rounded-full">2</span>
-                  ) : index === 2 ? (
-                    <span className="flex items-center justify-center w-6 h-6 bg-amber-100 text-amber-800 rounded-full">3</span>
-                  ) : (
-                    <span className="text-center">{index + 1}</span>
-                  )}
+                  {index === 0 ? <span className="flex items-center justify-center w-6 h-6 bg-yellow-100 text-yellow-800 rounded-full">1</span> : index === 1 ? <span className="flex items-center justify-center w-6 h-6 bg-gray-100 text-gray-800 rounded-full">2</span> : index === 2 ? <span className="flex items-center justify-center w-6 h-6 bg-amber-100 text-amber-800 rounded-full">3</span> : <span className="text-center">{index + 1}</span>}
                 </TableCell>
                 <TableCell>
-                  <a 
-                    href={`https://twitter.com/${entry.twitter_username}`} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
-                  >
+                  <a href={`https://twitter.com/${entry.twitter_username}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                     @{entry.twitter_username}
                   </a>
                 </TableCell>
@@ -117,19 +86,13 @@ const LeaderboardTable = () => {
                   {entry.points}
                   <TrendingUpIcon className="ml-1 h-4 w-4 text-green-500" />
                 </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
+              </TableRow>) : <TableRow>
               <TableCell colSpan={4} className="text-center py-6 text-muted-foreground">
                 No tweet activity yet. Be the first to tweet about $DAWG!
               </TableCell>
-            </TableRow>
-          )}
+            </TableRow>}
         </TableBody>
       </Table>
-    </div>
-  );
+    </div>;
 };
-
 export default LeaderboardTable;
