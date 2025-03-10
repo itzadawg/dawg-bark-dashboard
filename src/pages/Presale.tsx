@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Twitter } from 'lucide-react';
@@ -14,20 +14,46 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const Presale = () => {
   const navigate = useNavigate();
+  const [isRedirecting, setIsRedirecting] = useState(false);
+  
+  // Check for auth errors in URL params
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const errorParam = url.searchParams.get('error');
+    const errorDescription = url.searchParams.get('error_description');
+    
+    if (errorParam) {
+      toast.error(`Authentication error: ${errorDescription || errorParam}`);
+      // Clean up the URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
 
   const handleConnectX = async () => {
     try {
+      setIsRedirecting(true);
+      
+      // Configure the redirect URL based on environment
+      const redirectUrl = window.location.hostname === 'localhost' 
+        ? `${window.location.origin}/presale-application`
+        : 'https://itzadawg.com/presale-application';
+      
+      console.log('Redirecting to:', redirectUrl);
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
         options: {
-          redirectTo: 'https://itzadawg.com/presale-application',
+          redirectTo: redirectUrl,
         },
       });
 
       if (error) {
+        setIsRedirecting(false);
         toast.error('Failed to connect X account: ' + error.message);
+        console.error('Twitter auth error:', error);
       }
     } catch (error) {
+      setIsRedirecting(false);
       toast.error('An unexpected error occurred');
       console.error('X authentication error:', error);
     }
@@ -60,10 +86,11 @@ const Presale = () => {
             </div>
             <Button 
               onClick={handleConnectX}
+              disabled={isRedirecting}
               className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2"
             >
               <Twitter className="h-5 w-5" />
-              Connect your X account
+              {isRedirecting ? 'Connecting...' : 'Connect your X account'}
             </Button>
           </div>
         </div>
@@ -76,9 +103,10 @@ const Presale = () => {
           </p>
           <Button 
             onClick={handleConnectX}
+            disabled={isRedirecting}
             className="py-6 px-8 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2 mx-auto"
           >
-            Connect with X <ArrowRight className="h-5 w-5" />
+            {isRedirecting ? 'Connecting...' : 'Connect with X'} <ArrowRight className="h-5 w-5" />
           </Button>
         </div>
       </div>
