@@ -16,11 +16,12 @@ import { Badge } from '@/components/ui/badge';
 
 interface Application {
   id: string;
-  email: string;
-  telegram: string;
+  wallet_address: string;
   twitter_username: string | null;
   amount: number;
   reason: string;
+  contribution: string;
+  size: string;
   status: string;
   created_at: string;
 }
@@ -69,6 +70,12 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
     }
   };
 
+  // Format wallet address to show beginning and end with ellipsis in the middle
+  const formatWalletAddress = (address) => {
+    if (!address || address.length < 10) return address;
+    return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
+  };
+
   return (
     <div className="w-full overflow-auto">
       <Table>
@@ -76,9 +83,9 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
           <TableRow>
             <TableHead>Date</TableHead>
             <TableHead>Twitter</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Telegram</TableHead>
-            <TableHead>Amount ($)</TableHead>
+            <TableHead>Size</TableHead>
+            <TableHead>Amount (AVAX)</TableHead>
+            <TableHead>Wallet</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
@@ -111,9 +118,9 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                     '-'
                   )}
                 </TableCell>
-                <TableCell>{app.email}</TableCell>
-                <TableCell>{app.telegram}</TableCell>
-                <TableCell>${app.amount}</TableCell>
+                <TableCell>{app.size}</TableCell>
+                <TableCell>{app.amount}</TableCell>
+                <TableCell className="font-mono text-xs">{formatWalletAddress(app.wallet_address)}</TableCell>
                 <TableCell>{getStatusBadge(app.status)}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">

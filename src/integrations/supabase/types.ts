@@ -12,39 +12,42 @@ export type Database = {
       presale_applications: {
         Row: {
           amount: number
+          contribution: string
           created_at: string | null
-          email: string
           id: string
           reason: string
+          size: string
           status: string | null
-          telegram: string
           twitter_username: string | null
           updated_at: string | null
           user_id: string
+          wallet_address: string
         }
         Insert: {
           amount: number
+          contribution?: string
           created_at?: string | null
-          email: string
           id?: string
           reason: string
+          size?: string
           status?: string | null
-          telegram: string
           twitter_username?: string | null
           updated_at?: string | null
           user_id: string
+          wallet_address?: string
         }
         Update: {
           amount?: number
+          contribution?: string
           created_at?: string | null
-          email?: string
           id?: string
           reason?: string
+          size?: string
           status?: string | null
-          telegram?: string
           twitter_username?: string | null
           updated_at?: string | null
           user_id?: string
+          wallet_address?: string
         }
         Relationships: []
       }
