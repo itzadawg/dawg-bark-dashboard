@@ -17,19 +17,22 @@ export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
 
   const handleTwitterSignIn = async () => {
     try {
-      // Get the absolute URL for redirect
-      const currentUrl = window.location.href.split('?')[0]; // Remove any query params
+      // Get the current URL for redirect without query parameters
+      const redirectUrl = window.location.origin + window.location.pathname;
+      console.log('Redirect URL for Twitter auth:', redirectUrl);
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
         options: {
-          redirectTo: currentUrl,
+          redirectTo: redirectUrl,
         },
       });
 
       if (error) {
         toast.error('Failed to connect with Twitter: ' + error.message);
         console.error('Twitter auth error:', error);
+      } else {
+        console.log('Twitter auth initiated:', data);
       }
     } catch (error) {
       toast.error('An unexpected error occurred');
@@ -43,7 +46,9 @@ export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
     // If we're done loading and the user is not an admin, show a toast message
     if (!isLoading && !isAdmin) {
       toast.error('Admin access required');
-      setTimeout(() => navigate('/', { replace: true }), 2000);
+      // Use a short delay before redirecting
+      const redirectTimer = setTimeout(() => navigate('/', { replace: true }), 2000);
+      return () => clearTimeout(redirectTimer);
     }
   }, [isAdmin, isLoading, navigate]);
 

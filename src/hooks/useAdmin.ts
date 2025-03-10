@@ -28,13 +28,14 @@ export const useAdmin = () => {
         // If no session exists, set loading to false and return early
         if (!sessionData.session) {
           console.log('No active session found');
-          toast.error('Please sign in to access admin features');
           setIsLoading(false);
           return;
         }
         
         const currentUserId = sessionData.session.user.id;
         const userEmail = sessionData.session.user.email;
+        
+        // Log detailed user information for debugging
         console.log('Current user ID:', currentUserId);
         console.log('User email:', userEmail);
         console.log('Auth provider:', sessionData.session.user.app_metadata.provider);
@@ -60,8 +61,6 @@ export const useAdmin = () => {
           
           if (adminStatus) {
             toast.success('Admin access granted');
-          } else {
-            toast.error('You do not have admin access');
           }
           
           setIsAdmin(adminStatus);
@@ -85,6 +84,7 @@ export const useAdmin = () => {
       } else if (event === 'SIGNED_OUT') {
         setIsAdmin(false);
         setUserId(null);
+        setUserEmail(null);
       }
     });
     
