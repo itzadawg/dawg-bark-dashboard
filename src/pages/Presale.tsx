@@ -16,21 +16,8 @@ const Presale = () => {
   const navigate = useNavigate();
 
   const handleConnectX = async () => {
-    try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
-        provider: 'twitter',
-        options: {
-          redirectTo: window.location.origin + '/presale-application',
-        },
-      });
-
-      if (error) {
-        toast.error('Failed to connect X account: ' + error.message);
-      }
-    } catch (error) {
-      toast.error('An unexpected error occurred');
-      console.error('X authentication error:', error);
-    }
+    // Navigate to the application form page
+    navigate('/presale-application');
   };
 
   return <>
@@ -62,8 +49,7 @@ const Presale = () => {
               onClick={handleConnectX}
               className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2"
             >
-              <Twitter className="h-5 w-5" />
-              Connect your X account
+              Apply for Presale
             </Button>
           </div>
         </div>
@@ -78,7 +64,7 @@ const Presale = () => {
             onClick={handleConnectX}
             className="py-6 px-8 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2 mx-auto"
           >
-            Connect with X <ArrowRight className="h-5 w-5" />
+            Apply Now <ArrowRight className="h-5 w-5" />
           </Button>
         </div>
       </div>

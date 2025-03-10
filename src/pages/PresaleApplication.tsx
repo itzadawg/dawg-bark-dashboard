@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
@@ -15,32 +15,13 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const PresaleApplication = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     telegram: '',
     amount: '',
     reason: ''
   });
-
-  useEffect(() => {
-    // Check if user is authenticated
-    const checkUser = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      
-      if (error || !data.session) {
-        toast.error('Please connect your X account first');
-        navigate('/presale');
-        return;
-      }
-      
-      setUser(data.session.user);
-      setLoading(false);
-    };
-    
-    checkUser();
-  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -50,50 +31,31 @@ const PresaleApplication = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!user) {
-      toast.error('User not authenticated');
-      return;
-    }
+    setLoading(true);
     
     try {
-      setLoading(true);
-      
-      // Save application to Supabase
-      const { error } = await supabase
-        .from('presale_applications')
-        .insert([
-          { 
-            user_id: user.id,
-            x_username: user.user_metadata?.preferred_username || 'unknown',
-            profile_image: user.user_metadata?.avatar_url,
-            email: formData.email,
-            telegram: formData.telegram,
-            amount: formData.amount,
-            reason: formData.reason
+      // Connect with Twitter after form submission
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'twitter',
+        options: {
+          redirectTo: window.location.origin + '/presale',
+          queryParams: {
+            // Store the form data in the session storage to retrieve after auth
+            formData: JSON.stringify(formData)
           }
-        ]);
-      
-      if (error) throw error;
-      
-      toast.success('Application submitted successfully!');
-      navigate('/presale');
+        },
+      });
+
+      if (error) {
+        toast.error('Failed to connect X account: ' + error.message);
+        setLoading(false);
+      }
     } catch (error) {
-      toast.error('Error submitting application: ' + error.message);
-    } finally {
+      toast.error('An unexpected error occurred');
+      console.error('X authentication error:', error);
       setLoading(false);
     }
   };
-
-  if (loading) {
-    return (
-      <>
-        <Header />
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-pulse">Loading...</div>
-        </div>
-      </>
-    );
-  }
 
   return (
     <>
@@ -105,17 +67,6 @@ const PresaleApplication = () => {
             Complete your details to participate in the DAWG presale
           </p>
         </div>
-        
-        {user && (
-          <div className="mb-8 flex items-center justify-center flex-col">
-            <img 
-              src={user.user_metadata?.avatar_url} 
-              alt="Profile" 
-              className="w-16 h-16 rounded-full neo-brutal-border"
-            />
-            <p className="mt-2 font-medium">@{user.user_metadata?.preferred_username}</p>
-          </div>
-        )}
         
         <form onSubmit={handleSubmit} className="space-y-6 neo-brutal-border p-6">
           <div>
@@ -175,9 +126,10 @@ const PresaleApplication = () => {
           <Button 
             type="submit"
             disabled={loading}
-            className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary"
+            className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2"
           >
-            {loading ? 'Submitting...' : 'Submit Application'}
+            {loading ? 'Connecting...' : 'Connect with X to Submit Application'}
+            <Twitter className="h-5 w-5" />
           </Button>
         </form>
       </div>
