@@ -1,3 +1,4 @@
+
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createHmac } from "node:crypto";
@@ -264,9 +265,28 @@ serve(async (req) => {
   try {
     validateEnvironmentVariables();
     
-    // Parse URL to get query parameters
-    const url = new URL(req.url);
-    const action = url.searchParams.get('action') || 'fetch';
+    // Check if body contains action parameter
+    let action = 'fetch';
+    
+    // Try to parse the request body for the action
+    if (req.body) {
+      try {
+        const body = await req.json();
+        if (body && body.action) {
+          action = body.action;
+        }
+      } catch (e) {
+        console.log("No valid JSON body or no action specified");
+      }
+    }
+    
+    // If no action in body, check URL params
+    if (action === 'fetch') {
+      const url = new URL(req.url);
+      action = url.searchParams.get('action') || 'fetch';
+    }
+
+    console.log(`Processing action: ${action}`);
     
     // Handle different actions
     if (action === 'leaderboard') {

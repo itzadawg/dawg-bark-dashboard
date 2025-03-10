@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { TrophyIcon, TrendingUpIcon, AlertTriangleIcon } from 'lucide-react';
+import { toast } from 'sonner';
 
 type TweetPoints = {
   id: string;
@@ -24,9 +25,7 @@ const LeaderboardTable = () => {
       headers: {
         'Content-Type': 'application/json'
       },
-      params: {
-        action: 'leaderboard'
-      }
+      body: { action: 'leaderboard' }
     });
     
     if (error) throw new Error(error.message);
@@ -56,13 +55,16 @@ const LeaderboardTable = () => {
           schema: 'public',
           table: 'tweet_points'
         },
-        () => {
-          console.log('Tweet points changed, refreshing leaderboard');
+        (payload) => {
+          console.log('Tweet points changed:', payload);
+          toast.info('Leaderboard updated with new activity!');
           refetch(); // Refresh the data when the tweet_points table changes
         }
       )
       .subscribe();
       
+    console.log('Real-time listener set up for tweet_points table');
+    
     // Cleanup subscription when component unmounts
     return () => {
       supabase.removeChannel(channel);

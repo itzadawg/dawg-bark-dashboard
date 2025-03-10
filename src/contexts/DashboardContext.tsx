@@ -1,6 +1,6 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
+export type ActivityLevel = 'none' | 'low' | 'medium' | 'high';
 type SortField = 'initial' | 'current' | 'balanceChange' | 'realizedPnL' | null;
 type SortDirection = 'asc' | 'desc' | null;
 
@@ -22,6 +22,39 @@ interface DashboardContextType {
   handleSort: (field: SortField) => void;
   handleToggleFumblers: () => void;
   handleToggleRevealed: () => void;
+}
+
+export interface TableDataItem {
+  id: number;
+  name: string;
+  username: string;
+  address: string;
+  initial: string;
+  current: string;
+  balanceChange: string;
+  activity: ActivityLevel;
+  realizedPnL: string;
+  avatar: string;
+  emoji?: string;
+}
+
+export interface DashboardData {
+  fumblers: Array<{
+    id: number;
+    name: string;
+    amount: string;
+    avatar: string;
+  }>;
+  revealed: Array<{
+    id: number;
+    name: string;
+    balance: string;
+    percent: string;
+    time: string;
+    avatar: string;
+    emoji?: string;
+  }>;
+  tableData: TableDataItem[];
 }
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
@@ -133,7 +166,7 @@ export const useDashboard = () => {
 };
 
 // Mock data to be replaced with actual API calls later
-export const getDashboardData = () => {
+export const getDashboardData = (): DashboardData => {
   const fumblers = [{
     id: 1,
     name: '',
