@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -104,13 +105,15 @@ const PresaleApplication = () => {
     
     checkUser();
     
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+    // Fix: Make the callback async since it contains await
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       debugAuthFlow('Auth state changed', { event, userId: session?.user?.id });
       
       if (event === 'SIGNED_IN' && session) {
         setIsAuthenticated(true);
         setUserInfo(session.user);
         
+        // Now this await is allowed since we made the callback async
         await checkExistingApplication(session.user.id);
         
         toast.success('Successfully connected with X');
