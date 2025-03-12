@@ -23,28 +23,28 @@ const RevealedCard: React.FC<RevealedCardProps> = ({
   const isNegative = percentValue < 0;
   
   return (
-    <div className="neo-brutal-box bg-dawg-light animate-fade-in hover:bg-dawg-secondary relative p-4">
-      <div className="flex items-center gap-3">
+    <div className="neo-brutal-box bg-dawg-light animate-fade-in hover:bg-dawg-secondary relative p-3 sm:p-4">
+      <div className="flex items-center gap-2 sm:gap-3">
         <div 
-          className="w-12 h-12 rounded-full neo-brutal-border bg-transparent flex items-center justify-center"
+          className="w-10 h-10 sm:w-12 sm:h-12 rounded-full neo-brutal-border bg-transparent flex items-center justify-center"
         />
         <div className="flex-1">
           <div className="flex items-center gap-1">
-            <p className="font-bold">{name}</p>
-            {emoji && <span>{emoji}</span>}
+            <p className="font-bold text-sm sm:text-base">{name}</p>
+            {emoji && <span className="text-sm sm:text-base">{emoji}</span>}
           </div>
-          <div className="flex gap-6">
-            <p className="text-sm">Balance: <span className="font-mono">{balance}</span></p>
-            <p className={`text-sm ${isNegative ? 'percent-negative' : 'percent-positive'}`}>
+          <div className="flex flex-col sm:flex-row sm:gap-6">
+            <p className="text-xs sm:text-sm">Balance: <span className="font-mono">{balance}</span></p>
+            <p className={`text-xs sm:text-sm ${isNegative ? 'percent-negative' : 'percent-positive'}`}>
               {percent}
             </p>
           </div>
         </div>
         <button className="absolute top-2 right-2 p-1 hover:bg-dawg-secondary transition-colors rounded-full">
-          <X size={18} />
+          <X size={16} className="sm:w-[18px] sm:h-[18px]" />
         </button>
       </div>
-      <p className="text-xs mt-2 text-dawg-dark/70">Revealed: {time}</p>
+      <p className="text-[10px] sm:text-xs mt-2 text-dawg-dark/70">Revealed: {time}</p>
     </div>
   );
 };

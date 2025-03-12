@@ -13,22 +13,16 @@ const Index = () => {
   return (
     <DashboardProvider>
       <Header />
-      <div className="min-h-screen bg-dawg-light px-8 py-8 max-w-7xl mx-auto">
-        <div className="grid grid-cols-6 gap-8">
-          <div className="col-span-6 lg:col-span-4 space-y-10 animate-slide-in">
-            <IntroSection />
-            <StatsCards />
-            <FumblersSection />
-            <RevealedSection />
-            <div className="mb-4">
-              <SearchBar />
-            </div>
-            <HoldersTable />
+      <div className="min-h-screen bg-dawg-light px-4 sm:px-6 lg:px-8 py-4 sm:py-8 max-w-7xl mx-auto">
+        <div className="space-y-6 sm:space-y-10 animate-slide-in">
+          <IntroSection />
+          <StatsCards />
+          <FumblersSection />
+          <RevealedSection />
+          <div className="mb-4">
+            <SearchBar />
           </div>
-
-          <div className="col-span-6 lg:col-span-2 flex justify-center lg:justify-end">
-            {/* Sidebar content, if any */}
-          </div>
+          <HoldersTable />
         </div>
       </div>
     </DashboardProvider>

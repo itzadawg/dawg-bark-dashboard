@@ -11,7 +11,7 @@ interface TableRowProps {
   initial: string;
   current: string;
   balanceChange: string;
-  activity: string; // Changed from 'low' | 'medium' | 'high' | 'none' to string
+  activity: string;
   realizedPnL: string;
   avatar: string;
   emoji?: string;
@@ -35,7 +35,7 @@ const TableRow: React.FC<TableRowProps> = ({
   const isNegative = percentValue < 0;
   
   const getActivityBar = () => {
-    const baseClasses = "w-24 h-2 bg-dawg-dark";
+    const baseClasses = "w-16 sm:w-24 h-2 bg-dawg-dark";
     const barClasses = "h-full bg-dawg-accent";
     
     let widthClass = "w-0";
@@ -56,47 +56,47 @@ const TableRow: React.FC<TableRowProps> = ({
   
   return (
     <tr className="border-b-2 border-black hover:bg-dawg-secondary transition-colors">
-      <td className="py-4 px-2 w-[20%]">
-        <div className="flex items-center gap-2">
-          <div className="w-10 h-10 rounded-full neo-brutal-border bg-transparent flex items-center justify-center overflow-hidden">
+      <td className="py-2 sm:py-4 px-1 sm:px-2 w-[20%]">
+        <div className="flex items-center gap-1 sm:gap-2">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full neo-brutal-border bg-transparent flex items-center justify-center overflow-hidden">
             {avatar && (
               <img src={avatar} alt="Avatar" className="w-full h-full rounded-full object-cover" />
             )}
           </div>
           <div>
             <div className="flex items-center gap-1">
-              <p className="font-bold">{name}</p>
-              {emoji && <span>{emoji}</span>}
+              <p className="font-bold text-xs sm:text-base">{name}</p>
+              {emoji && <span className="text-xs sm:text-base">{emoji}</span>}
             </div>
-            <p className="text-xs text-dawg-dark/70">{username}</p>
+            <p className="text-[10px] sm:text-xs text-dawg-dark/70">{username}</p>
           </div>
         </div>
       </td>
-      <td className="py-4 px-2 font-mono text-xs w-[15%]">
+      <td className="py-2 sm:py-4 px-1 sm:px-2 font-mono text-[10px] sm:text-xs hidden sm:table-cell w-[15%]">
         <div className="flex items-center">
           <span className="truncate">{address}</span>
         </div>
       </td>
-      <td className="py-4 px-2 font-mono w-[13%]">{initial}</td>
-      <td className="py-4 px-2 font-mono w-[13%]">{current}</td>
-      <td className={`py-4 px-2 font-mono w-[13%] ${isNegative ? 'text-red-500' : 'text-green-500'}`}>
+      <td className="py-2 sm:py-4 px-1 sm:px-2 font-mono text-[10px] sm:text-xs w-[13%]">{initial}</td>
+      <td className="py-2 sm:py-4 px-1 sm:px-2 font-mono text-[10px] sm:text-xs w-[13%]">{current}</td>
+      <td className={`py-2 sm:py-4 px-1 sm:px-2 font-mono text-[10px] sm:text-xs w-[13%] ${isNegative ? 'text-red-500' : 'text-green-500'}`}>
         {balanceChange}
       </td>
-      <td className="py-4 px-2 w-[11%]">{getActivityBar()}</td>
-      <td className="py-4 px-2 font-mono w-[15%] flex items-center gap-2">
+      <td className="py-2 sm:py-4 px-1 sm:px-2 w-[11%]">{getActivityBar()}</td>
+      <td className="py-2 sm:py-4 px-1 sm:px-2 font-mono text-[10px] sm:text-xs w-[15%] flex items-center gap-1 sm:gap-2">
         <span>{realizedPnL}</span>
         <Dialog>
           <DialogTrigger asChild>
             <Button 
               variant="ghost" 
               size="icon" 
-              className="p-1 h-6 w-6" 
+              className="p-1 h-5 w-5 sm:h-6 sm:w-6" 
               onClick={(e) => {
                 e.stopPropagation();
                 if (onViewDetails) onViewDetails();
               }}
             >
-              <Info size={14} />
+              <Info size={12} className="sm:w-[14px] sm:h-[14px]" />
             </Button>
           </DialogTrigger>
         </Dialog>
