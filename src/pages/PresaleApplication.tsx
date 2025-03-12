@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -8,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Copy, Check } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 
@@ -32,6 +31,7 @@ const PresaleApplication = () => {
     size: 'Dawg' as InvestmentSize,
     walletAddress: ''
   });
+  const [copied, setCopied] = useState(false);
 
   const debugAuthFlow = (message, data = null) => {
     console.log(`[Auth Debug] ${message}`, data || '');
@@ -61,6 +61,17 @@ const PresaleApplication = () => {
     } finally {
       setCheckingApplication(false);
     }
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      toast.success('Wallet address copied to clipboard');
+      setTimeout(() => setCopied(false), 2000);
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+      toast.error('Failed to copy address');
+    });
   };
 
   useEffect(() => {
@@ -105,7 +116,6 @@ const PresaleApplication = () => {
     
     checkUser();
     
-    // Fix: Make the callback async since it contains await
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       debugAuthFlow('Auth state changed', { event, userId: session?.user?.id });
       
@@ -113,7 +123,6 @@ const PresaleApplication = () => {
         setIsAuthenticated(true);
         setUserInfo(session.user);
         
-        // Now this await is allowed since we made the callback async
         await checkExistingApplication(session.user.id);
         
         toast.success('Successfully connected with X');
@@ -332,14 +341,36 @@ const PresaleApplication = () => {
               
               <div className="space-y-2">
                 <p className="font-semibold">Wallet address:</p>
-                <p className="font-mono">{formatWalletAddress(existingApplication.wallet_address)}</p>
+                <div 
+                  className="font-mono flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors"
+                  onClick={() => copyToClipboard(existingApplication.wallet_address)}
+                  title="Click to copy full address"
+                >
+                  <span>{formatWalletAddress(existingApplication.wallet_address)}</span>
+                  {copied ? (
+                    <Check className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <Copy className="h-4 w-4 text-gray-400" />
+                  )}
+                </div>
               </div>
               
               {applicationStatus === 'approved' && (
                 <div className="space-y-3 md:col-span-2 mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
                   <h3 className="text-lg font-bold text-green-800">Payment Instructions</h3>
                   <p className="font-medium">Please send <span className="font-bold">{existingApplication.amount} AVAX</span> to this wallet address:</p>
-                  <p className="font-mono text-sm bg-white p-3 rounded border border-green-200 break-all">0x829b054cf1a5A791aEaE52f509A8D0eF93416b63</p>
+                  <div 
+                    className="font-mono text-sm bg-white p-3 rounded border border-green-200 break-all flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-50"
+                    onClick={() => copyToClipboard("0x829b054cf1a5A791aEaE52f509A8D0eF93416b63")}
+                    title="Click to copy"
+                  >
+                    <span>0x829b054cf1a5A791aEaE52f509A8D0eF93416b63</span>
+                    {copied ? (
+                      <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    ) : (
+                      <Copy className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                    )}
+                  </div>
                   <p className="text-sm text-green-700 mt-2">Once your payment is confirmed, your allocation will be secured.</p>
                 </div>
               )}
