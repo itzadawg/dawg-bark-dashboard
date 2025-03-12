@@ -11,7 +11,7 @@ interface TableRowProps {
   initial: string;
   current: string;
   balanceChange: string;
-  activity: 'low' | 'medium' | 'high' | 'none';
+  activity: string; // Changed from 'low' | 'medium' | 'high' | 'none' to string
   realizedPnL: string;
   avatar: string;
   emoji?: string;
