@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -12,10 +11,8 @@ import { Loader2 } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 
-// Define application status type for type safety
 type ApplicationStatus = 'pending' | 'approved' | 'rejected' | null;
 
-// Define the investment size options
 type InvestmentSize = 'Smol Dawg' | 'Dawg' | 'Big Dawg';
 
 const PresaleApplication = () => {
@@ -35,12 +32,10 @@ const PresaleApplication = () => {
     walletAddress: ''
   });
 
-  // Debug function to help troubleshoot
   const debugAuthFlow = (message, data = null) => {
     console.log(`[Auth Debug] ${message}`, data || '');
   };
 
-  // Check if user has an existing application
   const checkExistingApplication = async (userId) => {
     try {
       setCheckingApplication(true);
@@ -50,7 +45,7 @@ const PresaleApplication = () => {
         .eq('user_id', userId)
         .single();
       
-      if (error && error.code !== 'PGRST116') { // PGRST116 is "no rows returned"
+      if (error && error.code !== 'PGRST116') {
         console.error('Error checking application:', error);
         return;
       }
@@ -68,7 +63,6 @@ const PresaleApplication = () => {
   };
 
   useEffect(() => {
-    // Check if we have an error in the URL (from OAuth redirect)
     const queryParams = new URLSearchParams(location.search);
     const error = queryParams.get('error');
     const errorDescription = queryParams.get('error_description');
@@ -98,7 +92,6 @@ const PresaleApplication = () => {
           setIsAuthenticated(true);
           setUserInfo(data.session.user);
           
-          // Check if user already has an application
           await checkExistingApplication(data.session.user.id);
         } else {
           debugAuthFlow('No active session found');
@@ -118,8 +111,7 @@ const PresaleApplication = () => {
         setIsAuthenticated(true);
         setUserInfo(session.user);
         
-        // Check if user already has an application
-        checkExistingApplication(session.user.id);
+        await checkExistingApplication(session.user.id);
         
         toast.success('Successfully connected with X');
       } else if (event === 'SIGNED_OUT') {
@@ -149,8 +141,7 @@ const PresaleApplication = () => {
     setAuthError(null);
     
     try {
-      // Get the absolute URL for redirect
-      const currentUrl = window.location.href.split('?')[0]; // Remove any query params
+      const currentUrl = window.location.href.split('?')[0];
       const redirectUrl = currentUrl;
       
       debugAuthFlow('Initiating Twitter auth with redirect URL', redirectUrl);
@@ -202,7 +193,6 @@ const PresaleApplication = () => {
       return;
     }
     
-    // Double-check that the user doesn't already have an application
     try {
       const { data, error } = await supabase
         .from('presale_applications')
@@ -221,7 +211,6 @@ const PresaleApplication = () => {
     
     setLoading(true);
     
-    // Get amount based on selected size
     const getAmountFromSize = (size: InvestmentSize) => {
       switch (size) {
         case 'Smol Dawg': return 7.5;
@@ -252,10 +241,8 @@ const PresaleApplication = () => {
       
       toast.success('Application submitted successfully!');
       
-      // Update local state to show pending status
       await checkExistingApplication(userInfo.id);
       
-      // Optionally navigate after a short delay to allow user to see the toast
       setTimeout(() => navigate('/presale'), 2000);
     } catch (error) {
       toast.error('Failed to submit application: ' + error.message);
@@ -265,23 +252,19 @@ const PresaleApplication = () => {
     }
   };
 
-  // Get the Twitter profile picture URL from user metadata
   const getProfilePictureUrl = () => {
     if (!userInfo || !userInfo.user_metadata) return null;
     
-    // Different providers might store the image URL at different paths
     return userInfo.user_metadata.avatar_url || 
            userInfo.user_metadata.picture ||
            userInfo.user_metadata.profile_image_url;
   };
 
-  // Format wallet address to show beginning and end with ellipsis in the middle
   const formatWalletAddress = (address) => {
     if (!address || address.length < 10) return address;
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
   };
 
-  // Component for displaying the application status
   const ApplicationStatusDisplay = () => {
     const getStatusContent = () => {
       switch (applicationStatus) {
@@ -296,7 +279,7 @@ const PresaleApplication = () => {
         case 'approved':
           return {
             title: 'Application Approved!',
-            description: 'Congratulations! Your presale application has been approved. Our team will contact you with next steps.',
+            description: 'Congratulations! Your presale application has been approved. Please follow the payment instructions below to complete your purchase.',
             bgColor: 'bg-green-50',
             borderColor: 'border-green-300',
             textColor: 'text-green-800'
@@ -348,6 +331,15 @@ const PresaleApplication = () => {
                 <p className="font-semibold">Wallet address:</p>
                 <p className="font-mono">{formatWalletAddress(existingApplication.wallet_address)}</p>
               </div>
+              
+              {applicationStatus === 'approved' && (
+                <div className="space-y-3 md:col-span-2 mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
+                  <h3 className="text-lg font-bold text-green-800">Payment Instructions</h3>
+                  <p className="font-medium">Please send <span className="font-bold">{existingApplication.amount} AVAX</span> to this wallet address:</p>
+                  <p className="font-mono text-sm bg-white p-3 rounded border border-green-200 break-all">0x829b054cf1a5A791aEaE52f509A8D0eF93416b63</p>
+                  <p className="text-sm text-green-700 mt-2">Once your payment is confirmed, your allocation will be secured.</p>
+                </div>
+              )}
             </div>
           )}
           <div className="pt-4">
@@ -374,7 +366,6 @@ const PresaleApplication = () => {
           </p>
         </div>
         
-        {/* Add debug info in development */}
         {authError && (
           <div className="p-4 mb-6 neo-brutal-border bg-red-50 text-red-700">
             <h3 className="font-bold">Authentication Error:</h3>
@@ -399,7 +390,6 @@ const PresaleApplication = () => {
             <p>Checking application status...</p>
           </div>
         ) : existingApplication ? (
-          // Display application status if user already applied
           <ApplicationStatusDisplay />
         ) : (
           <div className="space-y-6">

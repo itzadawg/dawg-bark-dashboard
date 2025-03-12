@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Check, X, ExternalLink, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -79,7 +78,6 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
     }
   };
 
-  // Format wallet address to show beginning and end with ellipsis in the middle
   const formatWalletAddress = (address) => {
     if (!address || address.length < 10) return address;
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
@@ -265,4 +263,3 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
     </div>
   );
 };
-
