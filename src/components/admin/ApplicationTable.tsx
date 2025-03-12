@@ -217,6 +217,19 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                 <p className="text-sm p-2 bg-gray-50 rounded">{selectedApp.contribution}</p>
               </div>
               
+              {selectedApp.status === 'approved' && (
+                <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-md">
+                  <h3 className="text-lg font-bold text-green-800 mb-2">Payment Instructions</h3>
+                  <div className="space-y-2">
+                    <p className="font-medium">Selected size: <span className="font-semibold">{selectedApp.size} ({selectedApp.amount} AVAX)</span></p>
+                    <p className="font-medium">Wallet address:</p>
+                    <p className="font-mono text-xs break-words bg-white p-2 rounded border border-green-200">{selectedApp.wallet_address}</p>
+                    <p className="font-medium mt-4">Send {selectedApp.amount} AVAX to this wallet address:</p>
+                    <p className="font-mono text-xs break-words bg-white p-2 rounded border border-green-200">0x829b054cf1a5A791aEaE52f509A8D0eF93416b63</p>
+                  </div>
+                </div>
+              )}
+              
               {selectedApp.status === 'pending' && (
                 <div className="flex justify-end gap-2 pt-4">
                   <Button
@@ -252,3 +265,4 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
     </div>
   );
 };
+
