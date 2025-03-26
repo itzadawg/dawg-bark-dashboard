@@ -17,7 +17,7 @@ const Presale = () => {
           <img 
             src="https://i.imghippo.com/files/DqSl1886eGM.png" 
             alt="DAWG Presale Title" 
-            className="mx-auto w-full max-w-2xl h-auto"
+            className="mx-auto w-full max-w-md h-auto" 
           />
         </div>
 
