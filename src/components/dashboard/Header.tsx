@@ -13,7 +13,7 @@ const Header: React.FC = () => {
           <img 
             src="https://i.imghippo.com/files/Vopg5232kcY.png" 
             alt="Dawg Logo" 
-            className="h-12" 
+            className="h-16" 
           />
         </Link>
         
