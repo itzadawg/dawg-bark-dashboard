@@ -1,13 +1,20 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ShoppingCart, Gamepad2, AlertTriangle } from 'lucide-react';
+
 const Header: React.FC = () => {
   const location = useLocation();
   const isHomePage = location.pathname === '/';
+  
   return <header className={`w-full py-4 mb-8 ${isHomePage ? 'bg-transparent' : 'bg-white neo-brutal-border'}`}>
       <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
         <Link to="/" className="flex items-center mb-4 md:mb-0">
-          <h1 className="text-2xl font-black mx-[21px] text-zinc-50">Dawg</h1>
+          <img 
+            src="https://i.imghippo.com/files/Vopg5232kcY.png" 
+            alt="Dawg Logo" 
+            className="h-12" 
+          />
         </Link>
         
         <nav className="flex space-x-2">
@@ -24,4 +31,5 @@ const Header: React.FC = () => {
       </div>
     </header>;
 };
+
 export default Header;
