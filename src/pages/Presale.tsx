@@ -13,7 +13,7 @@ const Presale = () => {
       <Header />
       <div className="min-h-screen px-4 md:px-8 py-12 max-w-7xl mx-auto">
         <div className="mb-12 text-center">
-          <h1 className="text-4xl md:text-5xl font-black text-dawg-dark mb-4">DAWG Presale</h1>
+          
           
         </div>
 
