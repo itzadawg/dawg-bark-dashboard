@@ -33,7 +33,7 @@ const Presale = () => {
           </div>
 
           {/* Hero Section */}
-          <div className="w-full flex flex-col items-center px-4 md:px-8 lg:px-12 mt-16">
+          <div className="w-full flex flex-col items-center px-4 md:px-8 lg:px-12 mt-10">
             <div className="w-full max-w-7xl flex flex-col items-center justify-center">
               <div 
                 onClick={handleApplyForPresale} 
@@ -42,7 +42,7 @@ const Presale = () => {
                 <img 
                   src="https://i.imghippo.com/files/fx8859IYo.png" 
                   alt="Apply for Presale" 
-                  className="max-w-xs md:max-w-sm w-full h-auto"
+                  className="max-w-[250px] md:max-w-xs w-full h-auto"
                 />
               </div>
             </div>
