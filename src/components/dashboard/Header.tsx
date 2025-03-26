@@ -30,8 +30,12 @@ const Header: React.FC = () => {
               className="h-14"
             />
           </Link>
-          <Link to="/shameboard" className={`neo-brutal-button flex items-center gap-2 transform transition-transform duration-200 hover:scale-110 ${location.pathname === '/shameboard' ? 'bg-dawg' : ''}`}>
-            <span>Shameboard</span>
+          <Link to="/shameboard" className="transform transition-transform duration-200 hover:scale-110">
+            <img 
+              src="https://i.imghippo.com/files/M1109wC.png"
+              alt="Shameboard"
+              className="h-14"
+            />
           </Link>
         </nav>
       </div>
