@@ -12,12 +12,12 @@ const Presale = () => {
   };
   return <>
       <Header />
-      <div className="min-h-screen px-4 md:px-8 py-12 max-w-7xl mx-auto">
-        <div className="mb-12 text-center">
+      <div className="min-h-screen px-4 md:px-8 py-8 max-w-7xl mx-auto">
+        <div className="mb-8 text-center">
           <img 
             src="https://i.imghippo.com/files/DqSl1886eGM.png" 
             alt="DAWG Presale Title" 
-            className="mx-auto w-full max-w-md h-auto" 
+            className="mx-auto w-full max-w-xs h-auto" 
           />
         </div>
 
