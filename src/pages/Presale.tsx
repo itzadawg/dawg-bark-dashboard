@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
@@ -13,8 +14,11 @@ const Presale = () => {
       <Header />
       <div className="min-h-screen px-4 md:px-8 py-12 max-w-7xl mx-auto">
         <div className="mb-12 text-center">
-          
-          
+          <img 
+            src="https://i.imghippo.com/files/DqSl1886eGM.png" 
+            alt="DAWG Presale Title" 
+            className="mx-auto w-full max-w-2xl h-auto"
+          />
         </div>
 
         {/* Hero Section */}
