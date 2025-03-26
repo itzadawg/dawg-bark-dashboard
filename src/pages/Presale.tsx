@@ -16,12 +16,12 @@ const Presale = () => {
   return <>
       <Header />
       <div className="min-h-screen">
-        <div className="mb-4 text-center max-w-7xl mx-auto px-4 md:px-8">
+        <div className="text-center max-w-7xl mx-auto px-4 md:px-8 mb-0">
           <img src="https://i.imghippo.com/files/DqSl1886eGM.png" alt="DAWG Presale Title" className="mx-auto w-full max-w-xs h-auto" />
         </div>
 
         {/* Hero Section */}
-        <div className="mb-16 w-full">
+        <div className="w-full -mt-4">
           <div className="w-full">
             <div className="text-center mb-8">
               <img 

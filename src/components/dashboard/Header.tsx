@@ -5,7 +5,7 @@ import { Link, useLocation } from 'react-router-dom';
 const Header: React.FC = () => {
   const location = useLocation();
   
-  return <header className="w-full py-4 mb-8 bg-transparent">
+  return <header className="w-full py-4 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
         <Link to="/" className="flex items-center mb-4 md:mb-0">
           <img 
