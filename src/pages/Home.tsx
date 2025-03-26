@@ -10,7 +10,7 @@ const Home = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat z-0"
         style={{
-          backgroundImage: "url('/lovable-uploads/d7a028b8-bd7f-4c8d-8862-a4652f1d8e28.png')",
+          backgroundImage: "url('https://i.imghippo.com/files/cja9496FU.png')",
           opacity: 1
         }}
       />
