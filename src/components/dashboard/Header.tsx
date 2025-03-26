@@ -16,21 +16,21 @@ const Header: React.FC = () => {
         </Link>
         
         <nav className="flex space-x-4">
-          <Link to="/presale">
+          <Link to="/presale" className="transform transition-transform duration-200 hover:scale-110">
             <img 
               src="https://i.imghippo.com/files/mRu8010yo.png"
               alt="Presale"
               className="h-12"
             />
           </Link>
-          <Link to="/minigame">
+          <Link to="/minigame" className="transform transition-transform duration-200 hover:scale-110">
             <img 
               src="https://i.imghippo.com/files/fkRM7011LiQ.png"
               alt="Minigame"
               className="h-12"
             />
           </Link>
-          <Link to="/shameboard" className={`neo-brutal-button flex items-center gap-2 ${location.pathname === '/shameboard' ? 'bg-dawg' : ''}`}>
+          <Link to="/shameboard" className={`neo-brutal-button flex items-center gap-2 transform transition-transform duration-200 hover:scale-110 ${location.pathname === '/shameboard' ? 'bg-dawg' : ''}`}>
             <span>Shameboard</span>
           </Link>
         </nav>
