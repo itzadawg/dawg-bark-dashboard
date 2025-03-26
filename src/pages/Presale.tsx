@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
@@ -22,6 +23,13 @@ const Presale = () => {
             
           </div>
           <div className="w-full md:w-1/2 space-y-6">
+            <div className="text-center mb-4">
+              <img 
+                src="https://i.imghippo.com/files/HdYk9772Jys.png" 
+                alt="DAWG Presale Image" 
+                className="mx-auto max-w-full h-auto"
+              />
+            </div>
             
             <Button onClick={handleApplyForPresale} className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2">
               Apply for Presale
