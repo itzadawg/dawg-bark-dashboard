@@ -21,18 +21,18 @@ const Presale = () => {
         </div>
 
         {/* Hero Section */}
-        <div className="w-full -mt-4">
-          <div className="w-full">
-            <div className="text-center mb-8">
+        <div className="w-full flex flex-col items-center px-4 md:px-8 lg:px-12">
+          <div className="w-full max-w-7xl flex flex-col md:flex-row items-center justify-between gap-8">
+            <div className="w-full md:w-2/5 flex justify-center md:justify-start">
               <img 
                 src="https://i.imghippo.com/files/HdYk9772Jys.png" 
                 alt="DAWG Presale Image" 
-                className="w-full h-auto"
+                className="w-full max-w-sm h-auto neo-brutal-border p-1"
               />
             </div>
             
-            <div className="max-w-md mx-auto px-4 md:px-8">
-              <Button onClick={handleApplyForPresale} className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2">
+            <div className="w-full md:w-3/5 flex flex-col items-center md:items-start">
+              <Button onClick={handleApplyForPresale} className="w-full md:max-w-md py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2">
                 Apply for Presale
                 <Twitter className="h-5 w-5" />
               </Button>
