@@ -33,13 +33,17 @@ const Presale = () => {
           </div>
 
           {/* Hero Section */}
-          <div className="w-full flex flex-col items-center px-4 md:px-8 lg:px-12">
-            <div className="w-full max-w-7xl flex flex-col md:flex-row items-center justify-between gap-8">
-              <div className="w-full md:w-2/5 flex justify-center md:justify-start">
-                <Button onClick={handleApplyForPresale} className="w-full md:max-w-md py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2">
-                  Apply for Presale
-                  <Twitter className="h-5 w-5" />
-                </Button>
+          <div className="w-full flex flex-col items-center px-4 md:px-8 lg:px-12 mt-16">
+            <div className="w-full max-w-7xl flex flex-col items-center justify-center">
+              <div 
+                onClick={handleApplyForPresale} 
+                className="cursor-pointer transform transition-transform duration-300 hover:scale-105 hover:brightness-110 mx-auto"
+              >
+                <img 
+                  src="https://i.imghippo.com/files/IHd4178qx.png" 
+                  alt="Apply for Presale" 
+                  className="max-w-xs md:max-w-sm w-full h-auto"
+                />
               </div>
             </div>
           </div>
