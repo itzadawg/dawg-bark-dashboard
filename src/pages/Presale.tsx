@@ -23,7 +23,7 @@ const Presale = () => {
         {/* Hero Section */}
         <div className="w-full flex flex-col items-center px-4 md:px-8 lg:px-12">
           <div className="w-full max-w-7xl flex flex-col md:flex-row items-center justify-between gap-8">
-            <div className="w-full md:w-2/5 flex justify-center md:justify-start">
+            <div className="w-full md:w-2/5 flex justify-center md:justify-start mt-8">
               <div className="neo-brutal-border p-0 inline-block">
                 <img 
                   src="https://i.imghippo.com/files/HdYk9772Jys.png" 
