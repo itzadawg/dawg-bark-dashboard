@@ -42,7 +42,7 @@ const Presale = () => {
                 <img 
                   src="https://i.imghippo.com/files/fx8859IYo.png" 
                   alt="Apply for Presale" 
-                  className="max-w-[200px] md:max-w-[250px] w-full h-auto"
+                  className="max-w-[200px] md:max-w-[250px] w-full h-auto brightness-100 filter"
                 />
               </div>
             </div>
