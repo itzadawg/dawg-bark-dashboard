@@ -5,9 +5,8 @@ import { ShoppingCart, Gamepad2, AlertTriangle } from 'lucide-react';
 
 const Header: React.FC = () => {
   const location = useLocation();
-  const isHomePage = location.pathname === '/';
   
-  return <header className={`w-full py-4 mb-8 ${isHomePage ? 'bg-transparent' : 'bg-white neo-brutal-border'}`}>
+  return <header className="w-full py-4 mb-8 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
         <Link to="/" className="flex items-center mb-4 md:mb-0">
           <img 
