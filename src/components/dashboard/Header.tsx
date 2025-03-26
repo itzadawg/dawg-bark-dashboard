@@ -15,19 +15,19 @@ const Header: React.FC = () => {
           />
         </Link>
         
-        <nav className="flex space-x-2">
-          <Link to="/presale" className={`neo-brutal-button flex items-center gap-2 ${location.pathname === '/presale' ? 'bg-dawg' : ''}`}>
+        <nav className="flex space-x-4">
+          <Link to="/presale">
             <img 
               src="https://i.imghippo.com/files/mRu8010yo.png"
               alt="Presale"
-              className="h-6"
+              className={`h-8 ${location.pathname === '/presale' ? 'border-2 border-black p-1 bg-dawg' : ''}`}
             />
           </Link>
-          <Link to="/minigame" className={`neo-brutal-button flex items-center gap-2 ${location.pathname === '/minigame' ? 'bg-dawg' : ''}`}>
+          <Link to="/minigame">
             <img 
               src="https://i.imghippo.com/files/fkRM7011LiQ.png"
               alt="Minigame"
-              className="h-6"
+              className={`h-8 ${location.pathname === '/minigame' ? 'border-2 border-black p-1 bg-dawg' : ''}`}
             />
           </Link>
           <Link to="/shameboard" className={`neo-brutal-button flex items-center gap-2 ${location.pathname === '/shameboard' ? 'bg-dawg' : ''}`}>
