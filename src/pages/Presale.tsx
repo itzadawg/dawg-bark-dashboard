@@ -40,7 +40,7 @@ const Presale = () => {
                 className="cursor-pointer transform transition-transform duration-300 hover:scale-105 hover:brightness-110 mx-auto"
               >
                 <img 
-                  src="https://i.imghippo.com/files/IHd4178qx.png" 
+                  src="https://i.imghippo.com/files/fx8859IYo.png" 
                   alt="Apply for Presale" 
                   className="max-w-xs md:max-w-sm w-full h-auto"
                 />
