@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, Gamepad2, AlertTriangle } from 'lucide-react';
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -18,10 +17,18 @@ const Header: React.FC = () => {
         
         <nav className="flex space-x-2">
           <Link to="/presale" className={`neo-brutal-button flex items-center gap-2 ${location.pathname === '/presale' ? 'bg-dawg' : ''}`}>
-            <span>Presale</span>
+            <img 
+              src="https://i.imghippo.com/files/mRu8010yo.png"
+              alt="Presale"
+              className="h-6"
+            />
           </Link>
           <Link to="/minigame" className={`neo-brutal-button flex items-center gap-2 ${location.pathname === '/minigame' ? 'bg-dawg' : ''}`}>
-            <span>Minigame</span>
+            <img 
+              src="https://i.imghippo.com/files/fkRM7011LiQ.png"
+              alt="Minigame"
+              className="h-6"
+            />
           </Link>
           <Link to="/shameboard" className={`neo-brutal-button flex items-center gap-2 ${location.pathname === '/shameboard' ? 'bg-dawg' : ''}`}>
             <span>Shameboard</span>
