@@ -27,7 +27,7 @@ const Header: React.FC = () => {
             <img 
               src="https://i.imghippo.com/files/fkRM7011LiQ.png"
               alt="Minigame"
-              className="h-12"
+              className="h-14"
             />
           </Link>
           <Link to="/shameboard" className={`neo-brutal-button flex items-center gap-2 transform transition-transform duration-200 hover:scale-110 ${location.pathname === '/shameboard' ? 'bg-dawg' : ''}`}>
