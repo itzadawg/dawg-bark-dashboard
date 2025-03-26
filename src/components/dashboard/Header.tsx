@@ -20,14 +20,14 @@ const Header: React.FC = () => {
             <img 
               src="https://i.imghippo.com/files/mRu8010yo.png"
               alt="Presale"
-              className="h-8"
+              className="h-12"
             />
           </Link>
           <Link to="/minigame">
             <img 
               src="https://i.imghippo.com/files/fkRM7011LiQ.png"
               alt="Minigame"
-              className="h-8"
+              className="h-12"
             />
           </Link>
           <Link to="/shameboard" className={`neo-brutal-button flex items-center gap-2 ${location.pathname === '/shameboard' ? 'bg-dawg' : ''}`}>
