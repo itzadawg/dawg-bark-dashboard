@@ -6,8 +6,8 @@ const Header: React.FC = () => {
   return <header className="w-full py-4 mb-8 bg-white neo-brutal-border">
       <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
         <Link to="/" className="flex items-center mb-4 md:mb-0">
-          <img alt="Dawg Logo" className="h-14 w-auto mr-4" src="/lovable-uploads/4b11c13f-d9ca-4b7c-baa8-fb47676536c9.png" />
-          <h1 className="text-2xl font-black text-dawg-dark">Dawg</h1>
+          
+          <h1 className="text-2xl font-black text-dawg-dark mx-[21px]">Dawg</h1>
         </Link>
         
         <nav className="flex space-x-2">
