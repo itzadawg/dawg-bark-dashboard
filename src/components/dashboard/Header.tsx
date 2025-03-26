@@ -11,7 +11,7 @@ const Header: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
         <Link to="/" className="flex items-center mb-4 md:mb-0">
           <img 
-            src="https://i.imghippo.com/files/Vopg5232kcY.png" 
+            src="https://i.imghippo.com/files/sJBO3914Gdw.png" 
             alt="Dawg Logo" 
             className="h-16" 
           />
