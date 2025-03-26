@@ -20,7 +20,7 @@ const Header: React.FC = () => {
             <img 
               src="https://i.imghippo.com/files/mRu8010yo.png"
               alt="Presale"
-              className="h-12"
+              className="h-14"
             />
           </Link>
           <Link to="/minigame" className="transform transition-transform duration-200 hover:scale-110">
