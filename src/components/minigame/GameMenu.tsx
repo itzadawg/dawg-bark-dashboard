@@ -9,44 +9,11 @@ interface GameMenuProps {
 const GameMenu: React.FC<GameMenuProps> = ({ onSelectGame }) => {
   const games = [
     {
-      id: 'dawgCatcher',
-      name: 'Dawg Catcher',
-      description: 'Catch as many dogs as you can before time runs out!',
-      icon: <img src="/lovable-uploads/b20f764f-39b1-4aba-967d-36ca81400ae3.png" alt="Dawg Catcher" className="w-full h-full object-cover" />,
-      color: 'bg-[#1EAEDB]', // Blue background to match the reference image
-    },
-    {
-      id: 'flappyDawg',
-      name: 'Flappy Dawg',
-      description: 'Guide your dawg through obstacles in this fun flying game!',
-      icon: <img src="/lovable-uploads/d4d58344-3817-4b81-a535-e7fd84d0e807.png" alt="Flappy Dawg" className="w-full h-full object-cover" />,
+      id: 'memoryMatch',
+      name: 'Memory Match',
+      description: 'Test your memory by matching pairs of cards!',
+      icon: <Gamepad2 className="w-8 h-8 text-white" />,
       color: 'bg-[#4cc9f0]',
-    },
-    {
-      id: 'dawgDash',
-      name: 'Dawg Dash',
-      description: 'Jump over obstacles in this fast-paced running game!',
-      icon: <div className="flex items-center justify-center w-full h-full">
-              <img 
-                src="/lovable-uploads/d4d58344-3817-4b81-a535-e7fd84d0e807.png" 
-                alt="Dawg Dash" 
-                className="w-4/5 h-4/5" 
-              />
-            </div>,
-      color: 'bg-[#1EAEDB]',
-    },
-    {
-      id: 'whackADawg',
-      name: 'Whack-A-Dawg',
-      description: 'Whack the dawgs as they pop up from their holes!',
-      icon: <div className="flex items-center justify-center w-full h-full">
-              <img 
-                src="/lovable-uploads/9b1ad62d-7684-4c97-bbea-929b0be4d290.png" 
-                alt="Dawg" 
-                className="w-4/5 h-4/5" 
-              />
-            </div>,
-      color: 'bg-dawg',
     },
   ];
 

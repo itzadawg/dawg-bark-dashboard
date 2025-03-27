@@ -1,11 +1,8 @@
 
 import React, { useState } from 'react';
 import Header from '../components/dashboard/Header';
-import DogCatcher from '../components/minigame/DogCatcher';
 import GameMenu from '../components/minigame/GameMenu';
-import FlappyDawg from '../components/minigame/FlappyDawg';
-import DawgDash from '../components/minigame/DawgDash';
-import WhackADawg from '../components/minigame/WhackADawg';
+import MemoryMatch from '../components/minigame/MemoryMatch';
 
 const Minigame = () => {
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
@@ -30,10 +27,7 @@ const Minigame = () => {
                 ← Back to Games
               </button>
               
-              {selectedGame === 'dawgCatcher' && <DogCatcher />}
-              {selectedGame === 'flappyDawg' && <FlappyDawg />}
-              {selectedGame === 'dawgDash' && <DawgDash />}
-              {selectedGame === 'whackADawg' && <WhackADawg />}
+              {selectedGame === 'memoryMatch' && <MemoryMatch />}
             </div>
           )}
         </div>
