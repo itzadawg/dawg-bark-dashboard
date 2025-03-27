@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import Header from '../components/dashboard/Header';
 import GameMenu from '../components/minigame/GameMenu';
-import MemoryMatch from '../components/minigame/MemoryMatch';
 
 const Minigame = () => {
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
@@ -27,7 +26,7 @@ const Minigame = () => {
                 ← Back to Games
               </button>
               
-              {selectedGame === 'memoryMatch' && <MemoryMatch />}
+              {/* No games to display after removal */}
             </div>
           )}
         </div>
