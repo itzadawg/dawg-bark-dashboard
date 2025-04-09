@@ -35,16 +35,12 @@ const Presale = () => {
           {/* Hero Section moved lower on the page with flex-grow to push it down */}
           <div className="w-full flex flex-col items-center px-4 md:px-8 lg:px-12 flex-grow justify-end mb-24">
             <div className="w-full max-w-7xl flex flex-col items-center justify-center">
-              <div 
+              <button 
                 onClick={handleApplyForPresale} 
-                className="cursor-pointer hover:scale-105 transition-transform duration-200 rounded-2xl border-4 border-dawg shadow-lg overflow-hidden"
+                className="bg-dawg-secondary border-4 border-dawg hover:bg-dawg rounded-2xl px-8 py-6 text-xl font-bold text-dawg-dark shadow-[8px_8px_0px_0px_rgba(0,0,0,0.2)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,0.2)] transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
               >
-                <img 
-                  src="/lovable-uploads/a2178eba-ff37-43d0-97cf-092a48552bed.png" 
-                  alt="Connect With X" 
-                  className="max-w-[300px] md:max-w-[400px] w-full h-auto"
-                />
-              </div>
+                Connect With X
+              </button>
             </div>
           </div>
         </div>
