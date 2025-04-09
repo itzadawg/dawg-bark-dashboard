@@ -15,12 +15,12 @@ const Presale = () => {
 
   return (
     <div className="relative min-h-screen">
-      {/* Background Image with reduced opacity */}
+      {/* Background Image with full opacity */}
       <div className="absolute inset-0 z-0">
         <img 
           src="https://i.imghippo.com/files/HdYk9772Jys.png" 
           alt="DAWG Background" 
-          className="w-full h-full object-cover opacity-20"
+          className="w-full h-full object-cover opacity-100"
         />
       </div>
       
