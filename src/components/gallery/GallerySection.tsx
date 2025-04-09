@@ -7,11 +7,12 @@ import {
   DialogContent,
 } from '@/components/ui/dialog';
 
-interface GalleryImage {
+export interface GalleryImage {
   id: string;
   title: string;
   image_url: string;
   section: string;
+  created_at: string;
 }
 
 interface GallerySectionProps {

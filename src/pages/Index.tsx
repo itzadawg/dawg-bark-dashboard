@@ -4,9 +4,11 @@ import Header from '../components/dashboard/Header';
 import GallerySection from '../components/gallery/GallerySection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from '@/integrations/supabase/client';
+import { GalleryImage } from '../components/gallery/GallerySection';
+import { toast } from 'sonner';
 
 const Index = () => {
-  const [images, setImages] = useState<any[]>([]);
+  const [images, setImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('memes');
 
@@ -20,7 +22,7 @@ const Index = () => {
       const { data, error } = await supabase
         .from('gallery_images')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false }) as { data: GalleryImage[] | null, error: any };
       
       if (error) {
         throw error;
@@ -29,6 +31,7 @@ const Index = () => {
       setImages(data || []);
     } catch (error) {
       console.error('Error fetching images:', error);
+      toast.error('Failed to load gallery images');
     } finally {
       setLoading(false);
     }

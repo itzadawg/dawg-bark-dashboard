@@ -26,14 +26,7 @@ import { Image, Trash2, Upload, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { v4 as uuidv4 } from 'uuid';
-
-interface GalleryImage {
-  id: string;
-  title: string;
-  section: string;
-  image_url: string;
-  created_at: string;
-}
+import { GalleryImage } from '../gallery/GallerySection';
 
 const GalleryManager: React.FC = () => {
   const [images, setImages] = useState<GalleryImage[]>([]);
@@ -56,7 +49,7 @@ const GalleryManager: React.FC = () => {
       const { data, error } = await supabase
         .from('gallery_images')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', { ascending: false }) as { data: GalleryImage[] | null, error: any };
       
       if (error) {
         throw error;
@@ -123,7 +116,7 @@ const GalleryManager: React.FC = () => {
           title: title.trim(),
           section,
           image_url: publicUrl
-        });
+        }) as { error: any };
       
       if (insertError) {
         throw insertError;
@@ -172,7 +165,7 @@ const GalleryManager: React.FC = () => {
       const { error: dbError } = await supabase
         .from('gallery_images')
         .delete()
-        .eq('id', imageToDelete.id);
+        .eq('id', imageToDelete.id) as { error: any };
       
       if (dbError) {
         throw dbError;
