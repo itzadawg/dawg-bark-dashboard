@@ -40,7 +40,7 @@ const Index = () => {
   const filteredImages = images.filter(image => image.section === activeTab);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-dawg-light">
       <div className="relative">
         <Header />
         <div className="container mx-auto px-4 py-8">
@@ -48,11 +48,21 @@ const Index = () => {
             DAWG Gallery
           </h1>
           
-          <div className="neo-brutal-border p-6 bg-white mb-12">
-            <Tabs defaultValue="memes" onValueChange={setActiveTab}>
-              <TabsList className="mb-6 neo-brutal-border">
-                <TabsTrigger value="memes">Memes</TabsTrigger>
-                <TabsTrigger value="profile_pictures">Profile Pictures</TabsTrigger>
+          <div className="rounded-xl bg-white p-8 shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-2 border-dawg mb-12">
+            <Tabs defaultValue="memes" onValueChange={setActiveTab} className="w-full">
+              <TabsList className="mb-6 bg-dawg-secondary overflow-hidden rounded-lg p-1 border border-dawg/30 w-full max-w-md mx-auto">
+                <TabsTrigger 
+                  value="memes"
+                  className="text-dawg-dark font-bold rounded-md data-[state=active]:bg-dawg data-[state=active]:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all duration-200 w-1/2"
+                >
+                  Memes
+                </TabsTrigger>
+                <TabsTrigger 
+                  value="profile_pictures"
+                  className="text-dawg-dark font-bold rounded-md data-[state=active]:bg-dawg data-[state=active]:shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all duration-200 w-1/2"
+                >
+                  Profile Pictures
+                </TabsTrigger>
               </TabsList>
               
               <TabsContent value="memes">
