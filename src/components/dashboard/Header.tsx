@@ -25,7 +25,7 @@ const Header: React.FC = () => {
             <img 
               src="/lovable-uploads/33de2017-f52b-4a6f-a520-55488dfaa03c.png"
               alt="Presale"
-              className="h-14 relative z-10"
+              className="h-12 relative z-10"
             />
           </Link>
           <Link 
@@ -37,7 +37,7 @@ const Header: React.FC = () => {
             <img 
               src="/lovable-uploads/891c264a-33e2-4b9b-bb68-033e84559942.png"
               alt="Game"
-              className="h-14 relative z-10"
+              className="h-12 relative z-10"
             />
           </Link>
           <Link 
@@ -49,7 +49,7 @@ const Header: React.FC = () => {
             <img 
               src="/lovable-uploads/b7694506-fbc1-4e8a-96b5-618c34241608.png"
               alt="Gallery"
-              className="h-14 relative z-10"
+              className="h-12 relative z-10"
             />
           </Link>
         </nav>
