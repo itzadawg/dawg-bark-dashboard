@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Download, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -23,6 +23,7 @@ interface GallerySectionProps {
 const GallerySection: React.FC<GallerySectionProps> = ({ images, loading }) => {
   const [selectedImage, setSelectedImage] = useState<GalleryImage | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
 
   const handleImageClick = (image: GalleryImage) => {
     setSelectedImage(image);
@@ -47,6 +48,22 @@ const GallerySection: React.FC<GallerySectionProps> = ({ images, loading }) => {
       console.error('Download failed:', error);
     }
   };
+
+  const handleImageLoad = (imageId: string) => {
+    setLoadedImages(prev => ({
+      ...prev,
+      [imageId]: true
+    }));
+  };
+
+  useEffect(() => {
+    // Pre-load low resolution thumbnails
+    images.forEach(image => {
+      const img = new Image();
+      img.src = image.image_url;
+      img.onload = () => handleImageLoad(image.id);
+    });
+  }, [images]);
 
   if (loading) {
     return (
@@ -79,11 +96,23 @@ const GallerySection: React.FC<GallerySectionProps> = ({ images, loading }) => {
                        hover:shadow-[0_10px_25px_-5px_rgba(0,0,0,0.1),0_8px_10px_-6px_rgba(0,0,0,0.1)] 
                        transition-all duration-300 hover:translate-y-[-8px]"
             >
-              <div className="w-full h-full rounded-lg overflow-hidden">
+              <div className="w-full h-full rounded-lg overflow-hidden relative bg-gray-100">
+                {/* Placeholder while image loads */}
+                {!loadedImages[image.id] && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Loader2 className="h-6 w-6 animate-spin text-dawg-secondary" />
+                  </div>
+                )}
                 <img 
                   src={image.image_url} 
                   alt={image.title}
-                  className="w-full h-full object-cover"
+                  loading="lazy"
+                  width="300"
+                  height="300"
+                  className={`w-full h-full object-cover transition-opacity duration-300 ${
+                    loadedImages[image.id] ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  onLoad={() => handleImageLoad(image.id)}
                 />
               </div>
             </div>
@@ -100,10 +129,18 @@ const GallerySection: React.FC<GallerySectionProps> = ({ images, loading }) => {
             <div className="flex flex-col space-y-4">
               <h3 className="text-xl font-bold text-dawg-dark">{selectedImage.title}</h3>
               <div className="relative rounded-xl overflow-hidden border-2 border-dawg-secondary bg-white p-2">
+                {!loadedImages[`full-${selectedImage.id}`] && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                    <Loader2 className="h-8 w-8 animate-spin text-dawg" />
+                  </div>
+                )}
                 <img 
                   src={selectedImage.image_url} 
                   alt={selectedImage.title}
-                  className="w-full h-auto object-contain max-h-[70vh] rounded-lg"
+                  className={`w-full h-auto object-contain max-h-[70vh] rounded-lg transition-opacity duration-300 ${
+                    loadedImages[`full-${selectedImage.id}`] ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  onLoad={() => handleImageLoad(`full-${selectedImage.id}`)}
                 />
               </div>
               <div className="flex justify-end mt-4">

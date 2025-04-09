@@ -1,11 +1,12 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Header from '../components/dashboard/Header';
 import GallerySection from '../components/gallery/GallerySection';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from '@/integrations/supabase/client';
 import { GalleryImage } from '../components/gallery/GallerySection';
 import { toast } from 'sonner';
+import { Loader2 } from 'lucide-react';
 
 const Index = () => {
   const [images, setImages] = useState<GalleryImage[]>([]);
@@ -61,19 +62,25 @@ const Index = () => {
                 </TabsTrigger>
               </TabsList>
               
-              <TabsContent value="memes">
-                <GallerySection 
-                  images={filteredImages} 
-                  loading={loading} 
-                />
-              </TabsContent>
-              
-              <TabsContent value="profile_pictures">
-                <GallerySection 
-                  images={filteredImages}
-                  loading={loading}
-                />
-              </TabsContent>
+              <Suspense fallback={
+                <div className="flex justify-center items-center py-20">
+                  <Loader2 className="h-10 w-10 animate-spin text-dawg" />
+                </div>
+              }>
+                <TabsContent value="memes">
+                  <GallerySection 
+                    images={filteredImages} 
+                    loading={loading} 
+                  />
+                </TabsContent>
+                
+                <TabsContent value="profile_pictures">
+                  <GallerySection 
+                    images={filteredImages}
+                    loading={loading}
+                  />
+                </TabsContent>
+              </Suspense>
             </Tabs>
           </div>
         </div>
