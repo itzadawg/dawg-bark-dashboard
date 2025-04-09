@@ -26,7 +26,7 @@ const Minigame = () => {
       <div 
         className="fixed inset-0 z-0 bg-cover bg-center"
         style={{ 
-          backgroundImage: 'url("/lovable-uploads/f1a2b995-12c2-445a-bcb8-9248e67569ab.png")',
+          backgroundImage: 'url("/lovable-uploads/e7e866b2-dd46-4a46-a944-7a35f891b4ca.png")',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed'
