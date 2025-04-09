@@ -35,18 +35,16 @@ const Presale = () => {
     console.log(`[Auth Debug] ${message}`, data || '');
   };
 
-  // Check for auth redirection on page load
+  // Sign out all users when they land on presale page
   useEffect(() => {
-    const checkAuthState = async () => {
-      const { data, error } = await supabase.auth.getSession();
-      if (data?.session) {
-        // If we have a session and we're on the presale page, redirect to application
-        navigate('/presale-application');
-      }
+    const clearSession = async () => {
+      debugAuthFlow('Clearing any existing sessions');
+      await supabase.auth.signOut();
+      debugAuthFlow('Session cleared');
     };
     
-    checkAuthState();
-  }, [navigate]);
+    clearSession();
+  }, []);
 
   // X Auth handler
   const handleConnectX = async () => {

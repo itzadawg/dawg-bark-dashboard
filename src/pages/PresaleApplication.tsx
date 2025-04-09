@@ -117,6 +117,7 @@ const PresaleApplication = () => {
     walletAddress: ''
   });
   const [copied, setCopied] = useState(false);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
     addClayStyles();
@@ -179,6 +180,7 @@ const PresaleApplication = () => {
     addClayStyles();
     
     const checkUser = async () => {
+      setIsCheckingAuth(true);
       try {
         debugAuthFlow('Checking user session');
         const { data, error } = await supabase.auth.getSession();
@@ -187,6 +189,7 @@ const PresaleApplication = () => {
         if (error) {
           console.error('Session error:', error);
           setAuthError(`Session error: ${error.message}`);
+          navigate('/presale');
           return;
         }
         
@@ -198,11 +201,16 @@ const PresaleApplication = () => {
           await checkExistingApplication(data.session.user.id);
         } else {
           debugAuthFlow('No active session found, redirecting to /presale');
+          toast.error('Please connect with X first');
           navigate('/presale');
+          return;
         }
       } catch (error) {
         console.error('Error checking user session:', error);
         setAuthError(`Error checking session: ${error.message}`);
+        navigate('/presale');
+      } finally {
+        setIsCheckingAuth(false);
       }
     };
     
@@ -481,6 +489,39 @@ const PresaleApplication = () => {
       </div>
     );
   };
+
+  if (isCheckingAuth) {
+    return (
+      <div className="clay-container">
+        <Header />
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center clay-card p-8">
+            <Loader2 className="h-8 w-8 animate-spin text-dawg mx-auto mb-4" />
+            <p className="text-lg">Verifying authentication...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="clay-container">
+        <Header />
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center clay-card p-8">
+            <p className="text-lg mb-4">Please connect with X to view your application</p>
+            <Button 
+              onClick={() => navigate('/presale')}
+              className="clay-button"
+            >
+              Go to presale page
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="clay-container">
