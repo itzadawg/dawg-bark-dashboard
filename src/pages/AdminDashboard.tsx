@@ -9,12 +9,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2 } from 'lucide-react';
+import { useAdmin } from '@/hooks/useAdmin';
 
 const AdminDashboard: React.FC = () => {
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [tabFilter, setTabFilter] = useState<string>('all');
   const [activeTab, setActiveTab] = useState<string>('applications');
+  const { isAdmin } = useAdmin();
 
   const fetchApplications = async () => {
     setLoading(true);
@@ -44,10 +46,10 @@ const AdminDashboard: React.FC = () => {
   };
 
   useEffect(() => {
-    if (activeTab === 'applications') {
+    if (activeTab === 'applications' && isAdmin) {
       fetchApplications();
     }
-  }, [tabFilter, activeTab]);
+  }, [tabFilter, activeTab, isAdmin]);
 
   const getApplicationCount = (status: string): number => {
     if (status === 'all') {
