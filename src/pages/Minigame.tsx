@@ -42,6 +42,15 @@ const Minigame = () => {
           </div>
         </div>
       </div>
+      
+      {/* Coming Soon Image */}
+      <div className="relative z-10 flex justify-center mb-8">
+        <img 
+          src="/lovable-uploads/b5f95782-4779-4e4c-a54f-101e31785496.png" 
+          alt="Coming Soon" 
+          className="w-64 md:w-80 h-auto"
+        />
+      </div>
     </div>
   );
 };
