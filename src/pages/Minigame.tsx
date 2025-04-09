@@ -39,14 +39,6 @@ const Minigame = () => {
         <Header />
         <div className="container mx-auto px-4 py-8">
           <div className="max-w-4xl mx-auto">
-            {selectedGame && (
-              <button 
-                onClick={handleBackToMenu}
-                className="mb-6 neo-brutal-button"
-              >
-                ← Back
-              </button>
-            )}
             {renderGame()}
           </div>
         </div>
