@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -34,6 +35,19 @@ const Presale = () => {
     console.log(`[Auth Debug] ${message}`, data || '');
   };
 
+  // Check for auth redirection on page load
+  useEffect(() => {
+    const checkAuthState = async () => {
+      const { data, error } = await supabase.auth.getSession();
+      if (data?.session) {
+        // If we have a session and we're on the presale page, redirect to application
+        navigate('/presale-application');
+      }
+    };
+    
+    checkAuthState();
+  }, [navigate]);
+
   // X Auth handler
   const handleConnectX = async () => {
     // If presale is disabled, just show the popup
@@ -46,11 +60,17 @@ const Presale = () => {
     setAuthError(null);
     
     try {
-      debugAuthFlow('Initiating Twitter auth using simple approach');
+      debugAuthFlow('Initiating Twitter auth with specific redirect');
       
-      // Use the simplest approach from Supabase docs, without redirectTo
+      const origin = window.location.origin;
+      const redirectTo = `${origin}/presale-application`;
+      console.log('Using redirect URL:', redirectTo);
+      
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
+        options: {
+          redirectTo: redirectTo,
+        }
       });
 
       if (error) {
@@ -58,8 +78,7 @@ const Presale = () => {
         toast.error('Failed to connect X account: ' + error.message);
         console.error('X auth error details:', error);
       } else {
-        debugAuthFlow('Auth initiated successfully, browser should redirect automatically');
-        // The browser will be automatically redirected by Supabase
+        debugAuthFlow('Auth initiated successfully, browser should redirect to Twitter');
       }
     } catch (error) {
       setAuthError(`Unexpected error: ${error.message}`);

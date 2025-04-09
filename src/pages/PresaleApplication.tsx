@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -15,7 +14,6 @@ import { Label } from '@/components/ui/label';
 type ApplicationStatus = 'pending' | 'approved' | 'rejected' | null;
 type InvestmentSize = 'Smol Dawg' | 'Dawg' | 'Big Dawg';
 
-// Add claymorphism styles to the index.css
 const addClayStyles = () => {
   const style = document.createElement('style');
   style.textContent = `
@@ -120,7 +118,6 @@ const PresaleApplication = () => {
   });
   const [copied, setCopied] = useState(false);
 
-  // Add claymorphism styles on component mount
   useEffect(() => {
     addClayStyles();
   }, []);
@@ -179,6 +176,8 @@ const PresaleApplication = () => {
       toast.error(`Authentication error: ${errorDescription || error}`);
     }
     
+    addClayStyles();
+    
     const checkUser = async () => {
       try {
         debugAuthFlow('Checking user session');
@@ -198,7 +197,8 @@ const PresaleApplication = () => {
           
           await checkExistingApplication(data.session.user.id);
         } else {
-          debugAuthFlow('No active session found');
+          debugAuthFlow('No active session found, redirecting to /presale');
+          navigate('/presale');
         }
       } catch (error) {
         console.error('Error checking user session:', error);
@@ -223,13 +223,14 @@ const PresaleApplication = () => {
         setUserInfo(null);
         setExistingApplication(null);
         setApplicationStatus(null);
+        navigate('/presale');
       }
     });
     
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, [location]);
+  }, [location, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
