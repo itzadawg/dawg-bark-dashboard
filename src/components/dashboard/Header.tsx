@@ -35,7 +35,7 @@ const Header: React.FC = () => {
             }`}
           >
             <img 
-              src="https://i.imghippo.com/files/fkRM7011LiQ.png"
+              src="/lovable-uploads/891c264a-33e2-4b9b-bb68-033e84559942.png"
               alt="Game"
               className="h-14 relative z-10"
             />
