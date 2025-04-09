@@ -11,32 +11,42 @@ export const useAdmin = () => {
   const [error, setError] = useState<string | null>(null);
   const sessionChecked = useRef(false);
 
-  // Admin credentials - in a real app, these would be stored securely in a database
-  const ADMIN_USERNAME = "TristanenTeun";
-  const ADMIN_PASSWORD = "TristanenTeunopAvans2007#@!";
-
   const checkAdminStatus = async () => {
     try {
       setIsLoading(true);
       setError(null);
       
-      // Check if authenticated from localStorage
-      const isAuthenticated = localStorage.getItem('admin_authenticated') === 'true';
+      // Get the current session from Supabase
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession();
       
-      if (!isAuthenticated) {
+      if (sessionError) {
+        throw sessionError;
+      }
+      
+      if (!session) {
         console.log('No active session found');
         setIsAdmin(false);
         return;
       }
 
-      // Simple admin authentication based on localStorage
-      // We'll mark the user as admin directly based on localStorage
-      // This is still using localStorage but at least verifies against the hardcoded credentials
-      // during login in AdminProtected.tsx
-      setIsAdmin(true);
-      setUserId('admin');
-      setUserEmail('admin@example.com');
-      console.log('Admin status set to true');
+      // Set user info from session
+      setUserId(session.user.id);
+      setUserEmail(session.user.email);
+      
+      // Check if the user has admin privileges in the profiles table
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', session.user.id)
+        .single();
+      
+      if (profileError) {
+        throw profileError;
+      }
+      
+      // Set admin status based on profile data
+      setIsAdmin(profileData?.is_admin || false);
+      console.log('Admin status set to', profileData?.is_admin);
       sessionChecked.current = true;
       
     } catch (error) {
@@ -60,9 +70,17 @@ export const useAdmin = () => {
         console.warn('Admin status check timed out after 5 seconds');
       }
     }, 5000);
+
+    // Set up auth state change listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
+        checkAdminStatus();
+      }
+    });
     
     return () => {
       clearTimeout(timeoutId);
+      subscription.unsubscribe();
     };
   }, []);
 

@@ -12,6 +12,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { supabase } from '@/integrations/supabase/client';
 
 interface AdminProtectedProps {
   children: ReactNode;
@@ -19,57 +20,56 @@ interface AdminProtectedProps {
 
 // Define the form schema
 const formSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  password: z.string().min(1, "Password is required")
+  email: z.string().email("Must be a valid email"),
+  password: z.string().min(6, "Password must be at least 6 characters")
 });
 
 export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
   const { isAdmin, isLoading, userEmail, error, checkAdminStatus } = useAdmin();
   const navigate = useNavigate();
-  const [authInProgress, setAuthInProgress] = React.useState(false);
+  const [authInProgress, setAuthInProgress] = useState(false);
   
   // Define the form with validation
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      username: "",
+      email: "",
       password: ""
     }
   });
-  
-  // The hardcoded credentials (in a real app, these would be stored securely in a database)
-  const ADMIN_USERNAME = "TristanenTeun";
-  const ADMIN_PASSWORD = "TristanenTeunopAvans2007#@!";
 
   // Handle form submission
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     setAuthInProgress(true);
-    
-    // Simple username/password check
-    if (values.username === ADMIN_USERNAME && values.password === ADMIN_PASSWORD) {
-      // In a real app, we would set a session/token here
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: values.email,
+        password: values.password,
+      });
+      
+      if (error) {
+        throw error;
+      }
+      
       toast.success("Login successful");
-      localStorage.setItem('admin_authenticated', 'true');
-      checkAdminStatus();
-    } else {
-      toast.error("Invalid username or password");
+      await checkAdminStatus();
+    } catch (error: any) {
+      toast.error(error.message || "Invalid email or password");
+    } finally {
       setAuthInProgress(false);
     }
   };
 
-  // Check for existing session on load
-  useEffect(() => {
-    const isAuthenticated = localStorage.getItem('admin_authenticated') === 'true';
-    if (isAuthenticated) {
-      checkAdminStatus();
-    }
-  }, [checkAdminStatus]);
-
   // Log out function
-  const handleLogout = () => {
-    localStorage.removeItem('admin_authenticated');
-    toast.info("Logged out successfully");
-    checkAdminStatus();
+  const handleLogout = async () => {
+    try {
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      toast.info("Logged out successfully");
+      await checkAdminStatus();
+    } catch (error: any) {
+      toast.error(error.message || "Error logging out");
+    }
   };
 
   // Render login form
@@ -78,12 +78,12 @@ export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
-          name="username"
+          name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Email</FormLabel>
               <FormControl>
-                <Input placeholder="Enter your username" {...field} />
+                <Input type="email" placeholder="admin@example.com" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -97,7 +97,7 @@ export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="Enter your password" {...field} />
+                <Input type="password" placeholder="••••••••" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
