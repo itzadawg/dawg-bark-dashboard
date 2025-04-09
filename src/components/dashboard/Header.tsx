@@ -23,7 +23,7 @@ const Header: React.FC = () => {
             }`}
           >
             <img 
-              src="https://i.imghippo.com/files/mRu8010yo.png"
+              src="/lovable-uploads/33de2017-f52b-4a6f-a520-55488dfaa03c.png"
               alt="Presale"
               className="h-14 relative z-10"
             />
