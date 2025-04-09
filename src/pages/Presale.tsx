@@ -37,9 +37,10 @@ const Presale = () => {
             <div className="w-full max-w-7xl flex flex-col items-center justify-center">
               <button 
                 onClick={handleApplyForPresale} 
-                className="bg-dawg-secondary border-4 border-dawg hover:bg-dawg rounded-2xl px-8 py-6 text-xl font-bold text-dawg-dark shadow-[8px_8px_0px_0px_rgba(0,0,0,0.2)] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,0.2)] transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
+                className="bg-dawg flex items-center justify-center gap-2 px-8 py-3 rounded-full text-lg font-medium text-white shadow-md hover:bg-dawg-dark transition-colors duration-300"
               >
-                Connect With X
+                <Twitter className="h-5 w-5" />
+                Connect with X
               </button>
             </div>
           </div>

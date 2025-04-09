@@ -66,7 +66,7 @@ export default {
 				dawg: {
 					DEFAULT: '#F8D347', // Main yellow
 					secondary: '#FEF7CD', // Soft yellow
-					dark: '#2D2D2D', // Dark for text
+					dark: '#C8A81D', // Dark yellow for hover state
 					accent: '#F97316', // Orange accent
 					red: '#EF4444', // For negative values
 					green: '#10B981', // For positive values
