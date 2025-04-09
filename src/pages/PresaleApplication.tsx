@@ -254,18 +254,10 @@ const PresaleApplication = () => {
     setAuthError(null);
     
     try {
-      const currentUrl = window.location.href.split('?')[0];
-      const redirectUrl = currentUrl;
-      
-      debugAuthFlow('Initiating Twitter auth with redirect URL', redirectUrl);
-      console.log('Using redirect URL:', redirectUrl);
+      debugAuthFlow('Initiating Twitter auth');
       
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
-        options: {
-          redirectTo: redirectUrl,
-          scopes: 'tweet.read users.read',
-        },
       });
 
       if (error) {

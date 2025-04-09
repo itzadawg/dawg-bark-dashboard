@@ -35,12 +35,16 @@ const Presale = () => {
     console.log(`[Auth Debug] ${message}`, data || '');
   };
 
-  // Sign out all users when they land on presale page
+  // Sign out all users when they land on presale page to force re-auth
   useEffect(() => {
     const clearSession = async () => {
       debugAuthFlow('Clearing any existing sessions');
-      await supabase.auth.signOut();
-      debugAuthFlow('Session cleared');
+      try {
+        await supabase.auth.signOut();
+        debugAuthFlow('Session cleared');
+      } catch (error) {
+        console.error('Error clearing session:', error);
+      }
     };
     
     clearSession();
@@ -58,17 +62,12 @@ const Presale = () => {
     setAuthError(null);
     
     try {
-      debugAuthFlow('Initiating Twitter auth with specific redirect');
+      debugAuthFlow('Initiating Twitter auth');
       
-      const origin = window.location.origin;
-      const redirectTo = `${origin}/presale-application`;
-      console.log('Using redirect URL:', redirectTo);
-      
+      // Important: We're not using redirectTo parameter anymore
+      // This forces Supabase to use the default redirect URL configured in the Supabase dashboard
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
-        options: {
-          redirectTo: redirectTo,
-        }
       });
 
       if (error) {
@@ -82,6 +81,7 @@ const Presale = () => {
       setAuthError(`Unexpected error: ${error.message}`);
       toast.error('An unexpected error occurred');
       console.error('X authentication error:', error);
+    } finally {
       setIsAuthLoading(false);
     }
   };
