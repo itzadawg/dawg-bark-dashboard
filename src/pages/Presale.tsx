@@ -47,8 +47,9 @@ const Presale = () => {
     setAuthError(null);
     
     try {
-      // Force redirect to the exact same origin to prevent token issues
-      const redirectTo = window.location.origin + '/presale-application';
+      // Use the absolute URL from the window object with specific origin
+      const origin = window.location.origin;
+      const redirectTo = `${origin}/presale-application`;
       
       debugAuthFlow('Initiating Twitter auth with redirect URL', redirectTo);
       console.log('Using redirect URL:', redirectTo);
@@ -56,9 +57,8 @@ const Presale = () => {
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
         options: {
-          redirectTo: redirectTo,
+          redirectTo,
           scopes: 'tweet.read users.read',
-          skipBrowserRedirect: false, // Ensure browser redirect happens
         },
       });
 
@@ -69,7 +69,7 @@ const Presale = () => {
       } else {
         debugAuthFlow('Auth initiated successfully');
         console.log('Auth initiated successfully:', data);
-        // The page will automatically redirect to Twitter
+        // The user will be automatically redirected to Twitter for authentication
       }
     } catch (error) {
       setAuthError(`Unexpected error: ${error.message}`);
