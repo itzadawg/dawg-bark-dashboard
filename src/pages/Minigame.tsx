@@ -24,9 +24,12 @@ const Minigame = () => {
     <div className="min-h-screen flex flex-col relative">
       {/* Background Image */}
       <div 
-        className="fixed inset-0 z-0 bg-cover bg-center opacity-95"
+        className="fixed inset-0 z-0 bg-cover bg-center"
         style={{ 
           backgroundImage: 'url("/lovable-uploads/de32c026-c4bd-4f04-954a-004c1fe48fc7.png")',
+          backgroundSize: 'contain',
+          backgroundRepeat: 'no-repeat',
+          backgroundPosition: 'center',
           backgroundAttachment: 'fixed'
         }}
       />
