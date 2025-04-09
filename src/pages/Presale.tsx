@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
@@ -10,15 +10,16 @@ import PresaleDisabledPopup from '../components/presale/PresaleDisabledPopup';
 const Presale = () => {
   const navigate = useNavigate();
   const { settings, loading } = useAppSettings();
+  const [showPopup, setShowPopup] = useState(false);
   
   const handleApplyForPresale = () => {
-    navigate('/presale-application');
+    // Check if presale applications are enabled
+    if (!loading && settings.enable_presale_applications === false) {
+      setShowPopup(true);
+    } else {
+      navigate('/presale-application');
+    }
   };
-  
-  // Show the full-screen popup when presale applications are disabled
-  if (!loading && settings.enable_presale_applications === false) {
-    return <PresaleDisabledPopup />;
-  }
   
   return (
     <div className="relative min-h-screen">
@@ -49,6 +50,9 @@ const Presale = () => {
           </div>
         </div>
       </div>
+      
+      {/* Show popup conditionally when button is clicked and applications are disabled */}
+      {showPopup && <PresaleDisabledPopup onClose={() => setShowPopup(false)} />}
     </div>
   );
 };

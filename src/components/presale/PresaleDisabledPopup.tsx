@@ -1,14 +1,27 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Home } from 'lucide-react';
+import { Home, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const PresaleDisabledPopup = () => {
+interface PresaleDisabledPopupProps {
+  onClose: () => void;
+}
+
+const PresaleDisabledPopup = ({ onClose }: PresaleDisabledPopupProps) => {
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-black">
-      {/* Home Button in top right */}
-      <div className="absolute top-4 right-4 z-50">
+      {/* Close Button in top right */}
+      <div className="absolute top-4 right-4 z-50 flex gap-2">
+        <Button 
+          variant="outline" 
+          size="icon"
+          onClick={onClose} 
+          className="bg-white/90 hover:bg-white"
+        >
+          <X size={18} />
+        </Button>
+        
         <Link to="/">
           <Button variant="outline" className="flex items-center gap-2 bg-white/90 hover:bg-white">
             <Home size={18} />
