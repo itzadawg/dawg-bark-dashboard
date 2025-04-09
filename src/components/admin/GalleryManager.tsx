@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -69,7 +68,6 @@ const GalleryManager: React.FC = () => {
       const file = e.target.files[0];
       setSelectedFile(file);
       
-      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result as string);
@@ -89,7 +87,6 @@ const GalleryManager: React.FC = () => {
     try {
       setUploading(true);
       
-      // 1. Upload image to storage
       const fileExt = selectedFile.name.split('.').pop();
       const fileName = `${uuidv4()}.${fileExt}`;
       const filePath = `${section}/${fileName}`;
@@ -102,14 +99,12 @@ const GalleryManager: React.FC = () => {
         throw uploadError;
       }
       
-      // 2. Get public URL
       const { data: urlData } = supabase.storage
         .from('gallery')
         .getPublicUrl(filePath);
       
       const publicUrl = urlData.publicUrl;
       
-      // 3. Save record in database
       const { error: insertError } = await supabase
         .from('gallery_images')
         .insert({
@@ -124,12 +119,10 @@ const GalleryManager: React.FC = () => {
       
       toast.success('Image uploaded successfully');
       
-      // Reset form
       setSelectedFile(null);
       setPreviewUrl(null);
       setTitle('');
       
-      // Refresh images
       fetchImages();
       
     } catch (error: any) {
@@ -148,11 +141,9 @@ const GalleryManager: React.FC = () => {
     if (!imageToDelete) return;
     
     try {
-      // 1. Extract file path from URL
       const storageUrl = supabase.storage.from('gallery').getPublicUrl('').data.publicUrl;
       const filePath = imageToDelete.image_url.replace(storageUrl + '/', '');
       
-      // 2. Delete from storage
       const { error: storageError } = await supabase.storage
         .from('gallery')
         .remove([filePath]);
@@ -161,7 +152,6 @@ const GalleryManager: React.FC = () => {
         console.warn('Storage error, proceeding with database deletion:', storageError);
       }
       
-      // 3. Delete from database
       const { error: dbError } = await supabase
         .from('gallery_images')
         .delete()
@@ -183,11 +173,21 @@ const GalleryManager: React.FC = () => {
   };
 
   return (
-    <div className="neo-brutal-border p-6 bg-white">
+    <div className="bg-white rounded-xl border-2 border-dawg-dark p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.2)]">
       <Tabs defaultValue="upload" onValueChange={setActiveTab}>
-        <TabsList className="mb-6 neo-brutal-border">
-          <TabsTrigger value="upload">Upload New Image</TabsTrigger>
-          <TabsTrigger value="manage">Manage Images</TabsTrigger>
+        <TabsList className="mb-6 bg-gray-100 rounded-xl border-2 border-dawg/50 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)] p-1 overflow-hidden">
+          <TabsTrigger 
+            value="upload"
+            className="data-[state=active]:bg-dawg data-[state=active]:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.1)] rounded-lg transition-all duration-200"
+          >
+            Upload New Image
+          </TabsTrigger>
+          <TabsTrigger 
+            value="manage"
+            className="data-[state=active]:bg-dawg data-[state=active]:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.1)] rounded-lg transition-all duration-200"
+          >
+            Manage Images
+          </TabsTrigger>
         </TabsList>
         
         <TabsContent value="upload">
@@ -202,16 +202,17 @@ const GalleryManager: React.FC = () => {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     required
+                    className="border-2 border-gray-300 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)]"
                   />
                 </div>
                 
                 <div>
                   <label className="block mb-2 font-medium">Section</label>
                   <Select value={section} onValueChange={setSection}>
-                    <SelectTrigger>
+                    <SelectTrigger className="border-2 border-gray-300 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)]">
                       <SelectValue placeholder="Select section" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="border-2 border-gray-300 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)]">
                       <SelectItem value="memes">Memes</SelectItem>
                       <SelectItem value="profile_pictures">Profile Pictures</SelectItem>
                     </SelectContent>
@@ -226,7 +227,7 @@ const GalleryManager: React.FC = () => {
                     type="button" 
                     variant="outline" 
                     onClick={() => document.getElementById('image-upload')?.click()}
-                    className="neo-brutal-border"
+                    className="border-2 border-gray-300 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)] transform hover:translate-y-[-2px] transition-all duration-200"
                   >
                     <Upload className="mr-2 h-4 w-4" />
                     Select Image
@@ -250,11 +251,11 @@ const GalleryManager: React.FC = () => {
             {previewUrl && (
               <div className="mt-6">
                 <label className="block mb-2 font-medium">Preview</label>
-                <div className="p-2 border border-gray-200 rounded-md w-64 h-64">
+                <div className="p-3 border-2 border-gray-200 bg-white rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] w-64 h-64">
                   <img
                     src={previewUrl}
                     alt="Preview"
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain rounded-lg"
                   />
                 </div>
               </div>
@@ -263,7 +264,7 @@ const GalleryManager: React.FC = () => {
             <Button 
               type="submit" 
               disabled={uploading || !selectedFile || !title.trim()}
-              className="neo-brutal-button"
+              className="bg-dawg hover:bg-dawg-dark border-2 border-dawg-dark text-dawg-dark hover:text-white rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] transform hover:translate-y-[-2px] transition-all duration-200"
             >
               {uploading ? (
                 <>
@@ -293,58 +294,60 @@ const GalleryManager: React.FC = () => {
                 Get started by uploading your first image.
               </p>
               <Button
-                className="mt-4"
+                className="mt-4 bg-dawg hover:bg-dawg-dark border-2 border-dawg-dark text-dawg-dark hover:text-white rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] transform hover:translate-y-[-2px] transition-all duration-200"
                 onClick={() => setActiveTab('upload')}
               >
                 Upload Image
               </Button>
             </div>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Image</TableHead>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Section</TableHead>
-                  <TableHead>Date Added</TableHead>
-                  <TableHead className="w-24">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {images.map((image) => (
-                  <TableRow key={image.id}>
-                    <TableCell>
-                      <div className="w-16 h-16 overflow-hidden">
-                        <img 
-                          src={image.image_url} 
-                          alt={image.title} 
-                          className="w-full h-full object-cover neo-brutal-border"
-                        />
-                      </div>
-                    </TableCell>
-                    <TableCell className="font-medium">{image.title}</TableCell>
-                    <TableCell className="capitalize">{image.section.replace('_', ' ')}</TableCell>
-                    <TableCell>{new Date(image.created_at).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      <Button 
-                        variant="outline" 
-                        size="icon" 
-                        onClick={() => confirmDelete(image)}
-                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
+            <div className="border-2 border-gray-200 rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,0.1)] overflow-hidden">
+              <Table>
+                <TableHeader className="bg-gray-50 border-b-2 border-gray-200">
+                  <TableRow>
+                    <TableHead>Image</TableHead>
+                    <TableHead>Title</TableHead>
+                    <TableHead>Section</TableHead>
+                    <TableHead>Date Added</TableHead>
+                    <TableHead className="w-24">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {images.map((image) => (
+                    <TableRow key={image.id} className="hover:bg-gray-50">
+                      <TableCell>
+                        <div className="w-16 h-16 overflow-hidden rounded-lg border-2 border-gray-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.1)]">
+                          <img 
+                            src={image.image_url} 
+                            alt={image.title} 
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">{image.title}</TableCell>
+                      <TableCell className="capitalize">{image.section.replace('_', ' ')}</TableCell>
+                      <TableCell>{new Date(image.created_at).toLocaleDateString()}</TableCell>
+                      <TableCell>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          onClick={() => confirmDelete(image)}
+                          className="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg border-2 border-red-200 shadow-[2px_2px_0px_0px_rgba(0,0,0,0.05)]"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
           )}
         </TabsContent>
       </Tabs>
       
       <AlertDialog open={!!imageToDelete} onOpenChange={(open) => !open && setImageToDelete(null)}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-white rounded-xl border-2 border-dawg-dark shadow-[8px_8px_0px_0px_rgba(0,0,0,0.2)]">
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
@@ -352,8 +355,11 @@ const GalleryManager: React.FC = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-red-500 hover:bg-red-600">
+            <AlertDialogCancel className="rounded-lg border-2 border-gray-300 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)]">Cancel</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDelete} 
+              className="bg-red-500 hover:bg-red-600 text-white rounded-lg border-2 border-red-700 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.2)]"
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

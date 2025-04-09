@@ -70,36 +70,65 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         <Tabs defaultValue="applications" onValueChange={setActiveTab}>
-          <TabsList className="mb-6 neo-brutal-border">
-            <TabsTrigger value="applications">Applications</TabsTrigger>
-            <TabsTrigger value="gallery">Gallery</TabsTrigger>
-            <TabsTrigger value="admins">Admin Users</TabsTrigger>
+          <TabsList className="mb-6 bg-white rounded-xl border-2 border-dawg-dark shadow-[5px_5px_0px_0px_rgba(0,0,0,0.2)] p-1 overflow-hidden">
+            <TabsTrigger 
+              value="applications" 
+              className="data-[state=active]:bg-dawg data-[state=active]:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.1)] rounded-lg transition-all duration-200"
+            >
+              Applications
+            </TabsTrigger>
+            
+            <TabsTrigger 
+              value="gallery" 
+              className="data-[state=active]:bg-dawg data-[state=active]:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.1)] rounded-lg transition-all duration-200"
+            >
+              Gallery
+            </TabsTrigger>
+            
+            <TabsTrigger 
+              value="admins" 
+              className="data-[state=active]:bg-dawg data-[state=active]:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.1)] rounded-lg transition-all duration-200"
+            >
+              Admin Users
+            </TabsTrigger>
           </TabsList>
           
           <TabsContent value="applications">
-            <div className="neo-brutal-border p-6 bg-white">
+            <div className="bg-white rounded-xl border-2 border-dawg-dark p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.2)]">
               <Tabs defaultValue="all" onValueChange={setTabFilter}>
                 <div className="mb-6">
-                  <TabsList className="neo-brutal-border">
-                    <TabsTrigger value="all">
+                  <TabsList className="bg-gray-100 rounded-xl border-2 border-dawg/50 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)] p-1 overflow-hidden">
+                    <TabsTrigger 
+                      value="all"
+                      className="data-[state=active]:bg-dawg data-[state=active]:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.1)] rounded-lg transition-all duration-200"
+                    >
                       All
                       <span className="ml-2 bg-gray-100 px-2 py-0.5 rounded-full text-xs">
                         {getApplicationCount('all')}
                       </span>
                     </TabsTrigger>
-                    <TabsTrigger value="pending">
+                    <TabsTrigger 
+                      value="pending"
+                      className="data-[state=active]:bg-dawg data-[state=active]:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.1)] rounded-lg transition-all duration-200"
+                    >
                       Pending
                       <span className="ml-2 bg-yellow-100 px-2 py-0.5 rounded-full text-xs text-yellow-800">
                         {getApplicationCount('pending')}
                       </span>
                     </TabsTrigger>
-                    <TabsTrigger value="approved">
+                    <TabsTrigger 
+                      value="approved"
+                      className="data-[state=active]:bg-dawg data-[state=active]:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.1)] rounded-lg transition-all duration-200"
+                    >
                       Approved
                       <span className="ml-2 bg-green-100 px-2 py-0.5 rounded-full text-xs text-green-800">
                         {getApplicationCount('approved')}
                       </span>
                     </TabsTrigger>
-                    <TabsTrigger value="rejected">
+                    <TabsTrigger 
+                      value="rejected"
+                      className="data-[state=active]:bg-dawg data-[state=active]:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.1)] rounded-lg transition-all duration-200"
+                    >
                       Rejected
                       <span className="ml-2 bg-red-100 px-2 py-0.5 rounded-full text-xs text-red-800">
                         {getApplicationCount('rejected')}
@@ -132,7 +161,7 @@ const AdminDashboard: React.FC = () => {
           </TabsContent>
           
           <TabsContent value="admins">
-            <div className="neo-brutal-border p-6 bg-white">
+            <div className="bg-white rounded-xl border-2 border-dawg-dark p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.2)]">
               <AdminList />
             </div>
           </TabsContent>

@@ -58,7 +58,7 @@ export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
     <Button 
       onClick={handleTwitterSignIn}
       disabled={authInProgress}
-      className="flex items-center gap-2 bg-[#1DA1F2] hover:bg-[#0c85d0]"
+      className="flex items-center gap-2 bg-[#1DA1F2] hover:bg-[#0c85d0] rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] border-2 border-[#0c85d0] transform hover:translate-y-[-2px] transition-all duration-200"
     >
       {authInProgress ? <Loader2 className="h-4 w-4 animate-spin" /> : <Twitter className="h-4 w-4" />}
       {authInProgress ? 'Connecting...' : 'Sign in with Twitter'}
@@ -68,24 +68,30 @@ export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
   if (isLoading) {
     return (
       <div className="flex flex-col justify-center items-center h-screen p-4">
-        <Loader2 className="h-12 w-12 animate-spin text-dawg mb-4" />
-        <h2 className="text-xl font-bold mb-2">Checking Admin Status</h2>
-        <p className="text-gray-600 text-center mb-6">This should only take a moment...</p>
-        
-        <div className="flex flex-col items-center gap-4">
-          <Button onClick={checkAdminStatus} variant="outline">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Retry
-          </Button>
+        <div className="bg-white rounded-2xl border-2 border-dawg-dark p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.2)] max-w-md w-full">
+          <Loader2 className="h-12 w-12 animate-spin text-dawg mb-4 mx-auto" />
+          <h2 className="text-xl font-bold mb-2 text-center">Checking Admin Status</h2>
+          <p className="text-gray-600 text-center mb-6">This should only take a moment...</p>
           
-          {renderTwitterButton()}
-          
-          <Link 
-            to="/" 
-            className="text-sm text-gray-500 hover:underline mt-2"
-          >
-            Return to Home
-          </Link>
+          <div className="flex flex-col items-center gap-4">
+            <Button 
+              onClick={checkAdminStatus} 
+              variant="outline"
+              className="rounded-xl border-2 border-gray-300 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)] transform hover:translate-y-[-2px] transition-all duration-200"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Retry
+            </Button>
+            
+            {renderTwitterButton()}
+            
+            <Link 
+              to="/" 
+              className="text-sm text-gray-500 hover:underline mt-2"
+            >
+              Return to Home
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -94,24 +100,30 @@ export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
   if (error) {
     return (
       <div className="flex flex-col justify-center items-center h-screen p-4">
-        <AlertTriangle className="h-12 w-12 text-red-500 mb-4" />
-        <h2 className="text-xl font-bold mb-2">Authentication Error</h2>
-        <p className="text-center max-w-md mb-6 text-gray-600">{error}</p>
-        
-        <div className="flex flex-col items-center gap-4">
-          <Button onClick={checkAdminStatus} variant="outline">
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Try Again
-          </Button>
+        <div className="bg-white rounded-2xl border-2 border-dawg-dark p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.2)] max-w-md w-full">
+          <AlertTriangle className="h-12 w-12 text-red-500 mb-4 mx-auto" />
+          <h2 className="text-xl font-bold mb-2 text-center">Authentication Error</h2>
+          <p className="text-center max-w-md mb-6 text-gray-600">{error}</p>
           
-          {renderTwitterButton()}
-          
-          <Link 
-            to="/" 
-            className="text-sm text-gray-500 hover:underline mt-2"
-          >
-            Return to Home
-          </Link>
+          <div className="flex flex-col items-center gap-4">
+            <Button 
+              onClick={checkAdminStatus} 
+              variant="outline"
+              className="rounded-xl border-2 border-gray-300 shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)] transform hover:translate-y-[-2px] transition-all duration-200"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Try Again
+            </Button>
+            
+            {renderTwitterButton()}
+            
+            <Link 
+              to="/" 
+              className="text-sm text-gray-500 hover:underline mt-2"
+            >
+              Return to Home
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -131,25 +143,27 @@ export const AdminProtected: React.FC<AdminProtectedProps> = ({ children }) => {
   // Not an admin
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
-      <AlertTriangle className="h-16 w-16 text-red-500 mb-4" />
-      <h1 className="text-2xl font-bold mb-4">Admin Access Required</h1>
-      <p className="text-center max-w-md mb-6">
-        You need admin privileges to view this page. Please sign in with Twitter if you have admin access.
-      </p>
-      
-      <div className="flex flex-col items-center gap-4">
-        {renderTwitterButton()}
+      <div className="bg-white rounded-2xl border-2 border-dawg-dark p-8 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.2)] max-w-md w-full">
+        <AlertTriangle className="h-16 w-16 text-red-500 mb-4 mx-auto" />
+        <h1 className="text-2xl font-bold mb-4 text-center">Admin Access Required</h1>
+        <p className="text-center max-w-md mb-6">
+          You need admin privileges to view this page. Please sign in with Twitter if you have admin access.
+        </p>
         
-        {userEmail && (
-          <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-md text-center">
-            <p>Signed in as: <strong>{userEmail}</strong></p>
-            <p className="text-sm text-gray-500">This account doesn't have admin permissions.</p>
-          </div>
-        )}
-        
-        <Link to="/" className="text-dawg hover:underline mt-2">
-          Return to Home
-        </Link>
+        <div className="flex flex-col items-center gap-4">
+          {renderTwitterButton()}
+          
+          {userEmail && (
+            <div className="p-4 bg-yellow-50 border-2 border-yellow-200 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.05)] text-center w-full">
+              <p>Signed in as: <strong>{userEmail}</strong></p>
+              <p className="text-sm text-gray-500">This account doesn't have admin permissions.</p>
+            </div>
+          )}
+          
+          <Link to="/" className="text-dawg hover:underline mt-2">
+            Return to Home
+          </Link>
+        </div>
       </div>
     </div>
   );
