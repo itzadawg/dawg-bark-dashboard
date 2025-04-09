@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import Header from '../components/dashboard/Header';
 import GameMenu from '../components/minigame/GameMenu';
 import MemoryMatch from '../components/minigame/MemoryMatch';
-import { ArrowLeft } from 'lucide-react';
 
 const Minigame = () => {
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
@@ -15,20 +14,7 @@ const Minigame = () => {
   const renderGame = () => {
     switch (selectedGame) {
       case 'memory':
-        return (
-          <>
-            <div className="mb-4">
-              <button 
-                onClick={handleBackToMenu} 
-                className="neo-brutal-button flex items-center gap-2"
-              >
-                <ArrowLeft size={16} />
-                Back to Menu
-              </button>
-            </div>
-            <MemoryMatch />
-          </>
-        );
+        return <MemoryMatch />;
       default:
         return <GameMenu onSelectGame={setSelectedGame} />;
     }
