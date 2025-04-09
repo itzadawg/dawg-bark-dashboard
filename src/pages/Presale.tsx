@@ -1,17 +1,14 @@
-
 import React from 'react';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Twitter } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-
 const Presale = () => {
   const navigate = useNavigate();
   const handleApplyForPresale = () => {
     navigate('/presale-application');
   };
-
   return <div className="relative min-h-screen">
       {/* Background Image with full opacity */}
       <div className="absolute inset-0 z-0">
@@ -32,7 +29,7 @@ const Presale = () => {
               <p className="text-white text-lg font-medium mb-4">Want to apply for presale? Click the button below.</p>
               <button onClick={handleApplyForPresale} className="bg-dawg flex items-center justify-center gap-2 px-8 py-3 rounded-md text-lg font-medium text-white shadow-md hover:bg-dawg-dark transition-colors duration-300">
                 Connect with X
-                <Twitter size={20} />
+                
               </button>
             </div>
           </div>
@@ -40,5 +37,4 @@ const Presale = () => {
       </div>
     </div>;
 };
-
 export default Presale;
