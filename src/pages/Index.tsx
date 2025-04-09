@@ -43,12 +43,8 @@ const Index = () => {
     <div className="min-h-screen bg-dawg-light">
       <div className="relative">
         <Header />
-        <div className="container mx-auto px-4 py-8">
-          <h1 className="text-3xl md:text-4xl font-black text-dawg-dark mb-6">
-            DAWG Gallery
-          </h1>
-          
-          <div className="rounded-xl bg-white p-8 shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-2 border-dawg mb-12">
+        <div className="container mx-auto px-4 py-8 flex justify-center items-center">
+          <div className="rounded-xl bg-white p-8 shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-2 border-dawg mb-12 w-full max-w-4xl">
             <Tabs defaultValue="memes" onValueChange={setActiveTab} className="w-full">
               <TabsList className="mb-6 bg-dawg-secondary overflow-hidden rounded-lg p-1 border border-dawg/30 w-full max-w-md mx-auto">
                 <TabsTrigger 
