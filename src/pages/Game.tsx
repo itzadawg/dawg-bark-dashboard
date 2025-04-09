@@ -4,7 +4,7 @@ import Header from '../components/dashboard/Header';
 import GameMenu from '../components/minigame/GameMenu';
 import MemoryMatch from '../components/minigame/MemoryMatch';
 
-const Minigame = () => {
+const Game = () => {
   const [selectedGame, setSelectedGame] = useState<string | null>(null);
   
   const handleBackToMenu = () => {
@@ -55,4 +55,4 @@ const Minigame = () => {
   );
 };
 
-export default Minigame;
+export default Game;

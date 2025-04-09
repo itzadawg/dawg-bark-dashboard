@@ -7,7 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import Minigame from "./pages/Minigame";
+import Game from "./pages/Game";
 import Presale from "./pages/Presale";
 import PresaleApplication from "./pages/PresaleApplication";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -22,10 +22,10 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/shameboard" element={<Index />} />
+          <Route path="/gallery" element={<Index />} />
           <Route path="/presale" element={<Presale />} />
           <Route path="/presale-application" element={<PresaleApplication />} />
-          <Route path="/minigame" element={<Minigame />} />
+          <Route path="/game" element={<Game />} />
           <Route path="/admin" element={<AdminDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
