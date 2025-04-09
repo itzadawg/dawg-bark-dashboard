@@ -29,7 +29,7 @@ const Presale = () => {
         <Header />
         <div className="min-h-screen">
           <div className="text-center max-w-7xl mx-auto px-4 md:px-8 mb-0">
-            <img src="https://i.imghippo.com/files/DqSl1886eGM.png" alt="DAWG Presale Title" className="mx-auto w-full max-w-xs h-auto" />
+            {/* Image removed from here */}
           </div>
 
           {/* Hero Section */}
