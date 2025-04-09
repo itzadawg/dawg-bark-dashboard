@@ -37,12 +37,12 @@ const Presale = () => {
             <div className="w-full max-w-7xl flex flex-col items-center justify-center">
               <div 
                 onClick={handleApplyForPresale} 
-                className="cursor-pointer transform transition-transform duration-300 hover:scale-105 hover:brightness-110 mx-auto"
+                className="cursor-pointer hover:scale-105 transition-transform duration-200"
               >
                 <img 
                   src="/lovable-uploads/5b114779-72f6-45ea-94b8-7788e75a7549.png" 
                   alt="Connect With X" 
-                  className="max-w-[300px] md:max-w-[400px] w-full h-auto brightness-100 filter"
+                  className="max-w-[300px] md:max-w-[400px] w-full h-auto"
                 />
               </div>
             </div>
