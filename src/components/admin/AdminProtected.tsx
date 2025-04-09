@@ -1,5 +1,5 @@
 
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAdmin } from '@/hooks/useAdmin';
 import { Loader2, AlertTriangle, User, RefreshCw } from 'lucide-react';

@@ -26,6 +26,8 @@ export const useAdmin = () => {
       if (!session) {
         console.log('No active session found');
         setIsAdmin(false);
+        setUserEmail(null);
+        setUserId(null);
         return;
       }
 
