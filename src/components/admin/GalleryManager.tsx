@@ -79,8 +79,8 @@ const GalleryManager: React.FC = () => {
   const handleUpload = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!selectedFile || !title.trim()) {
-      toast.error('Please select an image and provide a title');
+    if (!selectedFile) {
+      toast.error('Please select an image');
       return;
     }
     
@@ -105,10 +105,12 @@ const GalleryManager: React.FC = () => {
       
       const publicUrl = urlData.publicUrl;
       
+      const imageTitle = title.trim() || selectedFile.name.split('.').slice(0, -1).join('.');
+      
       const { error: insertError } = await supabase
         .from('gallery_images')
         .insert({
-          title: title.trim(),
+          title: imageTitle,
           section,
           image_url: publicUrl
         }) as { error: any };
@@ -195,13 +197,12 @@ const GalleryManager: React.FC = () => {
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block mb-2 font-medium">Image Title</label>
+                  <label className="block mb-2 font-medium">Image Title (Optional)</label>
                   <Input
                     type="text"
-                    placeholder="Enter image title"
+                    placeholder="Enter image title or leave blank"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    required
                     className="border-2 border-gray-300 rounded-xl shadow-[3px_3px_0px_0px_rgba(0,0,0,0.1)]"
                   />
                 </div>
@@ -263,7 +264,7 @@ const GalleryManager: React.FC = () => {
             
             <Button 
               type="submit" 
-              disabled={uploading || !selectedFile || !title.trim()}
+              disabled={uploading || !selectedFile}
               className="bg-dawg hover:bg-dawg-dark border-2 border-dawg-dark text-dawg-dark hover:text-white rounded-xl shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] transform hover:translate-y-[-2px] transition-all duration-200"
             >
               {uploading ? (
