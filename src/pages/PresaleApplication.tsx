@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -12,8 +13,94 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 
 type ApplicationStatus = 'pending' | 'approved' | 'rejected' | null;
-
 type InvestmentSize = 'Smol Dawg' | 'Dawg' | 'Big Dawg';
+
+// Add claymorphism styles to the index.css
+const addClayStyles = () => {
+  const style = document.createElement('style');
+  style.textContent = `
+    .clay-card {
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 
+        0 8px 20px rgba(0, 0, 0, 0.08),
+        0 2px 8px rgba(0, 0, 0, 0.06),
+        inset 0 1px 1px rgba(255, 255, 255, 0.8);
+      transition: all 0.3s ease;
+    }
+    
+    .clay-card:hover {
+      box-shadow: 
+        0 10px 25px rgba(0, 0, 0, 0.1),
+        0 3px 10px rgba(0, 0, 0, 0.08),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+      transform: translateY(-2px);
+    }
+    
+    .clay-input {
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 16px;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 12px 16px;
+      transition: all 0.2s ease;
+    }
+    
+    .clay-input:focus {
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.15);
+      background: rgba(255, 255, 255, 0.85);
+    }
+    
+    .clay-button {
+      border-radius: 16px;
+      background: rgb(248, 211, 71);
+      box-shadow: 
+        0 4px 10px rgba(0, 0, 0, 0.1),
+        0 1px 4px rgba(0, 0, 0, 0.08),
+        inset 0 1px 1px rgba(255, 255, 255, 0.4);
+      transition: all 0.2s ease;
+      border: 1px solid rgba(248, 211, 71, 0.8);
+      font-weight: bold;
+      padding: 12px 24px;
+    }
+    
+    .clay-button:hover {
+      box-shadow: 
+        0 6px 14px rgba(0, 0, 0, 0.12),
+        0 2px 6px rgba(0, 0, 0, 0.1),
+        inset 0 1px 1px rgba(255, 255, 255, 0.5);
+      transform: translateY(-1px);
+      background: rgb(250, 217, 95);
+    }
+    
+    .clay-radio-item {
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 16px;
+      padding: 16px;
+      transition: all 0.2s ease;
+      box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.06),
+        inset 0 1px 1px rgba(255, 255, 255, 0.7);
+    }
+    
+    .clay-radio-item:hover {
+      background: rgba(255, 255, 255, 0.85);
+      box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.08),
+        inset 0 1px 1px rgba(255, 255, 255, 0.8);
+    }
+    
+    .clay-container {
+      background-color: #f7f7ff; /* Similar to gallery background */
+      min-height: 100vh;
+      padding: 2rem 1rem;
+    }
+  `;
+  document.head.appendChild(style);
+};
 
 const PresaleApplication = () => {
   const navigate = useNavigate();
@@ -32,6 +119,11 @@ const PresaleApplication = () => {
     walletAddress: ''
   });
   const [copied, setCopied] = useState(false);
+
+  // Add claymorphism styles on component mount
+  useEffect(() => {
+    addClayStyles();
+  }, []);
 
   const debugAuthFlow = (message, data = null) => {
     console.log(`[Auth Debug] ${message}`, data || '');
@@ -318,7 +410,7 @@ const PresaleApplication = () => {
     const status = getStatusContent();
 
     return (
-      <div className={`neo-brutal-border p-8 ${status.bgColor} ${status.borderColor} mb-6`}>
+      <div className={`clay-card p-8 ${status.bgColor} mb-6`}>
         <h2 className={`text-2xl font-bold mb-3 ${status.textColor}`}>{status.title}</h2>
         <p className="mb-4">{status.description}</p>
         <div className="flex flex-col space-y-4">
@@ -326,12 +418,12 @@ const PresaleApplication = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2 md:col-span-2">
                 <p className="font-semibold">Why you want to join the DAWG presale:</p>
-                <p className="bg-white p-3 rounded border border-gray-200">{existingApplication.reason}</p>
+                <p className="clay-card bg-white p-3 rounded">{existingApplication.reason}</p>
               </div>
               
               <div className="space-y-2 md:col-span-2">
                 <p className="font-semibold">How you plan to contribute:</p>
-                <p className="bg-white p-3 rounded border border-gray-200">{existingApplication.contribution}</p>
+                <p className="clay-card bg-white p-3 rounded">{existingApplication.contribution}</p>
               </div>
               
               <div className="space-y-2">
@@ -356,11 +448,11 @@ const PresaleApplication = () => {
               </div>
               
               {applicationStatus === 'approved' && (
-                <div className="space-y-3 md:col-span-2 mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
+                <div className="space-y-3 md:col-span-2 mt-4 p-4 clay-card bg-green-50 rounded-md">
                   <h3 className="text-lg font-bold text-green-800">Payment Instructions</h3>
                   <p className="font-medium">Please send <span className="font-bold">{existingApplication.amount} AVAX</span> to this wallet address:</p>
                   <div 
-                    className="font-mono text-sm bg-white p-3 rounded border border-green-200 break-all flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-50"
+                    className="font-mono text-sm clay-input bg-white p-3 break-all flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-50"
                     onClick={() => copyToClipboard("0x829b054cf1a5A791aEaE52f509A8D0eF93416b63")}
                     title="Click to copy"
                   >
@@ -379,7 +471,7 @@ const PresaleApplication = () => {
           <div className="pt-4">
             <Button 
               onClick={() => navigate('/presale')}
-              className="neo-brutal-border bg-dawg hover:bg-dawg-secondary"
+              className="clay-button"
             >
               Return to Presale Page
             </Button>
@@ -390,7 +482,7 @@ const PresaleApplication = () => {
   };
 
   return (
-    <>
+    <div className="clay-container">
       <Header />
       <div className="min-h-screen px-4 md:px-8 py-12 max-w-3xl mx-auto">
         <div className="mb-8 text-center">
@@ -401,25 +493,25 @@ const PresaleApplication = () => {
         </div>
         
         {authError && (
-          <div className="p-4 mb-6 neo-brutal-border bg-red-50 text-red-700">
+          <div className="p-4 mb-6 clay-card bg-red-50 text-red-700">
             <h3 className="font-bold">Authentication Error:</h3>
             <p className="break-words">{authError}</p>
           </div>
         )}
         
         {!isAuthenticated ? (
-          <div className="text-center neo-brutal-border p-8 flex flex-col items-center">
+          <div className="text-center clay-card p-8 flex flex-col items-center">
             <p className="mb-6 text-lg">Connect with X (Twitter) to access the application form</p>
             <Button 
               onClick={handleConnectX}
               disabled={loading}
-              className="py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary flex items-center justify-center gap-2 max-w-md"
+              className="py-6 text-lg clay-button flex items-center justify-center gap-2 max-w-md"
             >
               {loading ? 'Connecting...' : 'Connect with X'}
             </Button>
           </div>
         ) : checkingApplication ? (
-          <div className="text-center neo-brutal-border p-8 flex flex-col items-center">
+          <div className="text-center clay-card p-8 flex flex-col items-center">
             <Loader2 className="h-8 w-8 animate-spin text-dawg mb-4" />
             <p>Checking application status...</p>
           </div>
@@ -427,7 +519,7 @@ const PresaleApplication = () => {
           <ApplicationStatusDisplay />
         ) : (
           <div className="space-y-6">
-            <div className="neo-brutal-border p-4 flex items-center justify-between bg-dawg/10">
+            <div className="clay-card p-4 flex items-center justify-between bg-dawg/10">
               <div className="flex items-center gap-3">
                 <div className="font-medium">Connected as:</div>
                 <div className="flex items-center gap-2">
@@ -444,13 +536,13 @@ const PresaleApplication = () => {
                 variant="outline" 
                 onClick={handleSignOut}
                 disabled={loading}
-                className="neo-brutal-border bg-white"
+                className="clay-button bg-white"
               >
                 Disconnect
               </Button>
             </div>
             
-            <form onSubmit={handleSubmit} className="space-y-8 neo-brutal-border p-6">
+            <form onSubmit={handleSubmit} className="space-y-8 clay-card p-6">
               <div>
                 <label htmlFor="reason" className="block mb-2 font-medium text-lg">Why do you want to join the DAWG presale?</label>
                 <Textarea
@@ -460,7 +552,7 @@ const PresaleApplication = () => {
                   value={formData.reason}
                   onChange={handleChange}
                   placeholder="Share your reasons for joining the DAWG community..."
-                  className="neo-brutal-border h-32"
+                  className="clay-input h-32 w-full"
                 />
               </div>
               
@@ -473,28 +565,28 @@ const PresaleApplication = () => {
                   value={formData.contribution}
                   onChange={handleChange}
                   placeholder="Tell us how you'll help grow the DAWG community..."
-                  className="neo-brutal-border h-32"
+                  className="clay-input h-32 w-full"
                 />
               </div>
               
               <div>
                 <label className="block mb-2 font-medium text-lg">Choose your size</label>
                 <RadioGroup value={formData.size} onValueChange={handleSizeChange} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="flex items-center space-x-2 neo-brutal-border p-4 hover:bg-gray-50 cursor-pointer">
+                  <div className="flex items-center space-x-2 clay-radio-item hover:bg-gray-50 cursor-pointer">
                     <RadioGroupItem value="Smol Dawg" id="size-small" />
                     <Label htmlFor="size-small" className="font-medium cursor-pointer flex-1">
                       Smol Dawg <span className="block text-sm text-gray-500 mt-1">7.5 AVAX</span>
                     </Label>
                   </div>
                   
-                  <div className="flex items-center space-x-2 neo-brutal-border p-4 hover:bg-gray-50 cursor-pointer">
+                  <div className="flex items-center space-x-2 clay-radio-item hover:bg-gray-50 cursor-pointer">
                     <RadioGroupItem value="Dawg" id="size-medium" />
                     <Label htmlFor="size-medium" className="font-medium cursor-pointer flex-1">
                       Dawg <span className="block text-sm text-gray-500 mt-1">15 AVAX</span>
                     </Label>
                   </div>
                   
-                  <div className="flex items-center space-x-2 neo-brutal-border p-4 hover:bg-gray-50 cursor-pointer">
+                  <div className="flex items-center space-x-2 clay-radio-item hover:bg-gray-50 cursor-pointer">
                     <RadioGroupItem value="Big Dawg" id="size-large" />
                     <Label htmlFor="size-large" className="font-medium cursor-pointer flex-1">
                       Big Dawg <span className="block text-sm text-gray-500 mt-1">30 AVAX</span>
@@ -512,7 +604,7 @@ const PresaleApplication = () => {
                   value={formData.walletAddress}
                   onChange={handleChange}
                   placeholder="0x..."
-                  className="neo-brutal-border font-mono"
+                  className="clay-input font-mono w-full"
                 />
                 <p className="text-sm text-gray-500 mt-1">
                   Please ensure this is an AVAX C-Chain compatible address
@@ -522,7 +614,7 @@ const PresaleApplication = () => {
               <Button 
                 type="submit"
                 disabled={loading}
-                className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary"
+                className="w-full py-6 text-lg clay-button"
               >
                 {loading ? 'Submitting...' : 'Submit Application'}
               </Button>
@@ -530,7 +622,7 @@ const PresaleApplication = () => {
           </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 
