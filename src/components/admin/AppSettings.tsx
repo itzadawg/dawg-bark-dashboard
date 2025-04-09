@@ -41,13 +41,13 @@ const AppSettings = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('app_settings')
-        .select('*') as { data: AppSetting[] | null, error: any };
+        .select('*');
 
       if (error) throw error;
       
       if (data) {
         // Process data to ensure values are correctly typed
-        const processedSettings = data.map(setting => ({
+        const processedSettings = data.map((setting: any) => ({
           ...setting,
           value: setting.value === 'true' ? true : 
                  setting.value === 'false' ? false : 
@@ -80,8 +80,9 @@ const AppSettings = () => {
       const { error } = await supabase
         .from('app_settings')
         .insert(defaultSettings.map(setting => ({
-          ...setting,
-          value: String(setting.value) // Convert boolean to string for JSONB column
+          key: setting.key,
+          value: String(setting.value), // Convert boolean to string
+          description: setting.description
         })));
 
       if (error) throw error;
@@ -101,7 +102,7 @@ const AppSettings = () => {
       setSaving(true);
       const { error } = await supabase
         .from('app_settings')
-        .update({ value: String(value) }) // Convert to string for JSONB column
+        .update({ value: String(value) }) // Convert to string
         .eq('id', id);
 
       if (error) throw error;

@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { Database } from '@/integrations/supabase/types';
 
 interface AppSetting {
   id: string;
@@ -21,16 +22,15 @@ export const useAppSettings = () => {
       setLoading(true);
       setError(null);
       
-      // Use the correct typings for the app_settings table
       const { data, error } = await supabase
         .from('app_settings')
-        .select('*') as { data: AppSetting[] | null, error: any };
+        .select('*');
 
       if (error) throw error;
       
       if (data) {
         // Convert array of settings to an object for easier access
-        const settingsObject = data.reduce((acc: Record<string, any>, setting: AppSetting) => {
+        const settingsObject = data.reduce((acc: Record<string, any>, setting: any) => {
           // For boolean settings stored as strings, convert them to actual booleans
           if (setting.value === 'true' || setting.value === 'false') {
             acc[setting.key] = setting.value === 'true';
