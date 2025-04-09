@@ -4,6 +4,7 @@ import Header from '../components/dashboard/Header';
 import { AdminProtected } from '../components/admin/AdminProtected';
 import { ApplicationTable } from '../components/admin/ApplicationTable';
 import { AdminList } from '../components/admin/AdminList';
+import GalleryManager from '../components/admin/GalleryManager';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -64,13 +65,14 @@ const AdminDashboard: React.FC = () => {
             Admin Dashboard
           </h1>
           <p className="text-lg text-gray-600">
-            Manage presale applications and review user submissions
+            Manage presale applications, gallery images, and admin users
           </p>
         </div>
 
         <Tabs defaultValue="applications" onValueChange={setActiveTab}>
           <TabsList className="mb-6 neo-brutal-border">
             <TabsTrigger value="applications">Applications</TabsTrigger>
+            <TabsTrigger value="gallery">Gallery</TabsTrigger>
             <TabsTrigger value="admins">Admin Users</TabsTrigger>
           </TabsList>
           
@@ -123,6 +125,10 @@ const AdminDashboard: React.FC = () => {
                 ))}
               </Tabs>
             </div>
+          </TabsContent>
+          
+          <TabsContent value="gallery">
+            <GalleryManager />
           </TabsContent>
           
           <TabsContent value="admins">
