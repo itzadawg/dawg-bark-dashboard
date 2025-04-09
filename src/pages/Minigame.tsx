@@ -34,17 +34,17 @@ const Minigame = () => {
         }}
       />
       
-      {/* Content with Glass Effect */}
+      {/* Content */}
       <div className="relative z-10 flex-1">
         <Header />
         <div className="container mx-auto px-4 py-8">
-          <div className="max-w-4xl mx-auto bg-white/80 backdrop-blur-sm p-8 rounded-lg neo-brutal-border shadow-brutal">
+          <div className="max-w-4xl mx-auto">
             {selectedGame && (
               <button 
                 onClick={handleBackToMenu}
                 className="mb-6 neo-brutal-button"
               >
-                ← Back to Games
+                ← Back
               </button>
             )}
             {renderGame()}
