@@ -47,8 +47,9 @@ const Presale = () => {
     setAuthError(null);
     
     try {
-      const currentUrl = window.location.origin + '/presale-application';
-      const redirectUrl = currentUrl;
+      // Get the full absolute URL for the redirect
+      const baseUrl = window.location.origin; 
+      const redirectUrl = `${baseUrl}/presale-application`;
       
       debugAuthFlow('Initiating Twitter auth with redirect URL', redirectUrl);
       console.log('Using redirect URL:', redirectUrl);
