@@ -7,6 +7,8 @@ interface AppSetting {
   key: string;
   value: boolean | string;
   description: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export const useAppSettings = () => {
@@ -19,16 +21,22 @@ export const useAppSettings = () => {
       setLoading(true);
       setError(null);
       
+      // Use the correct typings for the app_settings table
       const { data, error } = await supabase
         .from('app_settings')
-        .select('*');
+        .select('*') as { data: AppSetting[] | null, error: any };
 
       if (error) throw error;
       
       if (data) {
         // Convert array of settings to an object for easier access
         const settingsObject = data.reduce((acc: Record<string, any>, setting: AppSetting) => {
-          acc[setting.key] = setting.value;
+          // For boolean settings stored as strings, convert them to actual booleans
+          if (setting.value === 'true' || setting.value === 'false') {
+            acc[setting.key] = setting.value === 'true';
+          } else {
+            acc[setting.key] = setting.value;
+          }
           return acc;
         }, {});
         

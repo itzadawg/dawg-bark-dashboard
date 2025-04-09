@@ -22,6 +22,8 @@ interface AppSetting {
   key: string;
   value: boolean | string;
   description: string;
+  created_at?: string;
+  updated_at?: string;
 }
 
 const AppSettings = () => {
@@ -39,13 +41,21 @@ const AppSettings = () => {
       setLoading(true);
       const { data, error } = await supabase
         .from('app_settings')
-        .select('*');
+        .select('*') as { data: AppSetting[] | null, error: any };
 
       if (error) throw error;
       
       if (data) {
-        setSettings(data);
-      } else if (data?.length === 0) {
+        // Process data to ensure values are correctly typed
+        const processedSettings = data.map(setting => ({
+          ...setting,
+          value: setting.value === 'true' ? true : 
+                 setting.value === 'false' ? false : 
+                 setting.value
+        }));
+        
+        setSettings(processedSettings);
+      } else if (!data || data.length === 0) {
         // If no settings exist, we'll create default ones
         await initializeDefaultSettings();
       }
@@ -69,7 +79,10 @@ const AppSettings = () => {
     try {
       const { error } = await supabase
         .from('app_settings')
-        .insert(defaultSettings);
+        .insert(defaultSettings.map(setting => ({
+          ...setting,
+          value: String(setting.value) // Convert boolean to string for JSONB column
+        })));
 
       if (error) throw error;
       
@@ -88,7 +101,7 @@ const AppSettings = () => {
       setSaving(true);
       const { error } = await supabase
         .from('app_settings')
-        .update({ value })
+        .update({ value: String(value) }) // Convert to string for JSONB column
         .eq('id', id);
 
       if (error) throw error;
@@ -169,8 +182,11 @@ const AppSettings = () => {
             <Switch
               id={`setting-${setting.id}`}
               disabled={saving}
-              checked={setting.value === true}
-              onCheckedChange={() => handleToggleSetting(setting.id, setting.value as boolean)}
+              checked={typeof setting.value === 'boolean' ? setting.value : setting.value === 'true'}
+              onCheckedChange={() => handleToggleSetting(
+                setting.id, 
+                typeof setting.value === 'boolean' ? setting.value : setting.value === 'true'
+              )}
               className="data-[state=checked]:bg-dawg"
             />
           </div>
