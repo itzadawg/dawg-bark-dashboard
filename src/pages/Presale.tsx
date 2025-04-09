@@ -6,11 +6,22 @@ import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAppSettings } from '../hooks/useAppSettings';
 import PresaleDisabledPopup from '../components/presale/PresaleDisabledPopup';
+import { useIsMobile } from '@/hooks/use-mobile';
+import {
+  Dialog,
+  DialogContent,
+} from "@/components/ui/dialog";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerOverlay,
+} from "@/components/ui/drawer";
 
 const Presale = () => {
   const navigate = useNavigate();
   const { settings, loading } = useAppSettings();
   const [showPopup, setShowPopup] = useState(false);
+  const isMobile = useIsMobile();
   
   const handleApplyForPresale = () => {
     // Check if presale applications are enabled
@@ -20,12 +31,23 @@ const Presale = () => {
       navigate('/presale-application');
     }
   };
+
+  const closePopup = () => {
+    setShowPopup(false);
+  };
   
   return (
     <div className="relative min-h-screen">
       {/* Background Image with slightly reduced opacity */}
       <div className="absolute inset-0 z-0">
-        <img src="https://i.imghippo.com/files/HdYk9772Jys.png" alt="DAWG Background" className="w-full h-full object-cover opacity-90" />
+        <img 
+          src="https://i.imghippo.com/files/HdYk9772Jys.png" 
+          alt="DAWG Background" 
+          className="w-full h-full object-cover opacity-90" 
+          loading="eager"
+          width="1920"
+          height="1080"
+        />
       </div>
       
       {/* Dark overlay to improve text visibility */}
@@ -43,7 +65,10 @@ const Presale = () => {
           <div className="w-full flex flex-col items-center px-4 md:px-8 lg:px-12 flex-grow justify-center mb-16">
             <div className="w-full max-w-7xl flex flex-col items-center justify-center">
               <p className="text-white text-lg font-medium mb-4">Want to apply for presale? Click the button below.</p>
-              <button onClick={handleApplyForPresale} className="bg-dawg flex items-center justify-center gap-2 px-8 py-3 rounded-md text-lg font-medium text-white shadow-md hover:bg-dawg-dark transition-colors duration-300">
+              <button 
+                onClick={handleApplyForPresale} 
+                className="bg-dawg flex items-center justify-center gap-2 px-8 py-3 rounded-md text-lg font-medium text-white shadow-md hover:bg-dawg-dark transition-colors duration-300"
+              >
                 Connect with X
               </button>
             </div>
@@ -51,8 +76,17 @@ const Presale = () => {
         </div>
       </div>
       
-      {/* Show popup conditionally when button is clicked and applications are disabled */}
-      {showPopup && <PresaleDisabledPopup onClose={() => setShowPopup(false)} />}
+      {/* Use appropriate component based on device type */}
+      {isMobile ? (
+        <Drawer open={showPopup} onOpenChange={closePopup}>
+          <DrawerOverlay />
+          <DrawerContent className="h-[90%] max-h-[90vh] p-0">
+            <PresaleDisabledPopup onClose={closePopup} />
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        showPopup && <PresaleDisabledPopup onClose={closePopup} />
+      )}
     </div>
   );
 };
