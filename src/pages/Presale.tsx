@@ -32,8 +32,8 @@ const Presale = () => {
             {/* Image removed from here */}
           </div>
 
-          {/* Hero Section moved lower on the page with flex-grow to push it down */}
-          <div className="w-full flex flex-col items-center px-4 md:px-8 lg:px-12 flex-grow justify-end mb-24">
+          {/* Adjusted positioning - changed justify-end to center and reduced bottom margin */}
+          <div className="w-full flex flex-col items-center px-4 md:px-8 lg:px-12 flex-grow justify-center mb-16">
             <div className="w-full max-w-7xl flex flex-col items-center justify-center">
               <button 
                 onClick={handleApplyForPresale} 
