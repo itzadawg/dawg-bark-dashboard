@@ -33,7 +33,7 @@ const PresaleDisabledPopup = ({ onClose }: PresaleDisabledPopupProps) => {
       {/* Full-screen image */}
       <div className="flex-1 relative overflow-hidden">
         <img 
-          src="/lovable-uploads/f513bf26-0a49-463f-a56c-5718cb26686d.png" 
+          src="/lovable-uploads/6e7c8d90-17c8-4344-a021-c36959c813e7.png" 
           alt="Too Early Dawg" 
           className="w-full h-full object-contain"
         />
