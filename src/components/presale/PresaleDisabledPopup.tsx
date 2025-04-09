@@ -1,7 +1,6 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Home, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface PresaleDisabledPopupProps {
@@ -12,7 +11,7 @@ const PresaleDisabledPopup = ({ onClose }: PresaleDisabledPopupProps) => {
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-black">
       {/* Close Button in top right */}
-      <div className="absolute top-4 right-4 z-50 flex gap-2">
+      <div className="absolute top-4 right-4 z-50">
         <Button 
           variant="outline" 
           size="icon"
@@ -21,13 +20,6 @@ const PresaleDisabledPopup = ({ onClose }: PresaleDisabledPopupProps) => {
         >
           <X size={18} />
         </Button>
-        
-        <Link to="/">
-          <Button variant="outline" className="flex items-center gap-2 bg-white/90 hover:bg-white">
-            <Home size={18} />
-            <span>Home</span>
-          </Button>
-        </Link>
       </div>
       
       {/* Full-screen image */}
