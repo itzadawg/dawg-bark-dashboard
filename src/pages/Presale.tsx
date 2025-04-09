@@ -1,19 +1,26 @@
+
 import React from 'react';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Twitter } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+
 const Presale = () => {
   const navigate = useNavigate();
+  
   const handleApplyForPresale = () => {
     navigate('/presale-application');
   };
+  
   return <div className="relative min-h-screen">
-      {/* Background Image with full opacity */}
+      {/* Background Image with slightly reduced opacity */}
       <div className="absolute inset-0 z-0">
-        <img src="https://i.imghippo.com/files/HdYk9772Jys.png" alt="DAWG Background" className="w-full h-full object-cover opacity-100" />
+        <img src="https://i.imghippo.com/files/HdYk9772Jys.png" alt="DAWG Background" className="w-full h-full object-cover opacity-90" />
       </div>
+      
+      {/* Dark overlay to improve text visibility */}
+      <div className="absolute inset-0 z-0 bg-black bg-opacity-20"></div>
       
       {/* Content */}
       <div className="relative z-10">
@@ -37,4 +44,5 @@ const Presale = () => {
       </div>
     </div>;
 };
+
 export default Presale;
