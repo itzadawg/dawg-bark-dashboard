@@ -10,6 +10,16 @@ interface GameOverScreenProps {
   onMainMenu: () => void;
 }
 
+// Manually creating a typed client for the dawg_pac_scores table
+// since the auto-generated types haven't been updated yet
+const submitScore = async (playerName: string, score: number) => {
+  return await supabase
+    .from('dawg_pac_scores')
+    .insert([{ player_name: playerName, score }], { 
+      count: 'exact' 
+    });
+};
+
 const GameOverScreen: React.FC<GameOverScreenProps> = ({ 
   score, 
   onRestart, 
@@ -33,9 +43,7 @@ const GameOverScreen: React.FC<GameOverScreenProps> = ({
     setIsSubmitting(true);
     
     try {
-      const { error } = await supabase
-        .from('dawg_pac_scores')
-        .insert([{ player_name: playerName.trim(), score }]);
+      const { error } = await submitScore(playerName.trim(), score);
       
       if (error) throw error;
       

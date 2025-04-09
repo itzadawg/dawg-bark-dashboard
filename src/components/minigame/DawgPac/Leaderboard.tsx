@@ -14,24 +14,28 @@ interface LeaderboardProps {
   currentScore: number;
 }
 
+// Type-safe fetch for scores since the auto-generated types haven't been updated yet
+const fetchScores = async (): Promise<Score[]> => {
+  const { data, error } = await supabase
+    .from('dawg_pac_scores')
+    .select('*')
+    .order('score', { ascending: false })
+    .limit(10);
+    
+  if (error) throw error;
+  return (data as Score[]) || [];
+};
+
 const Leaderboard: React.FC<LeaderboardProps> = ({ currentScore }) => {
   const [scores, setScores] = useState<Score[]>([]);
   const [loading, setLoading] = useState(true);
   
   useEffect(() => {
-    const fetchScores = async () => {
+    const getScores = async () => {
       try {
-        const { data, error } = await supabase
-          .from('dawg_pac_scores')
-          .select()
-          .order('score', { ascending: false })
-          .limit(10);
-          
-        if (error) {
-          throw error;
-        }
-        
-        setScores(data || []);
+        setLoading(true);
+        const data = await fetchScores();
+        setScores(data);
       } catch (error) {
         console.error('Error fetching scores:', error);
       } finally {
@@ -39,7 +43,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ currentScore }) => {
       }
     };
     
-    fetchScores();
+    getScores();
     
     // Set up realtime subscription
     const scoresSubscription = supabase
@@ -50,7 +54,7 @@ const Leaderboard: React.FC<LeaderboardProps> = ({ currentScore }) => {
           schema: 'public', 
           table: 'dawg_pac_scores' 
         }, 
-        fetchScores
+        () => getScores()
       )
       .subscribe();
       
