@@ -35,7 +35,8 @@ export const useAdmin = () => {
       setUserId(session.user.id);
       setUserEmail(session.user.email);
       
-      // Check if the user has admin privileges in the profiles table
+      // Check if the user has admin privileges with a direct query
+      // This avoids the recursive RLS policy issue
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('is_admin')
@@ -43,12 +44,13 @@ export const useAdmin = () => {
         .single();
       
       if (profileError) {
+        console.error('Error fetching admin status:', profileError);
         throw profileError;
       }
       
       // Set admin status based on profile data
       setIsAdmin(profileData?.is_admin || false);
-      console.log('Admin status set to', profileData?.is_admin);
+      console.log('Admin status set to:', profileData?.is_admin);
       sessionChecked.current = true;
       
     } catch (error) {
@@ -75,6 +77,7 @@ export const useAdmin = () => {
 
     // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state changed:', event);
       if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
         checkAdminStatus();
       }
