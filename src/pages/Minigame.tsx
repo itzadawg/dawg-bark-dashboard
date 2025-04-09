@@ -49,7 +49,7 @@ const Minigame = () => {
       {/* Coming Soon Image - positioned at very bottom with increased margin */}
       <div className="relative z-10 flex justify-center mb-24">
         <img 
-          src="/lovable-uploads/b5f95782-4779-4e4c-a54f-101e31785496.png" 
+          src="/lovable-uploads/8e7442aa-242d-4292-8a5c-dd0a11882580.png" 
           alt="Coming Soon" 
           className="w-64 md:w-80 h-auto"
         />
