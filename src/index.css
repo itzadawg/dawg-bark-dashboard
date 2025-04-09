@@ -106,38 +106,4 @@
   .percent-positive {
     @apply text-dawg-green font-bold;
   }
-  
-  /* Claymorphism styles */
-  .claymorphism {
-    @apply rounded-xl border border-white/40 bg-white/20 backdrop-blur-md 
-    shadow-[0_10px_50px_rgba(0,0,0,0.1)] transition-all duration-300;
-  }
-  
-  .clay-button {
-    @apply rounded-lg border border-white/30 backdrop-blur-sm 
-    shadow-[0_4px_10px_rgba(0,0,0,0.1)] transition-all duration-200 
-    hover:shadow-[0_6px_20px_rgba(0,0,0,0.15)] hover:translate-y-[-2px]
-    text-dawg-dark font-bold;
-  }
-  
-  .clay-input {
-    @apply rounded-lg border border-white/30 bg-white/50 backdrop-blur-sm 
-    shadow-[inset_0_1px_3px_rgba(0,0,0,0.1)] focus:shadow-[inset_0_1px_3px_rgba(0,0,0,0.1),0_0_0_1px_rgba(248,211,71,0.7)]
-    focus:border-dawg/50 transition-all duration-200 outline-none;
-  }
-  
-  .clay-option {
-    @apply rounded-lg border border-white/30 bg-white/50 backdrop-blur-sm 
-    shadow-[0_2px_5px_rgba(0,0,0,0.05)] transition-all duration-200;
-  }
-  
-  .clay-field {
-    @apply rounded-lg border border-white/30 bg-white/50 backdrop-blur-sm 
-    shadow-[inset_0_1px_3px_rgba(0,0,0,0.05)] transition-all duration-200;
-  }
-  
-  .clay-connect-box {
-    @apply claymorphism shadow-[0_15px_35px_rgba(0,0,0,0.1)] 
-    hover:shadow-[0_20px_35px_rgba(0,0,0,0.15)] transition-all duration-300;
-  }
 }

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
@@ -26,16 +27,19 @@ type ApplicationStatus = 'pending' | 'approved' | 'rejected' | null;
 type InvestmentSize = 'Smol Dawg' | 'Dawg' | 'Big Dawg';
 
 const Presale = () => {
+  // State management
   const { settings, loading: settingsLoading } = useAppSettings();
   const [showPopup, setShowPopup] = useState(false);
   const [showApplicationForm, setShowApplicationForm] = useState(false);
   const isMobile = useIsMobile();
   
+  // Auth states
   const [isAuthLoading, setIsAuthLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [authError, setAuthError] = useState(null);
 
+  // Application states
   const [existingApplication, setExistingApplication] = useState(null);
   const [applicationStatus, setApplicationStatus] = useState<ApplicationStatus>(null);
   const [checkingApplication, setCheckingApplication] = useState(false);
@@ -48,10 +52,12 @@ const Presale = () => {
   });
   const [copied, setCopied] = useState(false);
   
+  // Debugging helper
   const debugAuthFlow = (message, data = null) => {
     console.log(`[Auth Debug] ${message}`, data || '');
   };
 
+  // Check for existing application for the current user
   const checkExistingApplication = async (userId) => {
     try {
       setCheckingApplication(true);
@@ -72,6 +78,7 @@ const Presale = () => {
         setApplicationStatus(data.status as ApplicationStatus);
         setShowApplicationForm(false);
       } else {
+        // No existing application, allow form to be shown
         setShowApplicationForm(true);
       }
     } catch (error) {
@@ -81,6 +88,7 @@ const Presale = () => {
     }
   };
 
+  // Copy wallet address to clipboard
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text).then(() => {
       setCopied(true);
@@ -92,6 +100,7 @@ const Presale = () => {
     });
   };
 
+  // Check user session and auth state on load
   useEffect(() => {
     const checkUser = async () => {
       try {
@@ -121,6 +130,7 @@ const Presale = () => {
     
     checkUser();
     
+    // Listen for auth state changes
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       debugAuthFlow('Auth state changed', { event, userId: session?.user?.id });
       
@@ -145,6 +155,7 @@ const Presale = () => {
     };
   }, []);
 
+  // Form handlers
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
@@ -154,7 +165,9 @@ const Presale = () => {
     setFormData(prev => ({ ...prev, size: value }));
   };
 
+  // X Auth handler
   const handleConnectX = async () => {
+    // If presale is disabled, just show the popup
     if (!settingsLoading && settings.enable_presale_applications === false) {
       setShowPopup(true);
       return;
@@ -195,6 +208,7 @@ const Presale = () => {
     }
   };
 
+  // Sign out handler
   const handleSignOut = async () => {
     setIsAuthLoading(true);
     try {
@@ -208,6 +222,7 @@ const Presale = () => {
     }
   };
 
+  // Submit application form
   const handleSubmitApplication = async (e) => {
     e.preventDefault();
     
@@ -259,6 +274,7 @@ const Presale = () => {
     }
   };
 
+  // Helper functions
   const getProfilePictureUrl = () => {
     if (!userInfo || !userInfo.user_metadata) return null;
     
@@ -272,10 +288,12 @@ const Presale = () => {
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
   };
   
+  // Popup close handler
   const closePopup = () => {
     setShowPopup(false);
   };
-
+  
+  // Application status display component
   const ApplicationStatusDisplay = () => {
     const getStatusContent = () => {
       switch (applicationStatus) {
@@ -317,7 +335,7 @@ const Presale = () => {
     const status = getStatusContent();
 
     return (
-      <div className={`claymorphism p-8 ${status.bgColor} ${status.borderColor} mb-6`}>
+      <div className={`neo-brutal-border p-8 ${status.bgColor} ${status.borderColor} mb-6`}>
         <h2 className={`text-2xl font-bold mb-3 ${status.textColor}`}>{status.title}</h2>
         <p className="mb-4">{status.description}</p>
         
@@ -325,12 +343,12 @@ const Presale = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2 md:col-span-2">
               <p className="font-semibold">Why you want to join the DAWG presale:</p>
-              <p className="clay-field bg-white/80 p-3 rounded-lg border border-white/40">{existingApplication.reason}</p>
+              <p className="bg-white p-3 rounded border border-gray-200">{existingApplication.reason}</p>
             </div>
             
             <div className="space-y-2 md:col-span-2">
               <p className="font-semibold">How you plan to contribute:</p>
-              <p className="clay-field bg-white/80 p-3 rounded-lg border border-white/40">{existingApplication.contribution}</p>
+              <p className="bg-white p-3 rounded border border-gray-200">{existingApplication.contribution}</p>
             </div>
             
             <div className="space-y-2">
@@ -341,7 +359,7 @@ const Presale = () => {
             <div className="space-y-2">
               <p className="font-semibold">Wallet address:</p>
               <div 
-                className="font-mono flex items-center gap-2 cursor-pointer hover:bg-white/50 p-1 rounded transition-colors"
+                className="font-mono flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors"
                 onClick={() => copyToClipboard(existingApplication.wallet_address)}
                 title="Click to copy full address"
               >
@@ -379,8 +397,9 @@ const Presale = () => {
     );
   };
 
+  // Application Form Component
   const ApplicationFormDisplay = () => (
-    <form onSubmit={handleSubmitApplication} className="space-y-8 claymorphism p-6">
+    <form onSubmit={handleSubmitApplication} className="space-y-8 neo-brutal-border p-6">
       <div>
         <label htmlFor="reason" className="block mb-2 font-medium text-lg">Why do you want to join the DAWG presale?</label>
         <Textarea
@@ -390,7 +409,7 @@ const Presale = () => {
           value={formData.reason}
           onChange={handleChange}
           placeholder="Share your reasons for joining the DAWG community..."
-          className="clay-input h-32"
+          className="neo-brutal-border h-32"
         />
       </div>
       
@@ -403,28 +422,28 @@ const Presale = () => {
           value={formData.contribution}
           onChange={handleChange}
           placeholder="Tell us how you'll help grow the DAWG community..."
-          className="clay-input h-32"
+          className="neo-brutal-border h-32"
         />
       </div>
       
       <div>
         <label className="block mb-2 font-medium text-lg">Choose your size</label>
         <RadioGroup value={formData.size} onValueChange={handleSizeChange} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="flex items-center space-x-2 clay-option p-4 hover:bg-white/50 cursor-pointer">
+          <div className="flex items-center space-x-2 neo-brutal-border p-4 hover:bg-gray-50 cursor-pointer">
             <RadioGroupItem value="Smol Dawg" id="size-small" />
             <Label htmlFor="size-small" className="font-medium cursor-pointer flex-1">
               Smol Dawg <span className="block text-sm text-gray-500 mt-1">7.5 AVAX</span>
             </Label>
           </div>
           
-          <div className="flex items-center space-x-2 clay-option p-4 hover:bg-white/50 cursor-pointer">
+          <div className="flex items-center space-x-2 neo-brutal-border p-4 hover:bg-gray-50 cursor-pointer">
             <RadioGroupItem value="Dawg" id="size-medium" />
             <Label htmlFor="size-medium" className="font-medium cursor-pointer flex-1">
               Dawg <span className="block text-sm text-gray-500 mt-1">15 AVAX</span>
             </Label>
           </div>
           
-          <div className="flex items-center space-x-2 clay-option p-4 hover:bg-white/50 cursor-pointer">
+          <div className="flex items-center space-x-2 neo-brutal-border p-4 hover:bg-gray-50 cursor-pointer">
             <RadioGroupItem value="Big Dawg" id="size-large" />
             <Label htmlFor="size-large" className="font-medium cursor-pointer flex-1">
               Big Dawg <span className="block text-sm text-gray-500 mt-1">30 AVAX</span>
@@ -442,7 +461,7 @@ const Presale = () => {
           value={formData.walletAddress}
           onChange={handleChange}
           placeholder="0x..."
-          className="clay-input font-mono"
+          className="neo-brutal-border font-mono"
         />
         <p className="text-sm text-gray-500 mt-1">
           Please ensure this is an AVAX C-Chain compatible address
@@ -452,36 +471,50 @@ const Presale = () => {
       <Button 
         type="submit"
         disabled={submittingApplication}
-        className="w-full py-6 text-lg clay-button bg-dawg hover:bg-dawg-secondary"
+        className="w-full py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary"
       >
         {submittingApplication ? 'Submitting...' : 'Submit Application'}
       </Button>
     </form>
   );
 
+  // Main render
   return (
     <div className="relative min-h-screen">
-      <div className="absolute inset-0 z-0 bg-white">
-        <div className="w-full h-full bg-[#F1F1F1]"></div>
+      {/* Background Image with slightly reduced opacity */}
+      <div className="absolute inset-0 z-0">
+        <img 
+          src="https://i.imghippo.com/files/HdYk9772Jys.png" 
+          alt="DAWG Background" 
+          className="w-full h-full object-cover opacity-90" 
+          loading="eager"
+          width="1920"
+          height="1080"
+        />
       </div>
       
+      {/* Dark overlay to improve text visibility */}
       <div className="absolute inset-0 z-0 bg-black bg-opacity-20"></div>
       
+      {/* Content */}
       <div className="relative z-10">
         <Header />
         <div className="min-h-screen flex flex-col">
           <div className="text-center max-w-7xl mx-auto px-4 md:px-8 mb-0">
+            {/* Image removed from here */}
           </div>
 
+          {/* Main content section */}
           <div className="w-full flex flex-col items-center px-4 md:px-8 lg:px-12 flex-grow justify-center mb-16">
             <div className="w-full max-w-3xl flex flex-col items-center justify-center">
               {isAuthenticated ? (
                 <>
-                  <div className="claymorphism p-4 mb-6 w-full flex items-center justify-between bg-white/70">
+                  {/* User info display */}
+                  <div className="neo-brutal-border p-4 mb-6 w-full flex items-center justify-between bg-dawg/10">
                     <div className="flex items-center gap-3">
                       <div className="font-medium">Connected as:</div>
                       <div className="flex items-center gap-2">
-                        <Avatar className="h-8 w-8 border border-white/40 shadow-sm">
+                        <Avatar className="h-8 w-8 border border-gray-200">
                           <AvatarImage src={getProfilePictureUrl()} alt={userInfo?.user_metadata?.preferred_username || 'User'} />
                           <AvatarFallback>
                             {(userInfo?.user_metadata?.preferred_username || 'U').charAt(0).toUpperCase()}
@@ -494,14 +527,15 @@ const Presale = () => {
                       variant="outline" 
                       onClick={handleSignOut}
                       disabled={isAuthLoading}
-                      className="clay-button bg-white"
+                      className="neo-brutal-border bg-white"
                     >
                       Disconnect
                     </Button>
                   </div>
                   
+                  {/* Show appropriate content based on application state */}
                   {checkingApplication ? (
-                    <div className="text-center claymorphism p-8 flex flex-col items-center w-full">
+                    <div className="text-center neo-brutal-border p-8 flex flex-col items-center w-full">
                       <Loader2 className="h-8 w-8 animate-spin text-dawg mb-4" />
                       <p>Checking application status...</p>
                     </div>
@@ -509,15 +543,15 @@ const Presale = () => {
                     <ApplicationStatusDisplay />
                   ) : showApplicationForm ? (
                     <div className="w-full">
-                      <h2 className="text-2xl font-bold mb-4 text-center text-dawg-dark">Presale Application</h2>
+                      <h2 className="text-2xl font-bold mb-4 text-center text-white">Presale Application</h2>
                       <ApplicationFormDisplay />
                     </div>
                   ) : (
-                    <div className="text-center claymorphism p-8 flex flex-col items-center bg-white/70 w-full">
+                    <div className="text-center neo-brutal-border p-8 flex flex-col items-center bg-white/80 w-full">
                       <p className="mb-6 text-lg">Click the button below to apply for the presale</p>
                       <Button 
                         onClick={() => setShowApplicationForm(true)}
-                        className="py-6 text-lg clay-button bg-dawg hover:bg-dawg-secondary"
+                        className="py-6 text-lg neo-brutal-border bg-dawg hover:bg-dawg-secondary"
                       >
                         Apply for Presale
                       </Button>
@@ -526,28 +560,28 @@ const Presale = () => {
                 </>
               ) : (
                 <>
-                  <div className="text-center clay-connect-box p-8 bg-white/70 rounded-xl">
-                    <p className="text-dawg-dark text-lg font-medium mb-4">Want to apply for presale? Click the button below.</p>
-                    <Button 
-                      onClick={handleConnectX}
-                      disabled={isAuthLoading} 
-                      className="clay-button bg-dawg flex items-center justify-center gap-2 px-8 py-3 text-lg font-medium text-white"
-                    >
-                      {isAuthLoading ? (
-                        <>
-                          <Loader2 className="h-5 w-5 animate-spin" />
-                          Connecting...
-                        </>
-                      ) : (
-                        'Connect with X'
-                      )}
-                    </Button>
-                  </div>
+                  {/* Initial connect display */}
+                  <p className="text-white text-lg font-medium mb-4">Want to apply for presale? Click the button below.</p>
+                  <Button 
+                    onClick={handleConnectX}
+                    disabled={isAuthLoading} 
+                    className="bg-dawg flex items-center justify-center gap-2 px-8 py-3 rounded-md text-lg font-medium text-white shadow-md hover:bg-dawg-dark transition-colors duration-300"
+                  >
+                    {isAuthLoading ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        Connecting...
+                      </>
+                    ) : (
+                      'Connect with X'
+                    )}
+                  </Button>
                 </>
               )}
               
+              {/* Error display */}
               {authError && (
-                <div className="p-4 mt-6 w-full claymorphism bg-red-50 text-red-700">
+                <div className="p-4 mt-6 w-full neo-brutal-border bg-red-50 text-red-700">
                   <h3 className="font-bold">Authentication Error:</h3>
                   <p className="break-words">{authError}</p>
                 </div>
@@ -557,6 +591,7 @@ const Presale = () => {
         </div>
       </div>
       
+      {/* Use appropriate component based on device type for disabled popup */}
       {isMobile ? (
         <Drawer open={showPopup} onOpenChange={closePopup}>
           <DrawerOverlay />
