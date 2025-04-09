@@ -37,7 +37,7 @@ const Presale = () => {
             <div className="w-full max-w-7xl flex flex-col items-center justify-center">
               <div 
                 onClick={handleApplyForPresale} 
-                className="cursor-pointer hover:scale-105 transition-transform duration-200"
+                className="cursor-pointer hover:scale-105 transition-transform duration-200 rounded-2xl border-4 border-white shadow-lg overflow-hidden"
               >
                 <img 
                   src="/lovable-uploads/5b114779-72f6-45ea-94b8-7788e75a7549.png" 
