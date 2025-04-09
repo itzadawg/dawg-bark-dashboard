@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { GameController } from 'lucide-react';
+import { Gamepad2 } from 'lucide-react';
 
 interface GameMenuProps {
   onSelectGame: (game: string) => void;
@@ -21,7 +21,7 @@ const GameMenu: React.FC<GameMenuProps> = ({ onSelectGame }) => {
           onClick={() => onSelectGame('memory')}
           className="neo-brutal-box p-6 hover:cursor-pointer flex flex-col items-center"
         >
-          <GameController size={64} className="mb-4 text-dawg" />
+          <Gamepad2 size={64} className="mb-4 text-dawg" />
           <h3 className="text-xl font-bold mb-2">Memory Match</h3>
           <p className="text-gray-600">
             Test your memory by matching pairs of cards!
@@ -29,7 +29,7 @@ const GameMenu: React.FC<GameMenuProps> = ({ onSelectGame }) => {
         </div>
         
         <div className="neo-brutal-box p-6 flex flex-col items-center bg-gray-100/50">
-          <GameController size={64} className="mb-4 text-gray-400" />
+          <Gamepad2 size={64} className="mb-4 text-gray-400" />
           <h3 className="text-xl font-bold mb-2">Coming Soon</h3>
           <p className="text-gray-600">
             More games are on the way!
