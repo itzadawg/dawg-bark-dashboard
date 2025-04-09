@@ -1,6 +1,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 export const useAdmin = () => {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
@@ -23,13 +24,42 @@ export const useAdmin = () => {
         setIsAdmin(false);
         return;
       }
-      
-      // Simple admin authentication based on localStorage
-      setIsAdmin(true);
-      setUserId('admin');
-      setUserEmail('admin@example.com');
-      console.log('Admin status set:', true);
-      sessionChecked.current = true;
+
+      // Create a temporary session in Supabase
+      const { data: { user }, error: authError } = await supabase.auth.signInWithPassword({
+        email: 'admin@example.com',
+        password: 'TristanenTeunopAvans2007#@!'
+      });
+
+      if (authError) {
+        console.error('Auth error:', authError);
+        setError('Authentication failed');
+        setIsAdmin(false);
+        localStorage.removeItem('admin_authenticated');
+        return;
+      }
+
+      if (user) {
+        // Check admin status in profiles table
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('is_admin')
+          .eq('id', user.id)
+          .single();
+
+        if (profileError) {
+          console.error('Profile error:', profileError);
+          setError('Failed to verify admin status');
+          setIsAdmin(false);
+          return;
+        }
+
+        setIsAdmin(profile?.is_admin || false);
+        setUserId(user.id);
+        setUserEmail('admin@example.com');
+        console.log('Admin status set:', profile?.is_admin);
+        sessionChecked.current = true;
+      }
       
     } catch (error) {
       console.error('Unexpected error:', error);
