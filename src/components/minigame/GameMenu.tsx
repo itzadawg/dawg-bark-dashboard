@@ -1,13 +1,20 @@
 
 import React from 'react';
+import { Dog } from 'lucide-react';
 
 interface GameMenuProps {
   onSelectGame: (game: string) => void;
 }
 
 const GameMenu: React.FC<GameMenuProps> = ({ onSelectGame }) => {
-  const games: any[] = [
-    // All games have been removed
+  const games = [
+    {
+      id: 'dawgPac',
+      name: 'Dawg-Pac',
+      description: 'Navigate the maze, collect bones and avoid the animal control officers!',
+      icon: <Dog className="w-8 h-8 text-white" />,
+      color: 'bg-[#FFC107]',
+    }
   ];
 
   return (

@@ -5,6 +5,7 @@ export interface Obstacle {
   y: number;
   width: number;
   height: number;
+  type?: 'platform' | 'hazard' | 'coin';
 }
 
 export interface GameState {
