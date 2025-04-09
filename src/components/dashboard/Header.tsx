@@ -47,7 +47,7 @@ const Header: React.FC = () => {
             }`}
           >
             <img 
-              src="https://i.imghippo.com/files/M1109wC.png"
+              src="/lovable-uploads/b7694506-fbc1-4e8a-96b5-618c34241608.png"
               alt="Gallery"
               className="h-14 relative z-10"
             />
