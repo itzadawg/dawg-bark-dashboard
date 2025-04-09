@@ -1,16 +1,34 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Twitter } from 'lucide-react';
+import { ArrowRight, Twitter, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
+import { useAppSettings } from '../hooks/useAppSettings';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 const Presale = () => {
   const navigate = useNavigate();
+  const { settings, loading } = useAppSettings();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   
   const handleApplyForPresale = () => {
-    navigate('/presale-application');
+    if (settings.enable_presale_applications === true) {
+      navigate('/presale-application');
+    } else {
+      setIsDialogOpen(true);
+    }
   };
   
   return <div className="relative min-h-screen">
@@ -36,12 +54,38 @@ const Presale = () => {
               <p className="text-white text-lg font-medium mb-4">Want to apply for presale? Click the button below.</p>
               <button onClick={handleApplyForPresale} className="bg-dawg flex items-center justify-center gap-2 px-8 py-3 rounded-md text-lg font-medium text-white shadow-md hover:bg-dawg-dark transition-colors duration-300">
                 Connect with X
-                
               </button>
             </div>
           </div>
         </div>
       </div>
+
+      <AlertDialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertCircle className="h-5 w-5 text-yellow-500" />
+              Presale Applications Not Available
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Too early dawg, stay tuned for updates by following us on twitter <a 
+                href="https://twitter.com/itzadawg" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="font-medium text-blue-500 hover:underline flex items-center gap-1 inline-flex"
+              >
+                @itzadawg
+                <Twitter className="h-3 w-3" />
+              </a>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setIsDialogOpen(false)}>
+              Got it
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>;
 };
 

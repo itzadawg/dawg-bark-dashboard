@@ -1,13 +1,15 @@
+
 import React, { useState, useEffect } from 'react';
 import Header from '../components/dashboard/Header';
 import { AdminProtected } from '../components/admin/AdminProtected';
 import { ApplicationTable } from '../components/admin/ApplicationTable';
 import { AdminList } from '../components/admin/AdminList';
 import GalleryManager from '../components/admin/GalleryManager';
+import AppSettings from '../components/admin/AppSettings';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Settings } from 'lucide-react';
 import { useAdmin } from '@/hooks/useAdmin';
 
 const AdminDashboard: React.FC = () => {
@@ -66,7 +68,7 @@ const AdminDashboard: React.FC = () => {
             Admin Dashboard
           </h1>
           <p className="text-lg text-gray-600">
-            Manage presale applications, gallery images, and admin users
+            Manage presale applications, gallery images, admin users and application settings
           </p>
         </div>
 
@@ -91,6 +93,13 @@ const AdminDashboard: React.FC = () => {
               className="data-[state=active]:bg-dawg data-[state=active]:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.1)] rounded-lg transition-all duration-200"
             >
               Admin Users
+            </TabsTrigger>
+
+            <TabsTrigger 
+              value="settings" 
+              className="data-[state=active]:bg-dawg data-[state=active]:shadow-[inset_2px_2px_5px_rgba(0,0,0,0.1)] rounded-lg transition-all duration-200"
+            >
+              Settings
             </TabsTrigger>
           </TabsList>
           
@@ -164,6 +173,12 @@ const AdminDashboard: React.FC = () => {
           <TabsContent value="admins">
             <div className="bg-white rounded-xl border-2 border-dawg-dark p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.2)]">
               <AdminList />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="settings">
+            <div className="bg-white rounded-xl border-2 border-dawg-dark p-6 shadow-[8px_8px_0px_0px_rgba(0,0,0,0.2)]">
+              <AppSettings />
             </div>
           </TabsContent>
         </Tabs>
