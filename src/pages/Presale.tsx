@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -47,21 +46,11 @@ const Presale = () => {
     setAuthError(null);
     
     try {
-      // Following the Supabase docs for Twitter OAuth
-      debugAuthFlow('Initiating Twitter auth');
+      debugAuthFlow('Initiating Twitter auth using simple approach');
       
-      // Using the redirectTo parameter to specify where to return after authentication
-      const origin = window.location.origin;
-      const redirectTo = `${origin}/presale-application`;
-      
-      console.log('Using redirect URL:', redirectTo);
-      
+      // Use the simplest approach from Supabase docs, without redirectTo
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
-        options: {
-          redirectTo,
-          scopes: 'tweet.read users.read',
-        },
       });
 
       if (error) {
@@ -69,9 +58,8 @@ const Presale = () => {
         toast.error('Failed to connect X account: ' + error.message);
         console.error('X auth error details:', error);
       } else {
-        debugAuthFlow('Auth initiated successfully, redirecting to Twitter');
-        console.log('Auth initiated successfully:', data);
-        // Browser will be automatically redirected to Twitter
+        debugAuthFlow('Auth initiated successfully, browser should redirect automatically');
+        // The browser will be automatically redirected by Supabase
       }
     } catch (error) {
       setAuthError(`Unexpected error: ${error.message}`);
