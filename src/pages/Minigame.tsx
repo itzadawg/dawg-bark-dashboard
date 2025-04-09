@@ -43,11 +43,11 @@ const Minigame = () => {
         </div>
       </div>
       
-      {/* Spacer to push content down */}
-      <div className="flex-grow"></div>
+      {/* Increased spacer to push content down */}
+      <div className="flex-grow min-h-[20vh]"></div>
       
-      {/* Coming Soon Image - positioned at bottom */}
-      <div className="relative z-10 flex justify-center mb-16">
+      {/* Coming Soon Image - positioned at very bottom with increased margin */}
+      <div className="relative z-10 flex justify-center mb-24">
         <img 
           src="/lovable-uploads/b5f95782-4779-4e4c-a54f-101e31785496.png" 
           alt="Coming Soon" 
