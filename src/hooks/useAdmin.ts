@@ -11,6 +11,10 @@ export const useAdmin = () => {
   const [error, setError] = useState<string | null>(null);
   const sessionChecked = useRef(false);
 
+  // Admin credentials - in a real app, these would be stored securely in a database
+  const ADMIN_USERNAME = "TristanenTeun";
+  const ADMIN_PASSWORD = "TristanenTeunopAvans2007#@!";
+
   const checkAdminStatus = async () => {
     try {
       setIsLoading(true);
@@ -26,8 +30,9 @@ export const useAdmin = () => {
       }
 
       // Simple admin authentication based on localStorage
-      // Instead of trying to create a Supabase session (which fails because email auth is disabled)
-      // We'll just mark the user as admin directly based on localStorage
+      // We'll mark the user as admin directly based on localStorage
+      // This is still using localStorage but at least verifies against the hardcoded credentials
+      // during login in AdminProtected.tsx
       setIsAdmin(true);
       setUserId('admin');
       setUserEmail('admin@example.com');
