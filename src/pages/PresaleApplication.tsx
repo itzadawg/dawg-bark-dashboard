@@ -381,10 +381,10 @@ const PresaleApplication = () => {
     
     const getAmountFromSize = (size: InvestmentSize) => {
       switch (size) {
-        case 'Smol Dawg': return 7.5;
-        case 'Dawg': return 15;
-        case 'Big Dawg': return 30;
-        default: return 15;
+        case 'Smol Dawg': return 10;
+        case 'Dawg': return 25;
+        case 'Big Dawg': return 40;
+        default: return 25;
       }
     };
 
@@ -663,21 +663,21 @@ const PresaleApplication = () => {
                 <div className="flex items-center space-x-2 clay-radio-item hover:bg-gray-50 cursor-pointer">
                   <RadioGroupItem value="Smol Dawg" id="size-small" />
                   <Label htmlFor="size-small" className="font-medium cursor-pointer flex-1">
-                    Smol Dawg <span className="block text-sm text-gray-500 mt-1">7.5 AVAX</span>
+                    Smol Dawg <span className="block text-sm text-gray-500 mt-1">10 AVAX</span>
                   </Label>
                 </div>
                 
                 <div className="flex items-center space-x-2 clay-radio-item hover:bg-gray-50 cursor-pointer">
                   <RadioGroupItem value="Dawg" id="size-medium" />
                   <Label htmlFor="size-medium" className="font-medium cursor-pointer flex-1">
-                    Dawg <span className="block text-sm text-gray-500 mt-1">15 AVAX</span>
+                    Dawg <span className="block text-sm text-gray-500 mt-1">25 AVAX</span>
                   </Label>
                 </div>
                 
                 <div className="flex items-center space-x-2 clay-radio-item hover:bg-gray-50 cursor-pointer">
                   <RadioGroupItem value="Big Dawg" id="size-large" />
                   <Label htmlFor="size-large" className="font-medium cursor-pointer flex-1">
-                    Big Dawg <span className="block text-sm text-gray-500 mt-1">30 AVAX</span>
+                    Big Dawg <span className="block text-sm text-gray-500 mt-1">40 AVAX</span>
                   </Label>
                 </div>
               </RadioGroup>
