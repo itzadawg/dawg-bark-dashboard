@@ -572,27 +572,29 @@ const PresaleApplication = () => {
         <ApplicationStatusDisplay />
       ) : (
         <div className="space-y-6">
-          <div className="clay-card p-4 flex items-center justify-between bg-dawg/10">
-            <div className="flex items-center gap-3">
-              <div className="font-medium">Connected as:</div>
-              <div className="flex items-center gap-2">
-                <Avatar className="h-8 w-8 border border-gray-200">
-                  <AvatarImage src={getProfilePictureUrl()} alt={userInfo?.user_metadata?.preferred_username || 'User'} />
-                  <AvatarFallback>
-                    {(userInfo?.user_metadata?.preferred_username || 'U').charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="font-medium">@{userInfo?.user_metadata?.preferred_username || 'user'}</span>
+          <div className="clay-card p-4 bg-dawg/10">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
+                <div className="font-medium">Connected as:</div>
+                <div className="flex items-center gap-2">
+                  <Avatar className="h-8 w-8 border border-gray-200">
+                    <AvatarImage src={getProfilePictureUrl()} alt={userInfo?.user_metadata?.preferred_username || 'User'} />
+                    <AvatarFallback>
+                      {(userInfo?.user_metadata?.preferred_username || 'U').charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="font-medium">@{userInfo?.user_metadata?.preferred_username || 'user'}</span>
+                </div>
               </div>
+              <Button 
+                variant="outline" 
+                onClick={handleSignOut}
+                disabled={loading}
+                className="clay-button bg-white mt-2 md:mt-0"
+              >
+                Disconnect
+              </Button>
             </div>
-            <Button 
-              variant="outline" 
-              onClick={handleSignOut}
-              disabled={loading}
-              className="clay-button bg-white"
-            >
-              Disconnect
-            </Button>
           </div>
           
           <form onSubmit={handleSubmit} className="space-y-8 clay-card p-6">
