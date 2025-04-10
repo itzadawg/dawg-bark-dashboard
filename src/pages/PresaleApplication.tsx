@@ -10,6 +10,7 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Loader2, Copy, Check } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 
 type ApplicationStatus = 'pending' | 'approved' | 'rejected' | null;
 type InvestmentSize = 'Smol Dawg' | 'Dawg' | 'Big Dawg';
@@ -114,7 +115,9 @@ const PresaleApplication = () => {
     reason: '',
     contribution: '',
     size: 'Dawg' as InvestmentSize,
-    walletAddress: ''
+    walletAddress: '',
+    joinBeta: false,
+    betaReason: ''
   });
   const [copied, setCopied] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
@@ -249,6 +252,10 @@ const PresaleApplication = () => {
     setFormData(prev => ({ ...prev, size: value }));
   };
 
+  const handleJoinBetaChange = (checked: boolean) => {
+    setFormData(prev => ({ ...prev, joinBeta: checked, betaReason: checked ? prev.betaReason : '' }));
+  };
+
   const handleConnectX = async () => {
     setLoading(true);
     setAuthError(null);
@@ -339,7 +346,9 @@ const PresaleApplication = () => {
             size: formData.size,
             amount: getAmountFromSize(formData.size),
             wallet_address: formData.walletAddress,
-            twitter_username: userInfo.user_metadata?.preferred_username || ''
+            twitter_username: userInfo.user_metadata?.preferred_username || '',
+            join_beta: formData.joinBeta,
+            beta_reason: formData.betaReason
           }
         );
       
@@ -450,6 +459,18 @@ const PresaleApplication = () => {
                   )}
                 </div>
               </div>
+              
+              <div className="space-y-2 md:col-span-2">
+                <p className="font-semibold">Join Brawl of Dawgs beta:</p>
+                <p>{existingApplication.join_beta ? 'Yes' : 'No'}</p>
+              </div>
+              
+              {existingApplication.join_beta && existingApplication.beta_reason && (
+                <div className="space-y-2 md:col-span-2">
+                  <p className="font-semibold">Why you should be chosen for the beta:</p>
+                  <p className="clay-card bg-white p-3 rounded">{existingApplication.beta_reason}</p>
+                </div>
+              )}
               
               {applicationStatus === 'approved' && (
                 <div className="space-y-3 md:col-span-2 mt-4 p-4 clay-card bg-green-50 rounded-md">
@@ -647,6 +668,51 @@ const PresaleApplication = () => {
                   Please ensure this is an AVAX C-Chain compatible address
                 </p>
               </div>
+              
+              <div className="pt-2 space-y-2 clay-card p-4 bg-white/80">
+                <div className="flex items-center space-x-2">
+                  <label className="text-lg font-medium">Do you want to join the beta of the Brawl of Dawgs game?</label>
+                </div>
+                <div className="flex items-center space-x-6 mt-3">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="joinBeta-yes"
+                      checked={formData.joinBeta === true}
+                      onCheckedChange={() => handleJoinBetaChange(true)}
+                      className="h-5 w-5"
+                    />
+                    <label htmlFor="joinBeta-yes" className="font-medium cursor-pointer">
+                      Yes
+                    </label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      id="joinBeta-no"
+                      checked={formData.joinBeta === false}
+                      onCheckedChange={() => handleJoinBetaChange(false)}
+                      className="h-5 w-5"
+                    />
+                    <label htmlFor="joinBeta-no" className="font-medium cursor-pointer">
+                      No
+                    </label>
+                  </div>
+                </div>
+              </div>
+              
+              {formData.joinBeta && (
+                <div>
+                  <label htmlFor="betaReason" className="block mb-2 font-medium text-lg">Why should we choose you for the beta for the Brawl of Dawgs game?</label>
+                  <Textarea
+                    id="betaReason"
+                    name="betaReason"
+                    required={formData.joinBeta}
+                    value={formData.betaReason}
+                    onChange={handleChange}
+                    placeholder="Tell us why you'd be a good beta tester..."
+                    className="clay-input h-32 w-full"
+                  />
+                </div>
+              )}
               
               <Button 
                 type="submit"
