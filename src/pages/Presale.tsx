@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -35,20 +36,22 @@ const Presale = () => {
     console.log(`[Auth Debug] ${message}`, data || '');
   };
 
-  // Sign out all users when they land on presale page to force re-auth
+  // Check if user is already authenticated and redirect to application page if they are
   useEffect(() => {
-    const clearSession = async () => {
-      debugAuthFlow('Clearing any existing sessions');
+    const checkExistingSession = async () => {
       try {
-        await supabase.auth.signOut();
-        debugAuthFlow('Session cleared');
+        const { data, error } = await supabase.auth.getSession();
+        if (data?.session) {
+          debugAuthFlow('Found existing session, redirecting to application page', data.session.user.id);
+          navigate('/presale-application');
+        }
       } catch (error) {
-        console.error('Error clearing session:', error);
+        console.error('Error checking session:', error);
       }
     };
     
-    clearSession();
-  }, []);
+    checkExistingSession();
+  }, [navigate]);
 
   // X Auth handler
   const handleConnectX = async () => {
