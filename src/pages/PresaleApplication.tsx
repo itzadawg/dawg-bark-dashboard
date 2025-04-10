@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -135,7 +134,7 @@ const PresaleApplication = () => {
   });
   const [copied, setCopied] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const [authTimeout, setAuthTimeout] = useState(null);
+  const [sessionChecked, setSessionChecked] = useState(false);
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -211,44 +210,36 @@ const PresaleApplication = () => {
       setAuthError(`${error}: ${errorDescription || 'Unknown error'}`);
       toast.error(`Authentication error: ${errorDescription || error}`);
     }
-    
-    addClayStyles();
-    
-    // Set up a timeout to handle cases where auth check takes too long
-    const timeout = setTimeout(() => {
+
+    const timeoutId = setTimeout(() => {
       if (isCheckingAuth) {
+        debugAuthFlow('Auth check timed out, forcing completion');
         setIsCheckingAuth(false);
-        setAuthError('Authentication verification timed out. Please try again.');
+        setSessionChecked(true);
         navigate('/presale');
       }
-    }, 10000); // 10 second timeout
+    }, 5000); // 5 second timeout
     
-    setAuthTimeout(timeout);
-    
-    // Set up the auth state listener first
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       debugAuthFlow('Auth state changed', { event, userId: session?.user?.id });
-      
-      // Clear the timeout as we've got a response
-      clearTimeout(timeout);
       
       if (event === 'SIGNED_IN' && session) {
         setIsAuthenticated(true);
         setUserInfo(session.user);
         setIsCheckingAuth(false);
+        setSessionChecked(true);
         
         await checkExistingApplication(session.user.id);
-        
-        toast.success('Successfully connected with X');
       } else if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);
         setUserInfo(null);
         setExistingApplication(null);
         setApplicationStatus(null);
         setIsCheckingAuth(false);
+        setSessionChecked(true);
         navigate('/presale');
       } else if (event === 'INITIAL_SESSION') {
-        // Handle initial session state
+        setSessionChecked(true);
         if (session) {
           setIsAuthenticated(true);
           setUserInfo(session.user);
@@ -262,7 +253,6 @@ const PresaleApplication = () => {
       }
     });
     
-    // Then check the existing session
     const checkSession = async () => {
       try {
         debugAuthFlow('Checking user session');
@@ -272,6 +262,7 @@ const PresaleApplication = () => {
           console.error('Session error:', error);
           setAuthError(`Session error: ${error.message}`);
           setIsCheckingAuth(false);
+          setSessionChecked(true);
           navigate('/presale');
           return;
         }
@@ -281,12 +272,14 @@ const PresaleApplication = () => {
           setIsAuthenticated(true);
           setUserInfo(data.session.user);
           setIsCheckingAuth(false);
+          setSessionChecked(true);
           
           await checkExistingApplication(data.session.user.id);
         } else {
           debugAuthFlow('No active session found, redirecting to /presale');
           setIsAuthenticated(false);
           setIsCheckingAuth(false);
+          setSessionChecked(true);
           navigate('/presale');
           return;
         }
@@ -294,6 +287,7 @@ const PresaleApplication = () => {
         console.error('Error checking user session:', error);
         setAuthError(`Error checking session: ${error.message}`);
         setIsCheckingAuth(false);
+        setSessionChecked(true);
         navigate('/presale');
       }
     };
@@ -301,19 +295,10 @@ const PresaleApplication = () => {
     checkSession();
     
     return () => {
-      clearTimeout(timeout);
+      clearTimeout(timeoutId);
       authListener?.subscription?.unsubscribe();
     };
   }, [location, navigate]);
-  
-  // Clean up timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (authTimeout) {
-        clearTimeout(authTimeout);
-      }
-    };
-  }, [authTimeout]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -766,7 +751,7 @@ const PresaleApplication = () => {
     </>
   );
 
-  if (isCheckingAuth) {
+  if (isCheckingAuth && !sessionChecked) {
     return (
       <div className="clay-container mobile-safe-area">
         <Header />
@@ -780,7 +765,7 @@ const PresaleApplication = () => {
     );
   }
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated && sessionChecked) {
     return (
       <div className="clay-container mobile-safe-area">
         <Header />

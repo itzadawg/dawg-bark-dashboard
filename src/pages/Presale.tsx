@@ -32,6 +32,7 @@ const Presale = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [authError, setAuthError] = useState(null);
+  const [sessionChecked, setSessionChecked] = useState(false);
   
   // Debugging helper
   const debugAuthFlow = (message, data = null) => {
@@ -40,12 +41,16 @@ const Presale = () => {
 
   // Check if user is already authenticated and set state accordingly
   useEffect(() => {
+    let timeoutId;
+    
     const checkExistingSession = async () => {
       try {
+        debugAuthFlow('Checking for existing session');
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
           console.error('Error checking session:', error);
+          setSessionChecked(true);
           return;
         }
         
@@ -54,10 +59,22 @@ const Presale = () => {
           setIsAuthenticated(true);
           setUserInfo(data.session.user);
         }
+        
+        // Mark session as checked even if no active session
+        setSessionChecked(true);
       } catch (error) {
         console.error('Error checking session:', error);
+        setSessionChecked(true);
       }
     };
+    
+    // Set timeout to prevent infinite loading
+    timeoutId = setTimeout(() => {
+      if (!sessionChecked) {
+        setSessionChecked(true);
+        debugAuthFlow('Session check timed out, forcing completion');
+      }
+    }, 3000);
     
     checkExistingSession();
     
@@ -68,14 +85,17 @@ const Presale = () => {
       if (event === 'SIGNED_IN' && session) {
         setIsAuthenticated(true);
         setUserInfo(session.user);
+        setSessionChecked(true);
         navigate('/presale-application');
       } else if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);
         setUserInfo(null);
+        setSessionChecked(true);
       }
     });
     
     return () => {
+      clearTimeout(timeoutId);
       authListener?.subscription?.unsubscribe();
     };
   }, [navigate]);
@@ -160,7 +180,12 @@ const Presale = () => {
           <div className="w-full flex flex-col items-center px-4 md:px-8 lg:px-12 flex-grow justify-center mb-16">
             <div className="w-full max-w-3xl flex flex-col items-center justify-center">
               {/* Display different content based on authentication status */}
-              {isAuthenticated ? (
+              {!sessionChecked ? (
+                <div className="flex flex-col items-center justify-center gap-2">
+                  <Loader2 className="h-8 w-8 animate-spin text-white" />
+                  <p className="text-white text-lg">Checking authentication...</p>
+                </div>
+              ) : isAuthenticated ? (
                 <div className="w-full max-w-md clay-card bg-white/80 p-6 rounded-lg shadow-lg backdrop-blur-sm">
                   <p className="text-center text-lg font-medium mb-6">
                     You're connected with X as {userInfo?.user_metadata?.preferred_username || 'user'}
