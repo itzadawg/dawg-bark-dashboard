@@ -134,7 +134,6 @@ const PresaleApplication = () => {
   });
   const [copied, setCopied] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-  const [sessionChecked, setSessionChecked] = useState(false);
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -210,87 +209,67 @@ const PresaleApplication = () => {
       setAuthError(`${error}: ${errorDescription || 'Unknown error'}`);
       toast.error(`Authentication error: ${errorDescription || error}`);
     }
-
-    // Set a maximum timeout to prevent endless checking
-    const timeoutId = setTimeout(() => {
-      if (isCheckingAuth) {
-        debugAuthFlow('Auth check timed out after 5 seconds, forcing completion');
-        setIsCheckingAuth(false);
-        setSessionChecked(true);
-      }
-    }, 5000);
     
-    // Using setTimeout to avoid potential deadlocks with Supabase auth events
-    const checkSession = async () => {
+    addClayStyles();
+    
+    const checkUser = async () => {
+      setIsCheckingAuth(true);
       try {
         debugAuthFlow('Checking user session');
         const { data, error } = await supabase.auth.getSession();
+        console.log('Session data:', data);
         
         if (error) {
           console.error('Session error:', error);
           setAuthError(`Session error: ${error.message}`);
-          setIsCheckingAuth(false);
-          setSessionChecked(true);
           navigate('/presale');
           return;
         }
         
         if (data.session) {
-          debugAuthFlow('Found existing session', data.session.user.id);
+          debugAuthFlow('User authenticated', data.session.user.id);
           setIsAuthenticated(true);
           setUserInfo(data.session.user);
-          setIsCheckingAuth(false);
-          setSessionChecked(true);
           
           await checkExistingApplication(data.session.user.id);
         } else {
           debugAuthFlow('No active session found, redirecting to /presale');
-          setIsAuthenticated(false);
-          setIsCheckingAuth(false);
-          setSessionChecked(true);
+          toast.error('Please connect with X first');
           navigate('/presale');
           return;
         }
       } catch (error) {
         console.error('Error checking user session:', error);
         setAuthError(`Error checking session: ${error.message}`);
-        setIsCheckingAuth(false);
-        setSessionChecked(true);
         navigate('/presale');
+      } finally {
+        setIsCheckingAuth(false);
       }
     };
     
-    // Run the session check immediately
-    checkSession();
+    checkUser();
     
-    // Set up auth state change listener
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       debugAuthFlow('Auth state changed', { event, userId: session?.user?.id });
       
       if (event === 'SIGNED_IN' && session) {
         setIsAuthenticated(true);
         setUserInfo(session.user);
-        setIsCheckingAuth(false);
-        setSessionChecked(true);
         
-        // Need to use setTimeout to prevent potential deadlock with Supabase Auth
-        setTimeout(() => {
-          checkExistingApplication(session.user.id);
-        }, 0);
+        await checkExistingApplication(session.user.id);
+        
+        toast.success('Successfully connected with X');
       } else if (event === 'SIGNED_OUT') {
         setIsAuthenticated(false);
         setUserInfo(null);
         setExistingApplication(null);
         setApplicationStatus(null);
-        setIsCheckingAuth(false);
-        setSessionChecked(true);
         navigate('/presale');
       }
     });
     
     return () => {
-      clearTimeout(timeoutId);
-      authListener?.subscription?.unsubscribe();
+      authListener?.subscription.unsubscribe();
     };
   }, [location, navigate]);
 
@@ -745,7 +724,7 @@ const PresaleApplication = () => {
     </>
   );
 
-  if (isCheckingAuth && !sessionChecked) {
+  if (isCheckingAuth) {
     return (
       <div className="clay-container mobile-safe-area">
         <Header />
@@ -759,7 +738,7 @@ const PresaleApplication = () => {
     );
   }
 
-  if (!isAuthenticated && sessionChecked) {
+  if (!isAuthenticated) {
     return (
       <div className="clay-container mobile-safe-area">
         <Header />
