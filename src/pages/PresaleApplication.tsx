@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -134,6 +135,7 @@ const PresaleApplication = () => {
   });
   const [copied, setCopied] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [authTimeout, setAuthTimeout] = useState(null);
   const isMobile = useIsMobile();
 
   useEffect(() => {
@@ -212,49 +214,28 @@ const PresaleApplication = () => {
     
     addClayStyles();
     
-    const checkUser = async () => {
-      setIsCheckingAuth(true);
-      try {
-        debugAuthFlow('Checking user session');
-        const { data, error } = await supabase.auth.getSession();
-        console.log('Session data:', data);
-        
-        if (error) {
-          console.error('Session error:', error);
-          setAuthError(`Session error: ${error.message}`);
-          navigate('/presale');
-          return;
-        }
-        
-        if (data.session) {
-          debugAuthFlow('User authenticated', data.session.user.id);
-          setIsAuthenticated(true);
-          setUserInfo(data.session.user);
-          
-          await checkExistingApplication(data.session.user.id);
-        } else {
-          debugAuthFlow('No active session found, redirecting to /presale');
-          toast.error('Please connect with X first');
-          navigate('/presale');
-          return;
-        }
-      } catch (error) {
-        console.error('Error checking user session:', error);
-        setAuthError(`Error checking session: ${error.message}`);
-        navigate('/presale');
-      } finally {
+    // Set up a timeout to handle cases where auth check takes too long
+    const timeout = setTimeout(() => {
+      if (isCheckingAuth) {
         setIsCheckingAuth(false);
+        setAuthError('Authentication verification timed out. Please try again.');
+        navigate('/presale');
       }
-    };
+    }, 10000); // 10 second timeout
     
-    checkUser();
+    setAuthTimeout(timeout);
     
+    // Set up the auth state listener first
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       debugAuthFlow('Auth state changed', { event, userId: session?.user?.id });
+      
+      // Clear the timeout as we've got a response
+      clearTimeout(timeout);
       
       if (event === 'SIGNED_IN' && session) {
         setIsAuthenticated(true);
         setUserInfo(session.user);
+        setIsCheckingAuth(false);
         
         await checkExistingApplication(session.user.id);
         
@@ -264,14 +245,75 @@ const PresaleApplication = () => {
         setUserInfo(null);
         setExistingApplication(null);
         setApplicationStatus(null);
+        setIsCheckingAuth(false);
         navigate('/presale');
+      } else if (event === 'INITIAL_SESSION') {
+        // Handle initial session state
+        if (session) {
+          setIsAuthenticated(true);
+          setUserInfo(session.user);
+          setIsCheckingAuth(false);
+          await checkExistingApplication(session.user.id);
+        } else {
+          setIsAuthenticated(false);
+          setIsCheckingAuth(false);
+          navigate('/presale');
+        }
       }
     });
     
+    // Then check the existing session
+    const checkSession = async () => {
+      try {
+        debugAuthFlow('Checking user session');
+        const { data, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Session error:', error);
+          setAuthError(`Session error: ${error.message}`);
+          setIsCheckingAuth(false);
+          navigate('/presale');
+          return;
+        }
+        
+        if (data.session) {
+          debugAuthFlow('Found existing session', data.session.user.id);
+          setIsAuthenticated(true);
+          setUserInfo(data.session.user);
+          setIsCheckingAuth(false);
+          
+          await checkExistingApplication(data.session.user.id);
+        } else {
+          debugAuthFlow('No active session found, redirecting to /presale');
+          setIsAuthenticated(false);
+          setIsCheckingAuth(false);
+          navigate('/presale');
+          return;
+        }
+      } catch (error) {
+        console.error('Error checking user session:', error);
+        setAuthError(`Error checking session: ${error.message}`);
+        setIsCheckingAuth(false);
+        navigate('/presale');
+      }
+    };
+    
+    checkSession();
+    
     return () => {
-      authListener?.subscription.unsubscribe();
+      clearTimeout(timeout);
+      authListener?.subscription?.unsubscribe();
     };
   }, [location, navigate]);
+  
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (authTimeout) {
+        clearTimeout(authTimeout);
+      }
+    };
+  }, [authTimeout]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
