@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import {
   Dialog,
   DialogContent,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import {
   Drawer,
@@ -159,7 +160,8 @@ const Presale = () => {
         </Drawer>
       ) : (
         <Dialog open={showPopup} onOpenChange={closePopup}>
-          <DialogContent className="max-w-md p-0">
+          <DialogContent className="max-w-md p-0 border-0 bg-transparent shadow-none">
+            <DialogTitle className="sr-only">Presale Disabled</DialogTitle>
             <PresaleDisabledPopup onClose={closePopup} />
           </DialogContent>
         </Dialog>

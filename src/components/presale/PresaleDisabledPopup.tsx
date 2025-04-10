@@ -12,7 +12,7 @@ const PresaleDisabledPopup = ({ onClose }: PresaleDisabledPopupProps) => {
   const isMobile = useIsMobile();
   
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-black">
+    <div className="relative bg-black rounded-lg overflow-hidden">
       {/* Close Button - larger target area on mobile */}
       <div className="absolute top-4 right-4 z-50">
         <Button 
@@ -27,14 +27,14 @@ const PresaleDisabledPopup = ({ onClose }: PresaleDisabledPopupProps) => {
       </div>
       
       {/* Full-screen image with mobile optimizations */}
-      <div className="flex-1 relative overflow-hidden">
+      <div className="relative overflow-hidden">
         <img 
           src="/lovable-uploads/3f337a2b-01a9-49bc-877b-b2809e980e83.png" 
           alt="Too Early Dawg" 
-          className="w-full h-full object-contain md:object-cover"
+          className="w-full h-full object-contain"
           loading="eager" 
-          width={isMobile ? 390 : 1280}
-          height={isMobile ? 844 : 720}
+          width={isMobile ? 390 : 800}
+          height={isMobile ? 500 : 600}
         />
       </div>
     </div>
