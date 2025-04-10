@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -137,7 +136,6 @@ const PresaleApplication = () => {
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const isMobile = useIsMobile();
   
-  // Add a timer reference to avoid infinite loading
   const [authCheckTimedOut, setAuthCheckTimedOut] = useState(false);
   const [appCheckTimedOut, setAppCheckTimedOut] = useState(false);
 
@@ -170,7 +168,6 @@ const PresaleApplication = () => {
       setCheckingApplication(true);
       setAppCheckTimedOut(false);
       
-      // Set application check timeout
       const appCheckTimeout = setTimeout(() => {
         debugAuthFlow('Application check timed out after 3 seconds');
         setAppCheckTimedOut(true);
@@ -232,7 +229,6 @@ const PresaleApplication = () => {
       setIsCheckingAuth(true);
       setAuthCheckTimedOut(false);
       
-      // Set auth check timeout
       const authCheckTimeout = setTimeout(() => {
         debugAuthFlow('Session check timed out after 3 seconds, forcing completion');
         setAuthCheckTimedOut(true);
@@ -393,21 +389,31 @@ const PresaleApplication = () => {
     };
 
     try {
+      console.log('Submitting application with data:', {
+        user_id: userInfo.id,
+        reason: formData.reason,
+        contribution: formData.contribution,
+        size: formData.size,
+        amount: getAmountFromSize(formData.size),
+        wallet_address: formData.walletAddress,
+        twitter_username: userInfo.user_metadata?.preferred_username || '',
+        join_beta: formData.joinBeta,
+        beta_reason: formData.betaReason
+      });
+      
       const { error } = await supabase
         .from('presale_applications')
-        .insert(
-          { 
-            user_id: userInfo.id,
-            reason: formData.reason,
-            contribution: formData.contribution,
-            size: formData.size,
-            amount: getAmountFromSize(formData.size),
-            wallet_address: formData.walletAddress,
-            twitter_username: userInfo.user_metadata?.preferred_username || '',
-            join_beta: formData.joinBeta,
-            beta_reason: formData.betaReason
-          }
-        );
+        .insert([{ 
+          user_id: userInfo.id,
+          reason: formData.reason,
+          contribution: formData.contribution,
+          size: formData.size,
+          amount: getAmountFromSize(formData.size),
+          wallet_address: formData.walletAddress,
+          twitter_username: userInfo.user_metadata?.preferred_username || '',
+          join_beta: formData.joinBeta,
+          beta_reason: formData.betaReason || null
+        }]);
       
       if (error) {
         throw error;
@@ -765,7 +771,6 @@ const PresaleApplication = () => {
     );
   }
 
-  // When auth check times out, show a recovery UI
   if (authCheckTimedOut) {
     return (
       <div className="clay-container mobile-safe-area">

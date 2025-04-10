@@ -30,6 +30,8 @@ interface Application {
   size: string;
   status: string;
   created_at: string;
+  join_beta: boolean | null;
+  beta_reason: string | null;
 }
 
 interface ApplicationTableProps {
@@ -203,6 +205,9 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                 
                 <div className="font-semibold">Status:</div>
                 <div>{getStatusBadge(selectedApp.status)}</div>
+
+                <div className="font-semibold">Join Beta:</div>
+                <div>{selectedApp.join_beta ? 'Yes' : 'No'}</div>
               </div>
               
               <div>
@@ -214,6 +219,13 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                 <h4 className="font-semibold mb-1">How they plan to contribute:</h4>
                 <p className="text-sm p-2 bg-gray-50 rounded">{selectedApp.contribution}</p>
               </div>
+              
+              {selectedApp.join_beta && selectedApp.beta_reason && (
+                <div>
+                  <h4 className="font-semibold mb-1">Why they should be chosen for the beta:</h4>
+                  <p className="text-sm p-2 bg-gray-50 rounded">{selectedApp.beta_reason}</p>
+                </div>
+              )}
               
               {selectedApp.status === 'approved' && (
                 <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-md">

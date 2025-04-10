@@ -66,9 +66,11 @@ export type Database = {
       presale_applications: {
         Row: {
           amount: number
+          beta_reason: string | null
           contribution: string
           created_at: string | null
           id: string
+          join_beta: boolean | null
           reason: string
           size: string
           status: string | null
@@ -79,9 +81,11 @@ export type Database = {
         }
         Insert: {
           amount: number
+          beta_reason?: string | null
           contribution?: string
           created_at?: string | null
           id?: string
+          join_beta?: boolean | null
           reason: string
           size?: string
           status?: string | null
@@ -92,9 +96,11 @@ export type Database = {
         }
         Update: {
           amount?: number
+          beta_reason?: string | null
           contribution?: string
           created_at?: string | null
           id?: string
+          join_beta?: boolean | null
           reason?: string
           size?: string
           status?: string | null
