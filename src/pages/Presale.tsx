@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
 import { Button } from '@/components/ui/button';
@@ -32,6 +32,8 @@ const Presale = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
   const [authError, setAuthError] = useState(null);
+  const sessionChecked = useRef(false);
+  const sessionCheckTimeout = useRef(null);
   
   // Debugging helper
   const debugAuthFlow = (message, data = null) => {
@@ -40,8 +42,21 @@ const Presale = () => {
 
   // Check if user is already authenticated and set state accordingly
   useEffect(() => {
+    // Clear any existing timeout
+    if (sessionCheckTimeout.current) {
+      clearTimeout(sessionCheckTimeout.current);
+    }
+    
+    // Set a timeout to ensure we don't get stuck checking
+    sessionCheckTimeout.current = setTimeout(() => {
+      debugAuthFlow('Session check timed out after 3 seconds, forcing completion');
+      sessionChecked.current = true;
+      setIsAuthLoading(false);
+    }, 3000);
+    
     const checkExistingSession = async () => {
       try {
+        setIsAuthLoading(true);
         const { data, error } = await supabase.auth.getSession();
         
         if (error) {
@@ -56,6 +71,10 @@ const Presale = () => {
         }
       } catch (error) {
         console.error('Error checking session:', error);
+      } finally {
+        sessionChecked.current = true;
+        setIsAuthLoading(false);
+        clearTimeout(sessionCheckTimeout.current);
       }
     };
     
@@ -76,6 +95,7 @@ const Presale = () => {
     });
     
     return () => {
+      clearTimeout(sessionCheckTimeout.current);
       authListener?.subscription?.unsubscribe();
     };
   }, [navigate]);

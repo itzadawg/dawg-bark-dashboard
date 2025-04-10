@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -135,6 +136,10 @@ const PresaleApplication = () => {
   const [copied, setCopied] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const isMobile = useIsMobile();
+  
+  // Add a timer reference to avoid infinite loading
+  const [authCheckTimedOut, setAuthCheckTimedOut] = useState(false);
+  const [appCheckTimedOut, setAppCheckTimedOut] = useState(false);
 
   useEffect(() => {
     addClayStyles();
@@ -163,11 +168,22 @@ const PresaleApplication = () => {
   const checkExistingApplication = async (userId) => {
     try {
       setCheckingApplication(true);
+      setAppCheckTimedOut(false);
+      
+      // Set application check timeout
+      const appCheckTimeout = setTimeout(() => {
+        debugAuthFlow('Application check timed out after 3 seconds');
+        setAppCheckTimedOut(true);
+        setCheckingApplication(false);
+      }, 3000);
+      
       const { data, error } = await supabase
         .from('presale_applications')
         .select('*')
         .eq('user_id', userId)
         .single();
+      
+      clearTimeout(appCheckTimeout);
       
       if (error && error.code !== 'PGRST116') {
         console.error('Error checking application:', error);
@@ -214,10 +230,20 @@ const PresaleApplication = () => {
     
     const checkUser = async () => {
       setIsCheckingAuth(true);
+      setAuthCheckTimedOut(false);
+      
+      // Set auth check timeout
+      const authCheckTimeout = setTimeout(() => {
+        debugAuthFlow('Session check timed out after 3 seconds, forcing completion');
+        setAuthCheckTimedOut(true);
+        setIsCheckingAuth(false);
+      }, 3000);
+      
       try {
         debugAuthFlow('Checking user session');
         const { data, error } = await supabase.auth.getSession();
-        console.log('Session data:', data);
+        
+        clearTimeout(authCheckTimeout);
         
         if (error) {
           console.error('Session error:', error);
@@ -243,6 +269,7 @@ const PresaleApplication = () => {
         setAuthError(`Error checking session: ${error.message}`);
         navigate('/presale');
       } finally {
+        clearTimeout(authCheckTimeout);
         setIsCheckingAuth(false);
       }
     };
@@ -563,7 +590,7 @@ const PresaleApplication = () => {
             {loading ? 'Connecting...' : 'Connect with X'}
           </Button>
         </div>
-      ) : checkingApplication ? (
+      ) : checkingApplication && !appCheckTimedOut ? (
         <div className="text-center clay-card p-8 flex flex-col items-center">
           <Loader2 className="h-8 w-8 animate-spin text-dawg mb-4" />
           <p>Checking application status...</p>
@@ -724,7 +751,7 @@ const PresaleApplication = () => {
     </>
   );
 
-  if (isCheckingAuth) {
+  if (isCheckingAuth && !authCheckTimedOut) {
     return (
       <div className="clay-container mobile-safe-area">
         <Header />
@@ -732,6 +759,36 @@ const PresaleApplication = () => {
           <div className="text-center clay-card p-8">
             <Loader2 className="h-8 w-8 animate-spin text-dawg mx-auto mb-4" />
             <p className="text-lg">Verifying authentication...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // When auth check times out, show a recovery UI
+  if (authCheckTimedOut) {
+    return (
+      <div className="clay-container mobile-safe-area">
+        <Header />
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center clay-card p-8 max-w-md">
+            <h2 className="text-xl font-bold mb-4">Authentication Check Timed Out</h2>
+            <p className="mb-4">There was a problem verifying your authentication status. Please try again.</p>
+            <div className="flex flex-col gap-3">
+              <Button 
+                onClick={() => navigate('/presale')}
+                className="clay-button"
+              >
+                Go to presale page
+              </Button>
+              <Button 
+                onClick={() => window.location.reload()}
+                variant="outline"
+                className="clay-button bg-white"
+              >
+                Refresh page
+              </Button>
+            </div>
           </div>
         </div>
       </div>
