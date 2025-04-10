@@ -67,10 +67,12 @@ const Presale = () => {
     try {
       debugAuthFlow('Initiating Twitter auth');
       
-      // Important: We're not using redirectTo parameter anymore
-      // This forces Supabase to use the default redirect URL configured in the Supabase dashboard
+      // Specify the redirectTo URL to ensure users are sent to the application page after auth
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
+        options: {
+          redirectTo: window.location.origin + '/presale-application'
+        }
       });
 
       if (error) {
