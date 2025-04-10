@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -160,7 +159,7 @@ const Presale = () => {
         </Drawer>
       ) : (
         <Dialog open={showPopup} onOpenChange={closePopup}>
-          <DialogContent className="max-w-md p-0 border-0 bg-transparent shadow-none">
+          <DialogContent className="max-w-2xl p-0 border-0 bg-transparent shadow-none">
             <DialogTitle className="sr-only">Presale Disabled</DialogTitle>
             <PresaleDisabledPopup onClose={closePopup} />
           </DialogContent>
