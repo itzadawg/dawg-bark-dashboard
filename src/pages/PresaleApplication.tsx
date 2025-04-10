@@ -11,6 +11,8 @@ import { Loader2, Copy, Check } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 type ApplicationStatus = 'pending' | 'approved' | 'rejected' | null;
 type InvestmentSize = 'Smol Dawg' | 'Dawg' | 'Big Dawg';
@@ -96,6 +98,17 @@ const addClayStyles = () => {
       background-color: #f7f7ff; /* Similar to gallery background */
       min-height: 100vh;
       padding: 2rem 1rem;
+      overscroll-behavior: contain; /* Prevent pull-to-refresh and overscroll */
+      touch-action: pan-y; /* Allow vertical scrolling only */
+    }
+    
+    @media (max-width: 768px) {
+      .mobile-safe-area {
+        overscroll-behavior: contain;
+        touch-action: pan-y;
+        height: 100%;
+        width: 100%;
+      }
     }
   `;
   document.head.appendChild(style);
@@ -121,10 +134,27 @@ const PresaleApplication = () => {
   });
   const [copied, setCopied] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     addClayStyles();
-  }, []);
+    
+    const preventDefaultTouchMove = (e) => {
+      if (Math.abs(e.touches[0].clientX - e.touches[0].initialClientX) > 10) {
+        e.preventDefault();
+      }
+    };
+
+    if (isMobile) {
+      document.addEventListener('touchmove', preventDefaultTouchMove, { passive: false });
+    }
+    
+    return () => {
+      if (isMobile) {
+        document.removeEventListener('touchmove', preventDefaultTouchMove);
+      }
+    };
+  }, [isMobile]);
 
   const debugAuthFlow = (message, data = null) => {
     console.log(`[Auth Debug] ${message}`, data || '');
@@ -506,9 +536,195 @@ const PresaleApplication = () => {
     );
   };
 
+  const renderContent = () => (
+    <>
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl md:text-4xl font-black text-dawg-dark mb-4">Presale Application</h1>
+        <p className="text-lg text-gray-600">
+          Complete your details to participate in the DAWG presale
+        </p>
+      </div>
+      
+      {authError && (
+        <div className="p-4 mb-6 clay-card bg-red-50 text-red-700">
+          <h3 className="font-bold">Authentication Error:</h3>
+          <p className="break-words">{authError}</p>
+        </div>
+      )}
+      
+      {!isAuthenticated ? (
+        <div className="text-center clay-card p-8 flex flex-col items-center">
+          <p className="mb-6 text-lg">Connect with X (Twitter) to access the application form</p>
+          <Button 
+            onClick={handleConnectX}
+            disabled={loading}
+            className="py-6 text-lg clay-button flex items-center justify-center gap-2 max-w-md"
+          >
+            {loading ? 'Connecting...' : 'Connect with X'}
+          </Button>
+        </div>
+      ) : checkingApplication ? (
+        <div className="text-center clay-card p-8 flex flex-col items-center">
+          <Loader2 className="h-8 w-8 animate-spin text-dawg mb-4" />
+          <p>Checking application status...</p>
+        </div>
+      ) : existingApplication ? (
+        <ApplicationStatusDisplay />
+      ) : (
+        <div className="space-y-6">
+          <div className="clay-card p-4 flex items-center justify-between bg-dawg/10">
+            <div className="flex items-center gap-3">
+              <div className="font-medium">Connected as:</div>
+              <div className="flex items-center gap-2">
+                <Avatar className="h-8 w-8 border border-gray-200">
+                  <AvatarImage src={getProfilePictureUrl()} alt={userInfo?.user_metadata?.preferred_username || 'User'} />
+                  <AvatarFallback>
+                    {(userInfo?.user_metadata?.preferred_username || 'U').charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="font-medium">@{userInfo?.user_metadata?.preferred_username || 'user'}</span>
+              </div>
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={handleSignOut}
+              disabled={loading}
+              className="clay-button bg-white"
+            >
+              Disconnect
+            </Button>
+          </div>
+          
+          <form onSubmit={handleSubmit} className="space-y-8 clay-card p-6">
+            <div>
+              <label htmlFor="reason" className="block mb-2 font-medium text-lg">Why do you want to join the DAWG presale?</label>
+              <Textarea
+                id="reason"
+                name="reason"
+                required
+                value={formData.reason}
+                onChange={handleChange}
+                placeholder="Share your reasons for joining the DAWG community..."
+                className="clay-input h-32 w-full"
+              />
+            </div>
+            
+            <div>
+              <label htmlFor="contribution" className="block mb-2 font-medium text-lg">How do you plan to contribute to the DAWG coin?</label>
+              <Textarea
+                id="contribution"
+                name="contribution"
+                required
+                value={formData.contribution}
+                onChange={handleChange}
+                placeholder="Tell us how you'll help grow the DAWG community..."
+                className="clay-input h-32 w-full"
+              />
+            </div>
+            
+            <div>
+              <label className="block mb-2 font-medium text-lg">Choose your size</label>
+              <RadioGroup value={formData.size} onValueChange={handleSizeChange} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="flex items-center space-x-2 clay-radio-item hover:bg-gray-50 cursor-pointer">
+                  <RadioGroupItem value="Smol Dawg" id="size-small" />
+                  <Label htmlFor="size-small" className="font-medium cursor-pointer flex-1">
+                    Smol Dawg <span className="block text-sm text-gray-500 mt-1">7.5 AVAX</span>
+                  </Label>
+                </div>
+                
+                <div className="flex items-center space-x-2 clay-radio-item hover:bg-gray-50 cursor-pointer">
+                  <RadioGroupItem value="Dawg" id="size-medium" />
+                  <Label htmlFor="size-medium" className="font-medium cursor-pointer flex-1">
+                    Dawg <span className="block text-sm text-gray-500 mt-1">15 AVAX</span>
+                  </Label>
+                </div>
+                
+                <div className="flex items-center space-x-2 clay-radio-item hover:bg-gray-50 cursor-pointer">
+                  <RadioGroupItem value="Big Dawg" id="size-large" />
+                  <Label htmlFor="size-large" className="font-medium cursor-pointer flex-1">
+                    Big Dawg <span className="block text-sm text-gray-500 mt-1">30 AVAX</span>
+                  </Label>
+                </div>
+              </RadioGroup>
+            </div>
+            
+            <div>
+              <label htmlFor="walletAddress" className="block mb-2 font-medium text-lg">Enter your AVAX C-Chain Wallet Address</label>
+              <Input
+                id="walletAddress"
+                name="walletAddress"
+                required
+                value={formData.walletAddress}
+                onChange={handleChange}
+                placeholder="0x..."
+                className="clay-input font-mono w-full"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                Please ensure this is an AVAX C-Chain compatible address
+              </p>
+            </div>
+            
+            <div className="pt-2 space-y-2 clay-card p-4 bg-white/80">
+              <div className="flex items-center space-x-2">
+                <label className="text-lg font-medium">Do you want to join the beta of the Brawl of Dawgs game?</label>
+              </div>
+              <div className="flex items-center space-x-6 mt-3">
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="joinBeta-yes"
+                    checked={formData.joinBeta === true}
+                    onCheckedChange={() => handleJoinBetaChange(true)}
+                    className="h-5 w-5"
+                  />
+                  <label htmlFor="joinBeta-yes" className="font-medium cursor-pointer">
+                    Yes
+                  </label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <Checkbox
+                    id="joinBeta-no"
+                    checked={formData.joinBeta === false}
+                    onCheckedChange={() => handleJoinBetaChange(false)}
+                    className="h-5 w-5"
+                  />
+                  <label htmlFor="joinBeta-no" className="font-medium cursor-pointer">
+                    No
+                  </label>
+                </div>
+              </div>
+            </div>
+            
+            {formData.joinBeta && (
+              <div>
+                <label htmlFor="betaReason" className="block mb-2 font-medium text-lg">Why should we choose you for the beta for the Brawl of Dawgs game?</label>
+                <Textarea
+                  id="betaReason"
+                  name="betaReason"
+                  required={formData.joinBeta}
+                  value={formData.betaReason}
+                  onChange={handleChange}
+                  placeholder="Tell us why you'd be a good beta tester..."
+                  className="clay-input h-32 w-full"
+                />
+              </div>
+            )}
+            
+            <Button 
+              type="submit"
+              disabled={loading}
+              className="w-full py-6 text-lg clay-button"
+            >
+              {loading ? 'Submitting...' : 'Submit Application'}
+            </Button>
+          </form>
+        </div>
+      )}
+    </>
+  );
+
   if (isCheckingAuth) {
     return (
-      <div className="clay-container">
+      <div className="clay-container mobile-safe-area">
         <Header />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center clay-card p-8">
@@ -522,7 +738,7 @@ const PresaleApplication = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="clay-container">
+      <div className="clay-container mobile-safe-area">
         <Header />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center clay-card p-8">
@@ -540,189 +756,15 @@ const PresaleApplication = () => {
   }
 
   return (
-    <div className="clay-container">
+    <div className="clay-container mobile-safe-area">
       <Header />
       <div className="min-h-screen px-4 md:px-8 py-12 max-w-3xl mx-auto">
-        <div className="mb-8 text-center">
-          <h1 className="text-3xl md:text-4xl font-black text-dawg-dark mb-4">Presale Application</h1>
-          <p className="text-lg text-gray-600">
-            Complete your details to participate in the DAWG presale
-          </p>
-        </div>
-        
-        {authError && (
-          <div className="p-4 mb-6 clay-card bg-red-50 text-red-700">
-            <h3 className="font-bold">Authentication Error:</h3>
-            <p className="break-words">{authError}</p>
-          </div>
-        )}
-        
-        {!isAuthenticated ? (
-          <div className="text-center clay-card p-8 flex flex-col items-center">
-            <p className="mb-6 text-lg">Connect with X (Twitter) to access the application form</p>
-            <Button 
-              onClick={handleConnectX}
-              disabled={loading}
-              className="py-6 text-lg clay-button flex items-center justify-center gap-2 max-w-md"
-            >
-              {loading ? 'Connecting...' : 'Connect with X'}
-            </Button>
-          </div>
-        ) : checkingApplication ? (
-          <div className="text-center clay-card p-8 flex flex-col items-center">
-            <Loader2 className="h-8 w-8 animate-spin text-dawg mb-4" />
-            <p>Checking application status...</p>
-          </div>
-        ) : existingApplication ? (
-          <ApplicationStatusDisplay />
+        {isMobile ? (
+          <ScrollArea className="h-full w-full px-1">
+            {renderContent()}
+          </ScrollArea>
         ) : (
-          <div className="space-y-6">
-            <div className="clay-card p-4 flex items-center justify-between bg-dawg/10">
-              <div className="flex items-center gap-3">
-                <div className="font-medium">Connected as:</div>
-                <div className="flex items-center gap-2">
-                  <Avatar className="h-8 w-8 border border-gray-200">
-                    <AvatarImage src={getProfilePictureUrl()} alt={userInfo?.user_metadata?.preferred_username || 'User'} />
-                    <AvatarFallback>
-                      {(userInfo?.user_metadata?.preferred_username || 'U').charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="font-medium">@{userInfo?.user_metadata?.preferred_username || 'user'}</span>
-                </div>
-              </div>
-              <Button 
-                variant="outline" 
-                onClick={handleSignOut}
-                disabled={loading}
-                className="clay-button bg-white"
-              >
-                Disconnect
-              </Button>
-            </div>
-            
-            <form onSubmit={handleSubmit} className="space-y-8 clay-card p-6">
-              <div>
-                <label htmlFor="reason" className="block mb-2 font-medium text-lg">Why do you want to join the DAWG presale?</label>
-                <Textarea
-                  id="reason"
-                  name="reason"
-                  required
-                  value={formData.reason}
-                  onChange={handleChange}
-                  placeholder="Share your reasons for joining the DAWG community..."
-                  className="clay-input h-32 w-full"
-                />
-              </div>
-              
-              <div>
-                <label htmlFor="contribution" className="block mb-2 font-medium text-lg">How do you plan to contribute to the DAWG coin?</label>
-                <Textarea
-                  id="contribution"
-                  name="contribution"
-                  required
-                  value={formData.contribution}
-                  onChange={handleChange}
-                  placeholder="Tell us how you'll help grow the DAWG community..."
-                  className="clay-input h-32 w-full"
-                />
-              </div>
-              
-              <div>
-                <label className="block mb-2 font-medium text-lg">Choose your size</label>
-                <RadioGroup value={formData.size} onValueChange={handleSizeChange} className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="flex items-center space-x-2 clay-radio-item hover:bg-gray-50 cursor-pointer">
-                    <RadioGroupItem value="Smol Dawg" id="size-small" />
-                    <Label htmlFor="size-small" className="font-medium cursor-pointer flex-1">
-                      Smol Dawg <span className="block text-sm text-gray-500 mt-1">7.5 AVAX</span>
-                    </Label>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2 clay-radio-item hover:bg-gray-50 cursor-pointer">
-                    <RadioGroupItem value="Dawg" id="size-medium" />
-                    <Label htmlFor="size-medium" className="font-medium cursor-pointer flex-1">
-                      Dawg <span className="block text-sm text-gray-500 mt-1">15 AVAX</span>
-                    </Label>
-                  </div>
-                  
-                  <div className="flex items-center space-x-2 clay-radio-item hover:bg-gray-50 cursor-pointer">
-                    <RadioGroupItem value="Big Dawg" id="size-large" />
-                    <Label htmlFor="size-large" className="font-medium cursor-pointer flex-1">
-                      Big Dawg <span className="block text-sm text-gray-500 mt-1">30 AVAX</span>
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </div>
-              
-              <div>
-                <label htmlFor="walletAddress" className="block mb-2 font-medium text-lg">Enter your AVAX C-Chain Wallet Address</label>
-                <Input
-                  id="walletAddress"
-                  name="walletAddress"
-                  required
-                  value={formData.walletAddress}
-                  onChange={handleChange}
-                  placeholder="0x..."
-                  className="clay-input font-mono w-full"
-                />
-                <p className="text-sm text-gray-500 mt-1">
-                  Please ensure this is an AVAX C-Chain compatible address
-                </p>
-              </div>
-              
-              <div className="pt-2 space-y-2 clay-card p-4 bg-white/80">
-                <div className="flex items-center space-x-2">
-                  <label className="text-lg font-medium">Do you want to join the beta of the Brawl of Dawgs game?</label>
-                </div>
-                <div className="flex items-center space-x-6 mt-3">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="joinBeta-yes"
-                      checked={formData.joinBeta === true}
-                      onCheckedChange={() => handleJoinBetaChange(true)}
-                      className="h-5 w-5"
-                    />
-                    <label htmlFor="joinBeta-yes" className="font-medium cursor-pointer">
-                      Yes
-                    </label>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="joinBeta-no"
-                      checked={formData.joinBeta === false}
-                      onCheckedChange={() => handleJoinBetaChange(false)}
-                      className="h-5 w-5"
-                    />
-                    <label htmlFor="joinBeta-no" className="font-medium cursor-pointer">
-                      No
-                    </label>
-                  </div>
-                </div>
-              </div>
-              
-              {formData.joinBeta && (
-                <div>
-                  <label htmlFor="betaReason" className="block mb-2 font-medium text-lg">Why should we choose you for the beta for the Brawl of Dawgs game?</label>
-                  <Textarea
-                    id="betaReason"
-                    name="betaReason"
-                    required={formData.joinBeta}
-                    value={formData.betaReason}
-                    onChange={handleChange}
-                    placeholder="Tell us why you'd be a good beta tester..."
-                    className="clay-input h-32 w-full"
-                  />
-                </div>
-              )}
-              
-              <Button 
-                type="submit"
-                disabled={loading}
-                className="w-full py-6 text-lg clay-button"
-              >
-                {loading ? 'Submitting...' : 'Submit Application'}
-              </Button>
-            </form>
-          </div>
+          renderContent()
         )}
       </div>
     </div>
