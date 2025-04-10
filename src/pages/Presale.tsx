@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -41,7 +40,13 @@ const Presale = () => {
 
   // Check if user is already authenticated and set state accordingly
   useEffect(() => {
-    let timeoutId;
+    // Set maximum timeout to prevent endless loading
+    const timeoutId = setTimeout(() => {
+      if (!sessionChecked) {
+        setSessionChecked(true);
+        debugAuthFlow('Session check timed out after 3 seconds, forcing completion');
+      }
+    }, 3000);
     
     const checkExistingSession = async () => {
       try {
@@ -68,14 +73,7 @@ const Presale = () => {
       }
     };
     
-    // Set timeout to prevent infinite loading
-    timeoutId = setTimeout(() => {
-      if (!sessionChecked) {
-        setSessionChecked(true);
-        debugAuthFlow('Session check timed out, forcing completion');
-      }
-    }, 3000);
-    
+    // Check immediately
     checkExistingSession();
     
     // Subscribe to auth changes

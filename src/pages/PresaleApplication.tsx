@@ -211,48 +211,16 @@ const PresaleApplication = () => {
       toast.error(`Authentication error: ${errorDescription || error}`);
     }
 
+    // Set a maximum timeout to prevent endless checking
     const timeoutId = setTimeout(() => {
       if (isCheckingAuth) {
-        debugAuthFlow('Auth check timed out, forcing completion');
+        debugAuthFlow('Auth check timed out after 5 seconds, forcing completion');
         setIsCheckingAuth(false);
         setSessionChecked(true);
-        navigate('/presale');
       }
-    }, 5000); // 5 second timeout
+    }, 5000);
     
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
-      debugAuthFlow('Auth state changed', { event, userId: session?.user?.id });
-      
-      if (event === 'SIGNED_IN' && session) {
-        setIsAuthenticated(true);
-        setUserInfo(session.user);
-        setIsCheckingAuth(false);
-        setSessionChecked(true);
-        
-        await checkExistingApplication(session.user.id);
-      } else if (event === 'SIGNED_OUT') {
-        setIsAuthenticated(false);
-        setUserInfo(null);
-        setExistingApplication(null);
-        setApplicationStatus(null);
-        setIsCheckingAuth(false);
-        setSessionChecked(true);
-        navigate('/presale');
-      } else if (event === 'INITIAL_SESSION') {
-        setSessionChecked(true);
-        if (session) {
-          setIsAuthenticated(true);
-          setUserInfo(session.user);
-          setIsCheckingAuth(false);
-          await checkExistingApplication(session.user.id);
-        } else {
-          setIsAuthenticated(false);
-          setIsCheckingAuth(false);
-          navigate('/presale');
-        }
-      }
-    });
-    
+    // Using setTimeout to avoid potential deadlocks with Supabase auth events
     const checkSession = async () => {
       try {
         debugAuthFlow('Checking user session');
@@ -292,7 +260,33 @@ const PresaleApplication = () => {
       }
     };
     
+    // Run the session check immediately
     checkSession();
+    
+    // Set up auth state change listener
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      debugAuthFlow('Auth state changed', { event, userId: session?.user?.id });
+      
+      if (event === 'SIGNED_IN' && session) {
+        setIsAuthenticated(true);
+        setUserInfo(session.user);
+        setIsCheckingAuth(false);
+        setSessionChecked(true);
+        
+        // Need to use setTimeout to prevent potential deadlock with Supabase Auth
+        setTimeout(() => {
+          checkExistingApplication(session.user.id);
+        }, 0);
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+        setUserInfo(null);
+        setExistingApplication(null);
+        setApplicationStatus(null);
+        setIsCheckingAuth(false);
+        setSessionChecked(true);
+        navigate('/presale');
+      }
+    });
     
     return () => {
       clearTimeout(timeoutId);
