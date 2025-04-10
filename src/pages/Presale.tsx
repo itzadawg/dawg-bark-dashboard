@@ -29,6 +29,8 @@ const Presale = () => {
   
   // Auth states
   const [isAuthLoading, setIsAuthLoading] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userInfo, setUserInfo] = useState(null);
   const [authError, setAuthError] = useState(null);
   
   // Debugging helper
@@ -36,14 +38,21 @@ const Presale = () => {
     console.log(`[Auth Debug] ${message}`, data || '');
   };
 
-  // Check if user is already authenticated and redirect to application page if they are
+  // Check if user is already authenticated and set state accordingly
   useEffect(() => {
     const checkExistingSession = async () => {
       try {
         const { data, error } = await supabase.auth.getSession();
+        
+        if (error) {
+          console.error('Error checking session:', error);
+          return;
+        }
+        
         if (data?.session) {
-          debugAuthFlow('Found existing session, redirecting to application page', data.session.user.id);
-          navigate('/presale-application');
+          debugAuthFlow('Found existing session', data.session.user.id);
+          setIsAuthenticated(true);
+          setUserInfo(data.session.user);
         }
       } catch (error) {
         console.error('Error checking session:', error);
@@ -51,6 +60,24 @@ const Presale = () => {
     };
     
     checkExistingSession();
+    
+    // Subscribe to auth changes
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      debugAuthFlow('Auth state changed', { event, userId: session?.user?.id });
+      
+      if (event === 'SIGNED_IN' && session) {
+        setIsAuthenticated(true);
+        setUserInfo(session.user);
+        navigate('/presale-application');
+      } else if (event === 'SIGNED_OUT') {
+        setIsAuthenticated(false);
+        setUserInfo(null);
+      }
+    });
+    
+    return () => {
+      authListener?.subscription?.unsubscribe();
+    };
   }, [navigate]);
 
   // X Auth handler
@@ -58,6 +85,13 @@ const Presale = () => {
     // If presale is disabled, just show the popup
     if (!settingsLoading && settings.enable_presale_applications === false) {
       setShowPopup(true);
+      return;
+    }
+    
+    // If user is already authenticated, navigate directly to application page
+    if (isAuthenticated) {
+      debugAuthFlow('User already authenticated, navigating to application page');
+      navigate('/presale-application');
       return;
     }
     
@@ -125,22 +159,41 @@ const Presale = () => {
           {/* Main content section */}
           <div className="w-full flex flex-col items-center px-4 md:px-8 lg:px-12 flex-grow justify-center mb-16">
             <div className="w-full max-w-3xl flex flex-col items-center justify-center">
-              {/* Initial connect display */}
-              <p className="text-white text-lg font-medium mb-4">Want to apply for presale? Click the button below.</p>
-              <Button 
-                onClick={handleConnectX}
-                disabled={isAuthLoading} 
-                className="bg-dawg flex items-center justify-center gap-2 px-8 py-3 rounded-md text-lg font-medium text-white shadow-md hover:bg-dawg-dark transition-colors duration-300"
-              >
-                {isAuthLoading ? (
-                  <>
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                    Connecting...
-                  </>
-                ) : (
-                  'Connect with X'
-                )}
-              </Button>
+              {/* Display different content based on authentication status */}
+              {isAuthenticated ? (
+                <div className="w-full max-w-md clay-card bg-white/80 p-6 rounded-lg shadow-lg backdrop-blur-sm">
+                  <p className="text-center text-lg font-medium mb-6">
+                    You're connected with X as {userInfo?.user_metadata?.preferred_username || 'user'}
+                  </p>
+                  <div className="flex flex-col gap-3">
+                    <Button 
+                      onClick={() => navigate('/presale-application')}
+                      className="bg-dawg flex items-center justify-center gap-2 px-8 py-3 rounded-md text-lg font-medium text-white shadow-md hover:bg-dawg-dark transition-colors duration-300"
+                    >
+                      Go to Application
+                      <ArrowRight className="h-5 w-5" />
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <p className="text-white text-lg font-medium mb-4">Want to apply for presale? Click the button below.</p>
+                  <Button 
+                    onClick={handleConnectX}
+                    disabled={isAuthLoading} 
+                    className="bg-dawg flex items-center justify-center gap-2 px-8 py-3 rounded-md text-lg font-medium text-white shadow-md hover:bg-dawg-dark transition-colors duration-300"
+                  >
+                    {isAuthLoading ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin" />
+                        Connecting...
+                      </>
+                    ) : (
+                      'Connect with X'
+                    )}
+                  </Button>
+                </>
+              )}
               
               {/* Error display */}
               {authError && (
