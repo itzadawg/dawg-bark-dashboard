@@ -152,18 +152,6 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
                   )}
                 </div>
               </div>
-              
-              <div className="space-y-2 md:col-span-2">
-                <p className="font-semibold">Join Brawl of Dawgs beta:</p>
-                <p>{application.join_beta ? 'Yes' : 'No'}</p>
-              </div>
-              
-              {application.join_beta && application.beta_reason && (
-                <div className="space-y-2 md:col-span-2">
-                  <p className="font-semibold">Why you should be chosen for the beta:</p>
-                  <p className="bg-white p-3 rounded border border-gray-200">{application.beta_reason}</p>
-                </div>
-              )}
             </div>
           )}
           

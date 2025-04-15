@@ -10,7 +10,6 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Loader2, Copy, Check } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useIsMobile } from '@/hooks/use-mobile';
 
@@ -129,8 +128,6 @@ const PresaleApplication = () => {
     contribution: '',
     size: 'Dawg' as InvestmentSize,
     walletAddress: '',
-    joinBeta: false,
-    betaReason: ''
   });
   const [copied, setCopied] = useState(false);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
@@ -305,10 +302,6 @@ const PresaleApplication = () => {
     setFormData(prev => ({ ...prev, size: value }));
   };
 
-  const handleJoinBetaChange = (checked: boolean) => {
-    setFormData(prev => ({ ...prev, joinBeta: checked, betaReason: checked ? prev.betaReason : '' }));
-  };
-
   const handleConnectX = async () => {
     setLoading(true);
     setAuthError(null);
@@ -397,8 +390,6 @@ const PresaleApplication = () => {
         amount: getAmountFromSize(formData.size),
         wallet_address: formData.walletAddress,
         twitter_username: userInfo.user_metadata?.preferred_username || '',
-        join_beta: formData.joinBeta,
-        beta_reason: formData.betaReason
       });
       
       const { error } = await supabase
@@ -411,8 +402,8 @@ const PresaleApplication = () => {
           amount: getAmountFromSize(formData.size),
           wallet_address: formData.walletAddress,
           twitter_username: userInfo.user_metadata?.preferred_username || '',
-          join_beta: formData.joinBeta,
-          beta_reason: formData.betaReason || null
+          join_beta: false,
+          beta_reason: null
         }]);
       
       if (error) {
@@ -698,51 +689,6 @@ const PresaleApplication = () => {
                 Please ensure this is an AVAX C-Chain compatible address
               </p>
             </div>
-            
-            <div className="pt-2 space-y-2 clay-card p-4 bg-white/80">
-              <div className="flex items-center space-x-2">
-                <label className="text-lg font-medium">Do you want to join the beta of the Brawl of Dawgs game?</label>
-              </div>
-              <div className="flex items-center space-x-6 mt-3">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="joinBeta-yes"
-                    checked={formData.joinBeta === true}
-                    onCheckedChange={() => handleJoinBetaChange(true)}
-                    className="h-5 w-5"
-                  />
-                  <label htmlFor="joinBeta-yes" className="font-medium cursor-pointer">
-                    Yes
-                  </label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id="joinBeta-no"
-                    checked={formData.joinBeta === false}
-                    onCheckedChange={() => handleJoinBetaChange(false)}
-                    className="h-5 w-5"
-                  />
-                  <label htmlFor="joinBeta-no" className="font-medium cursor-pointer">
-                    No
-                  </label>
-                </div>
-              </div>
-            </div>
-            
-            {formData.joinBeta && (
-              <div>
-                <label htmlFor="betaReason" className="block mb-2 font-medium text-lg">Why should we choose you for the beta for the Brawl of Dawgs game?</label>
-                <Textarea
-                  id="betaReason"
-                  name="betaReason"
-                  required={formData.joinBeta}
-                  value={formData.betaReason}
-                  onChange={handleChange}
-                  placeholder="Tell us why you'd be a good beta tester..."
-                  className="clay-input h-32 w-full"
-                />
-              </div>
-            )}
             
             <Button 
               type="submit"
