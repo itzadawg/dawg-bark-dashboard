@@ -76,6 +76,19 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
 
   const status = getStatusContent();
 
+  const renderPendingContent = () => (
+    <div className="flex flex-col items-center justify-center py-6">
+      <img 
+        src="/lovable-uploads/2c0ff9de-72c1-4acf-ac6d-3e4ef34504ae.png" 
+        alt="DAWG review in progress" 
+        className="max-w-full rounded-lg shadow-md mb-4 max-h-64 object-contain"
+      />
+      <p className="text-center mt-4 text-gray-600">
+        The DAWG team is reviewing this application carefully.
+      </p>
+    </div>
+  );
+
   return (
     <div className="rounded-xl border-2 border-dawg-dark p-6 bg-[#f7f7ff]">
       <div className="mb-4 bg-dawg/10 p-4 rounded-lg">
@@ -93,70 +106,74 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
         <h2 className={`text-2xl font-bold mb-3 ${status.textColor}`}>{status.title}</h2>
         <p className="mb-4">{status.description}</p>
         <div className="flex flex-col space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2 md:col-span-2">
-              <p className="font-semibold">Why you want to join the DAWG presale:</p>
-              <p className="bg-white p-3 rounded border border-gray-200">{application.reason}</p>
-            </div>
-            
-            <div className="space-y-2 md:col-span-2">
-              <p className="font-semibold">How you plan to contribute:</p>
-              <p className="bg-white p-3 rounded border border-gray-200">{application.contribution}</p>
-            </div>
-            
-            <div className="space-y-2">
-              <p className="font-semibold">Selected size:</p>
-              <p>{application.size} ({application.amount} AVAX)</p>
-            </div>
-            
-            <div className="space-y-2">
-              <p className="font-semibold">Wallet address:</p>
-              <div 
-                className="font-mono flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors"
-                onClick={() => copyToClipboard(application.wallet_address)}
-                title="Click to copy full address"
-              >
-                <span>{formatWalletAddress(application.wallet_address)}</span>
-                {copied ? (
-                  <Check className="h-4 w-4 text-green-500" />
-                ) : (
-                  <Copy className="h-4 w-4 text-gray-400" />
-                )}
-              </div>
-            </div>
-            
-            <div className="space-y-2 md:col-span-2">
-              <p className="font-semibold">Join Brawl of Dawgs beta:</p>
-              <p>{application.join_beta ? 'Yes' : 'No'}</p>
-            </div>
-            
-            {application.join_beta && application.beta_reason && (
+          {application.status === 'pending' ? (
+            renderPendingContent()
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2 md:col-span-2">
-                <p className="font-semibold">Why you should be chosen for the beta:</p>
-                <p className="bg-white p-3 rounded border border-gray-200">{application.beta_reason}</p>
+                <p className="font-semibold">Why you want to join the DAWG presale:</p>
+                <p className="bg-white p-3 rounded border border-gray-200">{application.reason}</p>
               </div>
-            )}
-            
-            {application.status === 'approved' && (
-              <div className="space-y-3 md:col-span-2 mt-4 p-4 bg-green-50 rounded-md border border-green-200">
-                <h3 className="text-lg font-bold text-green-800">Payment Instructions</h3>
-                <p className="font-medium">Please send <span className="font-bold">{application.amount} AVAX</span> to this wallet address:</p>
+              
+              <div className="space-y-2 md:col-span-2">
+                <p className="font-semibold">How you plan to contribute:</p>
+                <p className="bg-white p-3 rounded border border-gray-200">{application.contribution}</p>
+              </div>
+              
+              <div className="space-y-2">
+                <p className="font-semibold">Selected size:</p>
+                <p>{application.size} ({application.amount} AVAX)</p>
+              </div>
+              
+              <div className="space-y-2">
+                <p className="font-semibold">Wallet address:</p>
                 <div 
-                  className="font-mono text-sm bg-white p-3 break-all flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-50 border border-green-100 rounded"
-                  onClick={() => copyToClipboard("0x829b054cf1a5A791aEaE52f509A8D0eF93416b63")}
-                  title="Click to copy"
+                  className="font-mono flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors"
+                  onClick={() => copyToClipboard(application.wallet_address)}
+                  title="Click to copy full address"
                 >
-                  <span>0x829b054cf1a5A791aEaE52f509A8D0eF93416b63</span>
+                  <span>{formatWalletAddress(application.wallet_address)}</span>
                   {copied ? (
-                    <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                    <Check className="h-4 w-4 text-green-500" />
                   ) : (
-                    <Copy className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                    <Copy className="h-4 w-4 text-gray-400" />
                   )}
                 </div>
-                <p className="text-sm text-green-700 mt-2">Once your payment is confirmed, your allocation will be secured.</p>
               </div>
-            )}
-          </div>
+              
+              <div className="space-y-2 md:col-span-2">
+                <p className="font-semibold">Join Brawl of Dawgs beta:</p>
+                <p>{application.join_beta ? 'Yes' : 'No'}</p>
+              </div>
+              
+              {application.join_beta && application.beta_reason && (
+                <div className="space-y-2 md:col-span-2">
+                  <p className="font-semibold">Why you should be chosen for the beta:</p>
+                  <p className="bg-white p-3 rounded border border-gray-200">{application.beta_reason}</p>
+                </div>
+              )}
+            </div>
+          )}
+          
+          {application.status === 'approved' && (
+            <div className="space-y-3 md:col-span-2 mt-4 p-4 bg-green-50 rounded-md border border-green-200">
+              <h3 className="text-lg font-bold text-green-800">Payment Instructions</h3>
+              <p className="font-medium">Please send <span className="font-bold">{application.amount} AVAX</span> to this wallet address:</p>
+              <div 
+                className="font-mono text-sm bg-white p-3 break-all flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-50 border border-green-100 rounded"
+                onClick={() => copyToClipboard("0x829b054cf1a5A791aEaE52f509A8D0eF93416b63")}
+                title="Click to copy"
+              >
+                <span>0x829b054cf1a5A791aEaE52f509A8D0eF93416b63</span>
+                {copied ? (
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                ) : (
+                  <Copy className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                )}
+              </div>
+              <p className="text-sm text-green-700 mt-2">Once your payment is confirmed, your allocation will be secured.</p>
+            </div>
+          )}
         </div>
       </div>
       
