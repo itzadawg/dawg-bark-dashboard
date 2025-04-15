@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -89,6 +88,19 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
     </div>
   );
 
+  const renderApprovedContent = () => (
+    <div className="flex flex-col items-center justify-center py-6">
+      <img 
+        src="/lovable-uploads/893f38ba-aab8-4078-a860-71eab4acda53.png" 
+        alt="DAWG approved celebration" 
+        className="max-w-full rounded-lg shadow-md mb-4 max-h-64 object-contain"
+      />
+      <p className="text-center mt-4 text-green-700 font-semibold">
+        Congratulations! Your application has been approved.
+      </p>
+    </div>
+  );
+
   return (
     <div className="rounded-xl border-2 border-dawg-dark p-6 bg-[#f7f7ff]">
       <div className="mb-4 bg-dawg/10 p-4 rounded-lg">
@@ -108,6 +120,8 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
         <div className="flex flex-col space-y-4">
           {application.status === 'pending' ? (
             renderPendingContent()
+          ) : application.status === 'approved' ? (
+            renderApprovedContent()
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2 md:col-span-2">
