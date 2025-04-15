@@ -29,18 +29,6 @@ const Header: React.FC = () => {
             />
           </Link>
           <Link 
-            to="/game" 
-            className={`transform transition-transform duration-200 hover:scale-110 relative ${
-              location.pathname === '/game' ? 'after:absolute after:inset-0 after:bg-dawg after:blur-md after:opacity-70 after:-z-10 after:rounded-full' : ''
-            }`}
-          >
-            <img 
-              src="/lovable-uploads/891c264a-33e2-4b9b-bb68-033e84559942.png"
-              alt="Game"
-              className="h-12 relative z-10"
-            />
-          </Link>
-          <Link 
             to="/gallery" 
             className={`transform transition-transform duration-200 hover:scale-110 relative ${
               location.pathname === '/gallery' ? 'after:absolute after:inset-0 after:bg-dawg after:blur-md after:opacity-70 after:-z-10 after:rounded-full' : ''
