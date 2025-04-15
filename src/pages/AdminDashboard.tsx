@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Header from '../components/dashboard/Header';
 import { AdminProtected } from '../components/admin/AdminProtected';
@@ -9,7 +8,7 @@ import AppSettings from '../components/admin/AppSettings';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Settings } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useAdmin } from '@/hooks/useAdmin';
 
 const AdminDashboard: React.FC = () => {

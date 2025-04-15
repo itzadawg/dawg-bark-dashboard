@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Check, X, ExternalLink, Eye } from 'lucide-react';
+import { Check, X, ExternalLink, Eye, UserCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -19,6 +20,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ApplicationPreview } from './ApplicationPreview';
 
 interface Application {
   id: string;
@@ -46,6 +48,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
   const [processing, setProcessing] = useState<string | null>(null);
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
+  const [previewOpen, setPreviewOpen] = useState<boolean>(false);
 
   const handleUpdateStatus = async (id: string, status: 'approved' | 'rejected') => {
     setProcessing(id);
@@ -88,6 +91,11 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
   const viewDetails = (app: Application) => {
     setSelectedApp(app);
     setDetailsOpen(true);
+  };
+  
+  const viewUserPreview = (app: Application) => {
+    setSelectedApp(app);
+    setPreviewOpen(true);
   };
 
   return (
@@ -146,6 +154,15 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                     >
                       <Eye className="h-4 w-4" />
                       Details
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline" 
+                      className="bg-purple-50 hover:bg-purple-100 text-purple-700 flex items-center gap-1"
+                      onClick={() => viewUserPreview(app)}
+                    >
+                      <UserCheck className="h-4 w-4" />
+                      Preview
                     </Button>
                     {app.status === 'pending' && (
                       <>
@@ -268,6 +285,24 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                   </Button>
                 </div>
               )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Add user preview modal */}
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="sm:max-w-4xl max-h-[90vh]">
+          <DialogHeader>
+            <DialogTitle>User View Preview</DialogTitle>
+            <DialogDescription>
+              This is what the user sees on their application page
+            </DialogDescription>
+          </DialogHeader>
+          
+          {selectedApp && (
+            <div className="pt-4 overflow-auto max-h-[calc(90vh-120px)]">
+              <ApplicationPreview application={selectedApp} />
             </div>
           )}
         </DialogContent>
