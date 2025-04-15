@@ -515,38 +515,40 @@ const PresaleApplication = () => {
                 </div>
               )}
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2 md:col-span-2">
-                  <p className="font-semibold">Why you want to join the DAWG presale:</p>
-                  <p className="clay-card bg-white p-3 rounded">{existingApplication.reason}</p>
-                </div>
-                
-                <div className="space-y-2 md:col-span-2">
-                  <p className="font-semibold">How you plan to contribute:</p>
-                  <p className="clay-card bg-white p-3 rounded">{existingApplication.contribution}</p>
-                </div>
-                
-                <div className="space-y-2">
-                  <p className="font-semibold">Selected size:</p>
-                  <p>{existingApplication.size} ({existingApplication.amount} AVAX)</p>
-                </div>
-                
-                <div className="space-y-2">
-                  <p className="font-semibold">Wallet address:</p>
-                  <div 
-                    className="font-mono flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors"
-                    onClick={() => copyToClipboard(existingApplication.wallet_address)}
-                    title="Click to copy full address"
-                  >
-                    <span>{formatWalletAddress(existingApplication.wallet_address)}</span>
-                    {copied ? (
-                      <Check className="h-4 w-4 text-green-500" />
-                    ) : (
-                      <Copy className="h-4 w-4 text-gray-400" />
-                    )}
+              {applicationStatus === 'rejected' && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2 md:col-span-2">
+                    <p className="font-semibold">Why you want to join the DAWG presale:</p>
+                    <p className="clay-card bg-white p-3 rounded">{existingApplication.reason}</p>
+                  </div>
+                  
+                  <div className="space-y-2 md:col-span-2">
+                    <p className="font-semibold">How you plan to contribute:</p>
+                    <p className="clay-card bg-white p-3 rounded">{existingApplication.contribution}</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <p className="font-semibold">Selected size:</p>
+                    <p>{existingApplication.size} ({existingApplication.amount} AVAX)</p>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <p className="font-semibold">Wallet address:</p>
+                    <div 
+                      className="font-mono flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors"
+                      onClick={() => copyToClipboard(existingApplication.wallet_address)}
+                      title="Click to copy full address"
+                    >
+                      <span>{formatWalletAddress(existingApplication.wallet_address)}</span>
+                      {copied ? (
+                        <Check className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <Copy className="h-4 w-4 text-gray-400" />
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
               
               {applicationStatus === 'approved' && (
                 <div className="space-y-3 md:col-span-2 mt-4 p-4 clay-card bg-green-50 rounded-md">

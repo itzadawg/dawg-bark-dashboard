@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -74,7 +73,6 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
     }
   };
 
-  // Get the status content based on the application status
   const status = getStatusContent();
 
   return (
