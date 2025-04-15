@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -72,8 +73,6 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
         };
     }
   };
-
-  const status = getStatusContent();
 
   const renderPendingContent = () => (
     <div className="flex flex-col items-center justify-center py-6">
