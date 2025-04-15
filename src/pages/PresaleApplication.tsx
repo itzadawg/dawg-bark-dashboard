@@ -482,49 +482,71 @@ const PresaleApplication = () => {
         <p className="mb-4">{status.description}</p>
         <div className="flex flex-col space-y-4">
           {existingApplication && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2 md:col-span-2">
-                <p className="font-semibold">Why you want to join the DAWG presale:</p>
-                <p className="clay-card bg-white p-3 rounded">{existingApplication.reason}</p>
-              </div>
-              
-              <div className="space-y-2 md:col-span-2">
-                <p className="font-semibold">How you plan to contribute:</p>
-                <p className="clay-card bg-white p-3 rounded">{existingApplication.contribution}</p>
-              </div>
-              
-              <div className="space-y-2">
-                <p className="font-semibold">Selected size:</p>
-                <p>{existingApplication.size} ({existingApplication.amount} AVAX)</p>
-              </div>
-              
-              <div className="space-y-2">
-                <p className="font-semibold">Wallet address:</p>
-                <div 
-                  className="font-mono flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors"
-                  onClick={() => copyToClipboard(existingApplication.wallet_address)}
-                  title="Click to copy full address"
-                >
-                  <span>{formatWalletAddress(existingApplication.wallet_address)}</span>
-                  {copied ? (
-                    <Check className="h-4 w-4 text-green-500" />
-                  ) : (
-                    <Copy className="h-4 w-4 text-gray-400" />
-                  )}
-                </div>
-              </div>
-              
-              <div className="space-y-2 md:col-span-2">
-                <p className="font-semibold">Join Brawl of Dawgs beta:</p>
-                <p>{existingApplication.join_beta ? 'Yes' : 'No'}</p>
-              </div>
-              
-              {existingApplication.join_beta && existingApplication.beta_reason && (
-                <div className="space-y-2 md:col-span-2">
-                  <p className="font-semibold">Why you should be chosen for the beta:</p>
-                  <p className="clay-card bg-white p-3 rounded">{existingApplication.beta_reason}</p>
+            <>
+              {applicationStatus === 'pending' && (
+                <div className="flex flex-col items-center justify-center py-6">
+                  <img 
+                    src="/lovable-uploads/2c0ff9de-72c1-4acf-ac6d-3e4ef34504ae.png" 
+                    alt="DAWG review in progress" 
+                    className="max-w-full h-auto rounded-lg shadow-md mb-4 max-h-64 object-contain"
+                    loading="eager" 
+                    width="500"
+                    height="300"
+                  />
+                  <p className="text-center mt-4 text-gray-600">
+                    The DAWG team is reviewing this application carefully.
+                  </p>
                 </div>
               )}
+              
+              {applicationStatus === 'approved' && (
+                <div className="flex flex-col items-center justify-center py-6">
+                  <img 
+                    src="/lovable-uploads/893f38ba-aab8-4078-a860-71eab4acda53.png" 
+                    alt="DAWG approved celebration" 
+                    className="max-w-full h-auto rounded-lg shadow-md mb-4 max-h-64 object-contain"
+                    loading="eager"
+                    width="500"
+                    height="300"
+                  />
+                  <p className="text-center mt-4 text-green-700 font-semibold">
+                    Congratulations! Your application has been approved.
+                  </p>
+                </div>
+              )}
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2 md:col-span-2">
+                  <p className="font-semibold">Why you want to join the DAWG presale:</p>
+                  <p className="clay-card bg-white p-3 rounded">{existingApplication.reason}</p>
+                </div>
+                
+                <div className="space-y-2 md:col-span-2">
+                  <p className="font-semibold">How you plan to contribute:</p>
+                  <p className="clay-card bg-white p-3 rounded">{existingApplication.contribution}</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <p className="font-semibold">Selected size:</p>
+                  <p>{existingApplication.size} ({existingApplication.amount} AVAX)</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <p className="font-semibold">Wallet address:</p>
+                  <div 
+                    className="font-mono flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors"
+                    onClick={() => copyToClipboard(existingApplication.wallet_address)}
+                    title="Click to copy full address"
+                  >
+                    <span>{formatWalletAddress(existingApplication.wallet_address)}</span>
+                    {copied ? (
+                      <Check className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <Copy className="h-4 w-4 text-gray-400" />
+                    )}
+                  </div>
+                </div>
+              </div>
               
               {applicationStatus === 'approved' && (
                 <div className="space-y-3 md:col-span-2 mt-4 p-4 clay-card bg-green-50 rounded-md">
@@ -545,7 +567,7 @@ const PresaleApplication = () => {
                   <p className="text-sm text-green-700 mt-2">Once your payment is confirmed, your allocation will be secured.</p>
                 </div>
               )}
-            </div>
+            </>
           )}
           <div className="pt-4">
             <Button 
