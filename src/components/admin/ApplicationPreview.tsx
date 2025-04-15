@@ -74,32 +74,6 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
     }
   };
 
-  const renderPendingContent = () => (
-    <div className="flex flex-col items-center justify-center py-6">
-      <img 
-        src="/lovable-uploads/2c0ff9de-72c1-4acf-ac6d-3e4ef34504ae.png" 
-        alt="DAWG review in progress" 
-        className="max-w-full rounded-lg shadow-md mb-4 max-h-64 object-contain"
-      />
-      <p className="text-center mt-4 text-gray-600">
-        The DAWG team is reviewing this application carefully.
-      </p>
-    </div>
-  );
-
-  const renderApprovedContent = () => (
-    <div className="flex flex-col items-center justify-center py-6">
-      <img 
-        src="/lovable-uploads/893f38ba-aab8-4078-a860-71eab4acda53.png" 
-        alt="DAWG approved celebration" 
-        className="max-w-full rounded-lg shadow-md mb-4 max-h-64 object-contain"
-      />
-      <p className="text-center mt-4 text-green-700 font-semibold">
-        Congratulations! Your application has been approved.
-      </p>
-    </div>
-  );
-
   // Get the status content based on the application status
   const status = getStatusContent();
 
@@ -120,11 +94,33 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
         <h2 className={`text-2xl font-bold mb-3 ${status.textColor}`}>{status.title}</h2>
         <p className="mb-4">{status.description}</p>
         <div className="flex flex-col space-y-4">
-          {application.status === 'pending' ? (
-            renderPendingContent()
-          ) : application.status === 'approved' ? (
-            renderApprovedContent()
-          ) : (
+          {application.status === 'pending' && (
+            <div className="flex flex-col items-center justify-center py-6">
+              <img 
+                src="/lovable-uploads/2c0ff9de-72c1-4acf-ac6d-3e4ef34504ae.png" 
+                alt="DAWG review in progress" 
+                className="max-w-full rounded-lg shadow-md mb-4 max-h-64 object-contain"
+              />
+              <p className="text-center mt-4 text-gray-600">
+                The DAWG team is reviewing this application carefully.
+              </p>
+            </div>
+          )}
+          
+          {application.status === 'approved' && (
+            <div className="flex flex-col items-center justify-center py-6">
+              <img 
+                src="/lovable-uploads/893f38ba-aab8-4078-a860-71eab4acda53.png" 
+                alt="DAWG approved celebration" 
+                className="max-w-full rounded-lg shadow-md mb-4 max-h-64 object-contain"
+              />
+              <p className="text-center mt-4 text-green-700 font-semibold">
+                Congratulations! Your application has been approved.
+              </p>
+            </div>
+          )}
+          
+          {application.status === 'rejected' && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2 md:col-span-2">
                 <p className="font-semibold">Why you want to join the DAWG presale:</p>
