@@ -100,6 +100,9 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
     </div>
   );
 
+  // Get the status content based on the application status
+  const status = getStatusContent();
+
   return (
     <div className="rounded-xl border-2 border-dawg-dark p-6 bg-[#f7f7ff]">
       <div className="mb-4 bg-dawg/10 p-4 rounded-lg">
