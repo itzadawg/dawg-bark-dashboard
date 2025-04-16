@@ -20,13 +20,11 @@ import {
 } from "@/components/ui/drawer";
 
 const Presale = () => {
-  // State management
   const { settings, loading: settingsLoading } = useAppSettings();
   const [showPopup, setShowPopup] = useState(false);
   const isMobile = useIsMobile();
   const navigate = useNavigate();
   
-  // Auth states
   const [isAuthLoading, setIsAuthLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userInfo, setUserInfo] = useState(null);
@@ -34,19 +32,15 @@ const Presale = () => {
   const sessionChecked = useRef(false);
   const sessionCheckTimeout = useRef(null);
   
-  // Debugging helper
   const debugAuthFlow = (message, data = null) => {
     console.log(`[Auth Debug] ${message}`, data || '');
   };
 
-  // Check if user is already authenticated and set state accordingly
   useEffect(() => {
-    // Clear any existing timeout
     if (sessionCheckTimeout.current) {
       clearTimeout(sessionCheckTimeout.current);
     }
     
-    // Set a timeout to ensure we don't get stuck checking
     sessionCheckTimeout.current = setTimeout(() => {
       debugAuthFlow('Session check timed out after 3 seconds, forcing completion');
       sessionChecked.current = true;
@@ -79,7 +73,6 @@ const Presale = () => {
     
     checkExistingSession();
     
-    // Subscribe to auth changes
     const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
       debugAuthFlow('Auth state changed', { event, userId: session?.user?.id });
       
@@ -99,15 +92,12 @@ const Presale = () => {
     };
   }, [navigate]);
 
-  // X Auth handler
   const handleConnectX = async () => {
-    // If presale is disabled, just show the popup
     if (!settingsLoading && settings.enable_presale_applications === false) {
       setShowPopup(true);
       return;
     }
     
-    // If user is already authenticated, navigate directly to application page
     if (isAuthenticated) {
       debugAuthFlow('User already authenticated, navigating to application page');
       navigate('/presale-application');
@@ -120,7 +110,6 @@ const Presale = () => {
     try {
       debugAuthFlow('Initiating Twitter auth');
       
-      // Specify the redirectTo URL to ensure users are sent to the application page after auth
       const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'twitter',
         options: {
@@ -144,41 +133,33 @@ const Presale = () => {
     }
   };
   
-  // Popup close handler
   const closePopup = () => {
     setShowPopup(false);
   };
 
-  // Main render
   return (
     <div className="relative min-h-screen">
-      {/* Background Image with improved mobile handling */}
       <div className="absolute inset-0 z-0">
         <img 
           src="/lovable-uploads/9cf97d27-5e5e-4f9f-8fad-4cf840895af6.png" 
           alt="DAWG Background" 
-          className="w-full h-full object-cover opacity-90 md:object-center object-left-top sm:object-center" 
+          className="w-full h-full object-cover opacity-90 md:object-center object-right-top sm:object-center" 
           loading="eager"
           width="1920"
           height="1080"
         />
       </div>
       
-      {/* Dark overlay to improve text visibility */}
       <div className="absolute inset-0 z-0 bg-black bg-opacity-20"></div>
       
-      {/* Content */}
       <div className="relative z-10">
         <Header />
         <div className="min-h-screen flex flex-col">
           <div className="text-center max-w-7xl mx-auto px-4 md:px-8 mb-0">
-            {/* Image removed from here */}
           </div>
 
-          {/* Main content section */}
           <div className="w-full flex flex-col items-center px-4 md:px-8 lg:px-12 flex-grow justify-center mb-16">
             <div className="w-full max-w-3xl flex flex-col items-center justify-center">
-              {/* Display different content based on authentication status */}
               {isAuthenticated ? (
                 <div className="w-full max-w-md clay-card bg-white/80 p-6 rounded-lg shadow-lg backdrop-blur-sm">
                   <p className="text-center text-lg font-medium mb-6">
@@ -214,7 +195,6 @@ const Presale = () => {
                 </>
               )}
               
-              {/* Error display */}
               {authError && (
                 <div className="p-4 mt-6 w-full neo-brutal-border bg-red-50 text-red-700">
                   <h3 className="font-bold">Authentication Error:</h3>
@@ -226,7 +206,6 @@ const Presale = () => {
         </div>
       </div>
       
-      {/* Use appropriate component based on device type for disabled popup */}
       {isMobile ? (
         <Drawer open={showPopup} onOpenChange={closePopup}>
           <DrawerOverlay />
