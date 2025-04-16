@@ -506,7 +506,7 @@ const PresaleApplication = () => {
                   />
                   
                   <div className="my-6 w-full max-w-xs mx-auto">
-                    <div className="flex items-center justify-center mb-2">
+                    <div className="flex justify-center mb-2">
                       <p className="text-center text-gray-600 font-medium mr-2">Social Score</p>
                       <TooltipProvider>
                         <Tooltip>
@@ -628,12 +628,14 @@ const PresaleApplication = () => {
 
   const renderContent = () => (
     <>
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl md:text-4xl font-black text-dawg-dark mb-4">Presale Application</h1>
-        <p className="text-lg text-gray-600">
-          Complete your details to participate in the DAWG presale
-        </p>
-      </div>
+      {!existingApplication && (
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl md:text-4xl font-black text-dawg-dark mb-4">Presale Application</h1>
+          <p className="text-lg text-gray-600">
+            Complete your details to participate in the DAWG presale
+          </p>
+        </div>
+      )}
       
       {authError && (
         <div className="p-4 mb-6 clay-card bg-red-50 text-red-700">

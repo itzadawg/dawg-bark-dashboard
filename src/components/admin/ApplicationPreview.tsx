@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Copy, Check, Info } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -121,7 +120,7 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
               />
               
               <div className="my-6 w-full max-w-xs mx-auto">
-                <div className="flex items-center justify-center mb-2">
+                <div className="flex justify-center mb-2">
                   <p className="text-center text-gray-600 font-medium mr-2">Social Score</p>
                   <TooltipProvider>
                     <Tooltip>

@@ -216,7 +216,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                 <TableCell>{getStatusBadge(app.status)}</TableCell>
                 <TableCell>
                   {app.status === 'pending' && (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-center gap-2">
                       <ProgressIndicator value={getDisplayProgress(app.progress)} size="sm" showLabel={false} />
                       <span className="text-xs">{getDisplayProgress(app.progress)}/10</span>
                     </div>

@@ -39,7 +39,7 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   
   return (
     <div className="flex flex-col items-center">
-      <div className="relative w-full">
+      <div className="relative w-full flex justify-center">
         <div 
           className={`${getSizeClasses()} ${sanitizedValue === 0 ? 'border-gray-300 border' : 'bg-gray-200'} rounded-full overflow-hidden`}
         >
