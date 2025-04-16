@@ -567,47 +567,10 @@ const PresaleApplication = () => {
                     width="700"
                     height="400"
                   />
-                  
-                  <div className="pt-4">
-                    <Button 
-                      onClick={() => navigate('/presale')}
-                      className="clay-button"
-                    >
-                      Return to Presale Page
-                    </Button>
-                  </div>
-                </div>
-              )}
-              
-              {applicationStatus === 'approved' && (
-                <div className="space-y-3 md:col-span-2 mt-4 p-4 clay-card bg-green-50 rounded-md">
-                  <h3 className="text-lg font-bold text-green-800">Payment Instructions</h3>
-                  <p className="font-medium">Please send <span className="font-bold">{existingApplication.amount} AVAX</span> to this wallet address:</p>
-                  <div 
-                    className="font-mono text-sm clay-input bg-white p-3 break-all flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-50"
-                    onClick={() => copyToClipboard("0x829b054cf1a5A791aEaE52f509A8D0eF93416b63")}
-                    title="Click to copy"
-                  >
-                    <span>0x829b054cf1a5A791aEaE52f509A8D0eF93416b63</span>
-                    {copied ? (
-                      <Check className="h-4 w-4 text-green-500" />
-                    ) : (
-                      <Copy className="h-4 w-4 text-gray-400" />
-                    )}
-                  </div>
-                  <p className="text-sm text-green-700 mt-2">Once your payment is confirmed, your allocation will be secured.</p>
                 </div>
               )}
             </>
           )}
-          <div className="pt-4">
-            <Button 
-              onClick={() => navigate('/presale')}
-              className="clay-button"
-            >
-              Return to Presale Page
-            </Button>
-          </div>
         </div>
       </div>
     );
