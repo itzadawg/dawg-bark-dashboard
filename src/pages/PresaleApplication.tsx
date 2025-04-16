@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -798,4 +799,31 @@ const PresaleApplication = () => {
 
   if (authCheckTimedOut) {
     return (
-      <div className="clay-container mobile-safe
+      <div className="clay-container mobile-safe-area bg-dawg-light">
+        <Header />
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center clay-card p-8">
+            <p className="text-lg">Authentication timed out. Please try again.</p>
+            <Button 
+              onClick={() => navigate('/presale')} 
+              className="clay-button mt-4"
+            >
+              Return to Presale Page
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="clay-container mobile-safe-area bg-dawg-light">
+      <Header />
+      <div className="container mx-auto px-4 py-8">
+        {renderContent()}
+      </div>
+    </div>
+  );
+};
+
+export default PresaleApplication;
