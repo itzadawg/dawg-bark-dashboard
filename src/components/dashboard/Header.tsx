@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import OptimizedImage from '../common/OptimizedImage';
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -9,13 +8,10 @@ const Header: React.FC = () => {
   return <header className="w-full py-4 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
         <Link to="/" className="flex items-center mb-4 md:mb-0">
-          <OptimizedImage 
+          <img 
             src="https://i.imghippo.com/files/sJBO3914Gdw.png" 
             alt="Dawg Logo" 
             className="h-16" 
-            width={64}
-            height={64}
-            loading="eager"
           />
         </Link>
         
@@ -26,12 +22,10 @@ const Header: React.FC = () => {
               location.pathname === '/presale' ? 'after:absolute after:inset-0 after:bg-dawg after:blur-md after:opacity-70 after:-z-10 after:rounded-full' : ''
             }`}
           >
-            <OptimizedImage 
+            <img 
               src="/lovable-uploads/33de2017-f52b-4a6f-a520-55488dfaa03c.png"
               alt="Presale"
               className="h-12 relative z-10"
-              width={48}
-              height={48}
             />
           </Link>
           <Link 
@@ -40,12 +34,10 @@ const Header: React.FC = () => {
               location.pathname === '/gallery' ? 'after:absolute after:inset-0 after:bg-dawg after:blur-md after:opacity-70 after:-z-10 after:rounded-full' : ''
             }`}
           >
-            <OptimizedImage 
+            <img 
               src="/lovable-uploads/b7694506-fbc1-4e8a-96b5-618c34241608.png"
               alt="Gallery"
               className="h-12 relative z-10"
-              width={48}
-              height={48}
             />
           </Link>
           <a 
@@ -54,12 +46,10 @@ const Header: React.FC = () => {
             rel="noopener noreferrer"
             className="transform transition-transform duration-200 hover:scale-110 relative"
           >
-            <OptimizedImage 
+            <img 
               src="/lovable-uploads/60a7bd3f-d42a-491d-b02e-4e83fa181f2b.png"
               alt="X (Twitter)"
               className="h-12 relative z-10"
-              width={48}
-              height={48}
             />
           </a>
         </nav>

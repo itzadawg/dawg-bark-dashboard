@@ -6,7 +6,6 @@ import {
   Dialog,
   DialogContent,
 } from '@/components/ui/dialog';
-import OptimizedImage from '@/components/common/OptimizedImage';
 
 export interface GalleryImage {
   id: string;
@@ -57,6 +56,15 @@ const GallerySection: React.FC<GallerySectionProps> = ({ images, loading }) => {
     }));
   };
 
+  useEffect(() => {
+    // Pre-load low resolution thumbnails
+    images.forEach(image => {
+      const img = new Image();
+      img.src = image.image_url;
+      img.onload = () => handleImageLoad(image.id);
+    });
+  }, [images]);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
@@ -89,13 +97,21 @@ const GallerySection: React.FC<GallerySectionProps> = ({ images, loading }) => {
                        transition-all duration-300 hover:translate-y-[-8px]"
             >
               <div className="w-full h-full rounded-lg overflow-hidden relative bg-gray-100">
-                <OptimizedImage 
+                {/* Placeholder while image loads */}
+                {!loadedImages[image.id] && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Loader2 className="h-6 w-6 animate-spin text-dawg-secondary" />
+                  </div>
+                )}
+                <img 
                   src={image.image_url} 
                   alt={image.title}
                   loading="lazy"
-                  width={300}
-                  height={300}
-                  className="w-full h-full object-cover"
+                  width="300"
+                  height="300"
+                  className={`w-full h-full object-cover transition-opacity duration-300 ${
+                    loadedImages[image.id] ? 'opacity-100' : 'opacity-0'
+                  }`}
                   onLoad={() => handleImageLoad(image.id)}
                 />
               </div>
@@ -113,13 +129,18 @@ const GallerySection: React.FC<GallerySectionProps> = ({ images, loading }) => {
             <div className="flex flex-col space-y-4">
               <h3 className="text-xl font-bold text-dawg-dark">{selectedImage.title}</h3>
               <div className="relative rounded-xl overflow-hidden border-2 border-dawg-secondary bg-white p-2">
-                <OptimizedImage 
+                {!loadedImages[`full-${selectedImage.id}`] && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+                    <Loader2 className="h-8 w-8 animate-spin text-dawg" />
+                  </div>
+                )}
+                <img 
                   src={selectedImage.image_url} 
                   alt={selectedImage.title}
-                  className="w-full h-auto object-contain max-h-[70vh] rounded-lg"
-                  loading="eager"
-                  width={800}
-                  height={600}
+                  className={`w-full h-auto object-contain max-h-[70vh] rounded-lg transition-opacity duration-300 ${
+                    loadedImages[`full-${selectedImage.id}`] ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  onLoad={() => handleImageLoad(`full-${selectedImage.id}`)}
                 />
               </div>
               <div className="flex justify-end mt-4">
