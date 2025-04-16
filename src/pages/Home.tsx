@@ -10,7 +10,7 @@ const Home = () => {
     <div className="relative min-h-screen">
       <div className="absolute inset-0 z-0">
         <img 
-          src="/lovable-uploads/df75c0cc-7501-4ca8-b0e4-edc2d248ccb4.png" 
+          src="/lovable-uploads/a827a6bc-d3f6-442a-bf88-189c1dce9348.png" 
           alt="DAWG Background" 
           className="w-full h-full object-cover md:object-center object-left-top sm:object-center" 
           loading="eager"
