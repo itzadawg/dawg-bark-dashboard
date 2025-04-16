@@ -1,7 +1,5 @@
-
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { X } from 'lucide-react';
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -50,7 +48,7 @@ const Header: React.FC = () => {
             <img 
               src="/lovable-uploads/21142f42-1419-4c88-ba2f-66edfe5d08a6.png"
               alt="X (Twitter)"
-              className="h-12 relative z-10"
+              className="h-10 relative z-10"
             />
           </a>
         </nav>
