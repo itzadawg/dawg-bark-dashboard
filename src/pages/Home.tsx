@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -9,7 +10,7 @@ const Home = () => {
     <div className="relative min-h-screen">
       <div className="absolute inset-0 z-0">
         <img 
-          src="/lovable-uploads/783076db-80a2-4372-9727-92f8d48e0ae0.png" 
+          src="/lovable-uploads/0bfd5d0a-98bb-4d65-b908-60d9337659de.png" 
           alt="DAWG Background" 
           className="w-full h-full object-cover object-center brightness-105" 
           loading="eager"
