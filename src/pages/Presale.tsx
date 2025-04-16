@@ -152,12 +152,12 @@ const Presale = () => {
   // Main render
   return (
     <div className="relative min-h-screen">
-      {/* Background Image with slightly reduced opacity */}
+      {/* Background Image with improved mobile handling */}
       <div className="absolute inset-0 z-0">
         <img 
           src="/lovable-uploads/9cf97d27-5e5e-4f9f-8fad-4cf840895af6.png" 
           alt="DAWG Background" 
-          className="w-full h-full object-cover opacity-90" 
+          className="w-full h-full object-cover opacity-90 md:object-center object-right-top" 
           loading="eager"
           width="1920"
           height="1080"
@@ -196,7 +196,7 @@ const Presale = () => {
                 </div>
               ) : (
                 <>
-                  <p className="text-white text-lg font-medium mb-4">Want to apply for presale? Click the button below.</p>
+                  <p className="text-white text-lg font-medium mb-4 text-shadow-sm">Want to apply for presale? Click the button below.</p>
                   <Button 
                     onClick={handleConnectX}
                     disabled={isAuthLoading} 
