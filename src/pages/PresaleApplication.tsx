@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -558,35 +559,46 @@ const PresaleApplication = () => {
               )}
               
               {applicationStatus === 'rejected' && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2 md:col-span-2">
-                    <p className="font-semibold">Why you want to join the DAWG presale:</p>
-                    <p className="clay-card bg-white p-3 rounded">{existingApplication.reason}</p>
-                  </div>
+                <div className="flex flex-col items-center justify-center py-6">
+                  <img 
+                    src="/lovable-uploads/0bd08fc9-6677-4eea-be6f-537d093293ee.png" 
+                    alt="DAWG application rejected" 
+                    className="max-w-full h-auto rounded-lg mb-4 max-h-96 object-contain"
+                    loading="eager"
+                    width="700"
+                    height="400"
+                  />
                   
-                  <div className="space-y-2 md:col-span-2">
-                    <p className="font-semibold">How you plan to contribute:</p>
-                    <p className="clay-card bg-white p-3 rounded">{existingApplication.contribution}</p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <p className="font-semibold">Selected size:</p>
-                    <p>{existingApplication.size} ({existingApplication.amount} AVAX)</p>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <p className="font-semibold">Wallet address:</p>
-                    <div 
-                      className="font-mono flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors"
-                      onClick={() => copyToClipboard(existingApplication.wallet_address)}
-                      title="Click to copy full address"
-                    >
-                      <span>{formatWalletAddress(existingApplication.wallet_address)}</span>
-                      {copied ? (
-                        <Check className="h-4 w-4 text-green-500" />
-                      ) : (
-                        <Copy className="h-4 w-4 text-gray-400" />
-                      )}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div className="space-y-2 md:col-span-2">
+                      <p className="font-semibold">Why you want to join the DAWG presale:</p>
+                      <p className="clay-card bg-white p-3 rounded">{existingApplication.reason}</p>
+                    </div>
+                    
+                    <div className="space-y-2 md:col-span-2">
+                      <p className="font-semibold">How you plan to contribute:</p>
+                      <p className="clay-card bg-white p-3 rounded">{existingApplication.contribution}</p>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <p className="font-semibold">Selected size:</p>
+                      <p>{existingApplication.size} ({existingApplication.amount} AVAX)</p>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <p className="font-semibold">Wallet address:</p>
+                      <div 
+                        className="font-mono flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors"
+                        onClick={() => copyToClipboard(existingApplication.wallet_address)}
+                        title="Click to copy full address"
+                      >
+                        <span>{formatWalletAddress(existingApplication.wallet_address)}</span>
+                        {copied ? (
+                          <Check className="h-4 w-4 text-green-500" />
+                        ) : (
+                          <Copy className="h-4 w-4 text-gray-400" />
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
