@@ -1,8 +1,10 @@
+
 import React, { useState } from 'react';
 import { Copy, Check, Info } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ProgressIndicator } from '@/components/presale/ProgressIndicator';
+import ImageOptimizer from '@/components/common/ImageOptimizer';
 import {
   Popover,
   PopoverContent,
@@ -109,13 +111,14 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
         <div className="flex flex-col space-y-4">
           {application.status === 'pending' && (
             <div className="flex flex-col items-center justify-center py-6">
-              <img 
+              <ImageOptimizer 
                 src="/lovable-uploads/2c0ff9de-72c1-4acf-ac6d-3e4ef34504ae.png" 
                 alt="DAWG review in progress" 
                 className="max-w-full h-auto rounded-lg mb-4 max-h-96 object-contain"
                 loading="eager" 
                 width="700"
                 height="400"
+                priority={true}
               />
               
               <div className="my-6 w-full max-w-xs mx-auto">
@@ -162,13 +165,14 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
           
           {application.status === 'approved' && (
             <div className="flex flex-col items-center justify-center py-6">
-              <img 
+              <ImageOptimizer 
                 src="/lovable-uploads/3b054821-e6a5-45dd-9833-3f47c6eea5b8.png" 
                 alt="DAWG approved celebration" 
                 className="max-w-full h-auto rounded-lg mb-4 max-h-96 object-contain"
                 loading="eager"
                 width="700"
                 height="400"
+                priority={true}
               />
               <p className="text-center mt-4 text-green-700 font-semibold">
                 Congratulations! Your application has been approved.
@@ -184,13 +188,14 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
           
           {application.status === 'rejected' && (
             <div className="flex flex-col items-center justify-center py-6">
-              <img 
+              <ImageOptimizer 
                 src="/lovable-uploads/0bd08fc9-6677-4eea-be6f-537d093293ee.png" 
                 alt="DAWG application rejected" 
                 className="max-w-full h-auto rounded-lg mb-4 max-h-96 object-contain"
                 loading="eager"
                 width="700"
                 height="400"
+                priority={true}
               />
               
               <div className="text-center pt-4">

@@ -3,6 +3,7 @@ import React from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useIsMobile } from '@/hooks/use-mobile';
+import ImageOptimizer from '@/components/common/ImageOptimizer';
 
 interface PresaleDisabledPopupProps {
   onClose: () => void;
@@ -28,13 +29,14 @@ const PresaleDisabledPopup = ({ onClose }: PresaleDisabledPopupProps) => {
       
       {/* Larger image with responsive sizing */}
       <div className="relative overflow-hidden">
-        <img 
+        <ImageOptimizer 
           src="/lovable-uploads/3f337a2b-01a9-49bc-877b-b2809e980e83.png" 
           alt="Too Early Dawg" 
           className="w-full h-auto object-contain"
           loading="eager" 
           width={isMobile ? 390 : 1200}
           height={isMobile ? 600 : 900}
+          priority={true}
         />
       </div>
     </div>

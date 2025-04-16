@@ -6,6 +6,7 @@ import {
   Dialog,
   DialogContent,
 } from '@/components/ui/dialog';
+import ImageOptimizer from '@/components/common/ImageOptimizer';
 
 export interface GalleryImage {
   id: string;
@@ -34,7 +35,9 @@ const GallerySection: React.FC<GallerySectionProps> = ({ images, loading }) => {
     if (!selectedImage) return;
     
     try {
-      const response = await fetch(selectedImage.image_url);
+      const response = await fetch(selectedImage.image_url, {
+        cache: 'force-cache' // Use browser cache if available
+      });
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -55,15 +58,6 @@ const GallerySection: React.FC<GallerySectionProps> = ({ images, loading }) => {
       [imageId]: true
     }));
   };
-
-  useEffect(() => {
-    // Pre-load low resolution thumbnails
-    images.forEach(image => {
-      const img = new Image();
-      img.src = image.image_url;
-      img.onload = () => handleImageLoad(image.id);
-    });
-  }, [images]);
 
   if (loading) {
     return (
@@ -97,22 +91,15 @@ const GallerySection: React.FC<GallerySectionProps> = ({ images, loading }) => {
                        transition-all duration-300 hover:translate-y-[-8px]"
             >
               <div className="w-full h-full rounded-lg overflow-hidden relative bg-gray-100">
-                {/* Placeholder while image loads */}
-                {!loadedImages[image.id] && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Loader2 className="h-6 w-6 animate-spin text-dawg-secondary" />
-                  </div>
-                )}
-                <img 
+                <ImageOptimizer 
                   src={image.image_url} 
                   alt={image.title}
                   loading="lazy"
                   width="300"
                   height="300"
-                  className={`w-full h-full object-cover transition-opacity duration-300 ${
-                    loadedImages[image.id] ? 'opacity-100' : 'opacity-0'
-                  }`}
+                  className="w-full h-full object-cover"
                   onLoad={() => handleImageLoad(image.id)}
+                  objectFit="cover"
                 />
               </div>
             </div>
@@ -129,18 +116,13 @@ const GallerySection: React.FC<GallerySectionProps> = ({ images, loading }) => {
             <div className="flex flex-col space-y-4">
               <h3 className="text-xl font-bold text-dawg-dark">{selectedImage.title}</h3>
               <div className="relative rounded-xl overflow-hidden border-2 border-dawg-secondary bg-white p-2">
-                {!loadedImages[`full-${selectedImage.id}`] && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-                    <Loader2 className="h-8 w-8 animate-spin text-dawg" />
-                  </div>
-                )}
-                <img 
+                <ImageOptimizer 
                   src={selectedImage.image_url} 
                   alt={selectedImage.title}
-                  className={`w-full h-auto object-contain max-h-[70vh] rounded-lg transition-opacity duration-300 ${
-                    loadedImages[`full-${selectedImage.id}`] ? 'opacity-100' : 'opacity-0'
-                  }`}
+                  className="w-full h-auto object-contain max-h-[70vh] rounded-lg"
                   onLoad={() => handleImageLoad(`full-${selectedImage.id}`)}
+                  objectFit="contain"
+                  priority={true}
                 />
               </div>
               <div className="flex justify-end mt-4">
