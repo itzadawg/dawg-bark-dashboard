@@ -47,7 +47,7 @@ const Header: React.FC = () => {
             className="transform transition-transform duration-200 hover:scale-110 relative"
           >
             <img 
-              src="/lovable-uploads/a29aca80-fcc8-4df9-9110-f423c9b398c7.png"
+              src="/lovable-uploads/60a7bd3f-d42a-491d-b02e-4e83fa181f2b.png"
               alt="X (Twitter)"
               className="h-12 relative z-10"
             />
