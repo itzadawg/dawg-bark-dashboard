@@ -4,20 +4,18 @@ import { Link } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
 import { ShoppingCart, Gamepad2, AlertTriangle, Dog } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import ImageOptimizer from '@/components/common/ImageOptimizer';
 
 const Home = () => {
   return (
     <div className="relative min-h-screen">
       <div className="absolute inset-0 z-0">
-        <ImageOptimizer 
+        <img 
           src="/lovable-uploads/0bfd5d0a-98bb-4d65-b908-60d9337659de.png" 
           alt="DAWG Background" 
           className="w-full h-full object-cover object-center brightness-105" 
           loading="eager"
           width="1920"
           height="1080"
-          priority={true}
         />
       </div>
       
