@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -156,7 +155,7 @@ const Presale = () => {
       {/* Background Image with slightly reduced opacity */}
       <div className="absolute inset-0 z-0">
         <img 
-          src="https://i.imghippo.com/files/HdYk9772Jys.png" 
+          src="/lovable-uploads/9cf97d27-5e5e-4f9f-8fad-4cf840895af6.png" 
           alt="DAWG Background" 
           className="w-full h-full object-cover opacity-90" 
           loading="eager"
