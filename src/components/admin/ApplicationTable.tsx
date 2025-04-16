@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Check, X, ExternalLink, Eye, UserCheck, BarChart } from 'lucide-react';
+import { Check, X, ExternalLink, Eye, UserCheck, BarChart, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -22,6 +23,17 @@ import {
 import { ApplicationPreview } from './ApplicationPreview';
 import { ProgressIndicator } from '@/components/presale/ProgressIndicator';
 import { Slider } from "@/components/ui/slider";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Application {
   id: string;
@@ -90,12 +102,12 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
         throw error;
       }
       
-      toast.success('Application progress updated successfully');
+      toast.success('Social score updated successfully');
       onStatusChange();
       setProgressDialogOpen(false);
     } catch (error) {
       console.error('Error updating application progress:', error);
-      toast.error('Failed to update application progress');
+      toast.error('Failed to update social score');
     } finally {
       setProcessing(null);
     }
@@ -144,7 +156,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
             <TableHead>Amount (AVAX)</TableHead>
             <TableHead>Wallet</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Progress</TableHead>
+            <TableHead>Social Score</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -217,7 +229,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                           onClick={() => openProgressDialog(app)}
                         >
                           <BarChart className="h-4 w-4" />
-                          Progress
+                          Social Score
                         </Button>
                         <Button
                           size="sm"
@@ -278,7 +290,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
 
                 {selectedApp.status === 'pending' && (
                   <>
-                    <div className="font-semibold">Progress:</div>
+                    <div className="font-semibold">Social Score:</div>
                     <div className="flex items-center gap-2">
                       <ProgressIndicator value={selectedApp.progress || 0} size="sm" showLabel={false} />
                       <span>{selectedApp.progress || 0}/10</span>
@@ -331,7 +343,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                     }}
                   >
                     <BarChart className="h-4 w-4" />
-                    Update Progress
+                    Update Social Score
                   </Button>
                   <Button
                     variant="outline"
@@ -384,9 +396,9 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
       <Dialog open={progressDialogOpen} onOpenChange={setProgressDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Update Application Progress</DialogTitle>
+            <DialogTitle>Update Social Score</DialogTitle>
             <DialogDescription>
-              {selectedApp?.twitter_username ? `Update progress for @${selectedApp.twitter_username}` : 'Update application progress'}
+              {selectedApp?.twitter_username ? `Update social score for @${selectedApp.twitter_username}` : 'Update application social score'}
             </DialogDescription>
           </DialogHeader>
           
@@ -422,7 +434,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                 disabled={processing === selectedApp?.id}
                 className="bg-dawg hover:bg-dawg/90"
               >
-                Save Progress
+                Save Social Score
               </Button>
             </div>
           </div>
@@ -431,3 +443,4 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
     </div>
   );
 };
+

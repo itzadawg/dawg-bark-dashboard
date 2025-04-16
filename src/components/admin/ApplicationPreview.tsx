@@ -1,8 +1,14 @@
+
 import React, { useState } from 'react';
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, Info } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { ProgressIndicator } from '@/components/presale/ProgressIndicator';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface Application {
   id: string;
@@ -106,7 +112,30 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
               />
               
               <div className="my-6 w-full max-w-xs mx-auto">
-                <p className="text-center mb-2 text-gray-600 font-medium">Application Progress</p>
+                <div className="flex items-center justify-center mb-2">
+                  <p className="text-center text-gray-600 font-medium mr-2">Social Score</p>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" size="sm" className="h-6 w-6 p-0 rounded-full">
+                        <Info className="h-3 w-3" />
+                        <span className="sr-only">Social Score Info</span>
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 text-sm">
+                      <div className="space-y-2">
+                        <p>
+                          The social score bar is updated every 72 hours. Your score is determined by your X account activity.
+                        </p>
+                        <p>
+                          This includes engaging with posts by the @itzadawg account, engaging with posts that contain $Dawg or @itzadawg and posting with $Dawg or @itzadawg.
+                        </p>
+                        <p className="font-medium">
+                          The higher your score the higher your chances you get accepted for the presale.
+                        </p>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
                 <ProgressIndicator value={application.progress || 0} size="lg" />
               </div>
               
@@ -195,3 +224,4 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
     </div>
   );
 };
+
