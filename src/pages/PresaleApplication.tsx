@@ -7,12 +7,18 @@ import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { Loader2, Copy, Check } from 'lucide-react';
+import { Loader2, Copy, Check, Info } from 'lucide-react';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { ProgressIndicator } from '@/components/presale/ProgressIndicator';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type ApplicationStatus = 'pending' | 'approved' | 'rejected' | null;
 type InvestmentSize = 'Smol Dawg' | 'Dawg' | 'Big Dawg';
@@ -496,7 +502,32 @@ const PresaleApplication = () => {
                   />
                   
                   <div className="my-6 w-full max-w-xs mx-auto">
-                    <p className="text-center mb-2 text-gray-600 font-medium">Application Progress</p>
+                    <div className="flex items-center justify-center mb-2">
+                      <p className="text-center text-gray-600 font-medium mr-2">Social Score</p>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="outline" size="sm" className="h-6 w-6 p-0 rounded-full">
+                              <Info className="h-3 w-3" />
+                              <span className="sr-only">Social Score Info</span>
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent className="w-80 text-sm">
+                            <div className="space-y-2">
+                              <p>
+                                The social score bar is updated every 72 hours. Your score is determined by your X account activity.
+                              </p>
+                              <p>
+                                This includes engaging with posts by the @itzadawg account, engaging with posts that contain $Dawg or @itzadawg and posting with $Dawg or @itzadawg.
+                              </p>
+                              <p className="font-medium">
+                                The higher your score the higher your chances you get accepted for the presale.
+                              </p>
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
                     <ProgressIndicator value={existingApplication.progress || 0} size="lg" />
                   </div>
                   

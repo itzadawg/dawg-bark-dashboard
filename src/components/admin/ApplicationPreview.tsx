@@ -9,6 +9,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Application {
   id: string;
@@ -114,27 +120,29 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
               <div className="my-6 w-full max-w-xs mx-auto">
                 <div className="flex items-center justify-center mb-2">
                   <p className="text-center text-gray-600 font-medium mr-2">Social Score</p>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button variant="outline" size="sm" className="h-6 w-6 p-0 rounded-full">
-                        <Info className="h-3 w-3" />
-                        <span className="sr-only">Social Score Info</span>
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-80 text-sm">
-                      <div className="space-y-2">
-                        <p>
-                          The social score bar is updated every 72 hours. Your score is determined by your X account activity.
-                        </p>
-                        <p>
-                          This includes engaging with posts by the @itzadawg account, engaging with posts that contain $Dawg or @itzadawg and posting with $Dawg or @itzadawg.
-                        </p>
-                        <p className="font-medium">
-                          The higher your score the higher your chances you get accepted for the presale.
-                        </p>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="outline" size="sm" className="h-6 w-6 p-0 rounded-full">
+                          <Info className="h-3 w-3" />
+                          <span className="sr-only">Social Score Info</span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent className="w-80 text-sm">
+                        <div className="space-y-2">
+                          <p>
+                            The social score bar is updated every 72 hours. Your score is determined by your X account activity.
+                          </p>
+                          <p>
+                            This includes engaging with posts by the @itzadawg account, engaging with posts that contain $Dawg or @itzadawg and posting with $Dawg or @itzadawg.
+                          </p>
+                          <p className="font-medium">
+                            The higher your score the higher your chances you get accepted for the presale.
+                          </p>
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
                 <ProgressIndicator value={application.progress || 0} size="lg" />
               </div>
@@ -224,4 +232,3 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
     </div>
   );
 };
-
