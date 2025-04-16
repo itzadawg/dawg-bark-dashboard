@@ -494,28 +494,6 @@ const PresaleApplication = () => {
         <div className="flex flex-col space-y-4">
           {existingApplication && (
             <>
-              {applicationStatus === 'approved' && (
-                <div className="flex flex-col items-center justify-center py-6">
-                  <img 
-                    src="/lovable-uploads/5dc48878-91e7-46af-aa2c-6de382f62915.png" 
-                    alt="DAWG application approved" 
-                    className="max-w-full h-auto rounded-lg mb-4 max-h-96 object-contain"
-                    loading="eager" 
-                    width="700"
-                    height="700"
-                  />
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div className="space-y-2">
-                      <p className="text-gray-600 font-semibold">
-                        Congratulations on being approved for the DAWG presale!
-                        Follow the payment instructions to secure your allocation.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-              
               {applicationStatus === 'rejected' && (
                 <div className="flex flex-col items-center justify-center py-6">
                   <img 
@@ -526,6 +504,16 @@ const PresaleApplication = () => {
                     width="700"
                     height="400"
                   />
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div className="space-y-2 text-center">
+                      <p className="text-gray-600 font-semibold">
+                        We appreciate your interest in the DAWG presale. 
+                        While your application was not approved this time, 
+                        we encourage you to stay engaged with our community.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               )}
               
