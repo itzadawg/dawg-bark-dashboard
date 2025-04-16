@@ -94,7 +94,7 @@ const addClayStyles = () => {
     }
     
     .clay-container {
-      background-color: #f7f7ff; /* Similar to gallery background */
+      background-color: #FFFBEB; /* Updated to match dawg-light from tailwind */
       min-height: 100vh;
       padding: 2rem 1rem;
       overscroll-behavior: contain; /* Prevent pull-to-refresh and overscroll */
