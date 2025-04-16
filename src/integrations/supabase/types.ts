@@ -71,6 +71,7 @@ export type Database = {
           created_at: string | null
           id: string
           join_beta: boolean | null
+          progress: number | null
           reason: string
           size: string
           status: string | null
@@ -86,6 +87,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           join_beta?: boolean | null
+          progress?: number | null
           reason: string
           size?: string
           status?: string | null
@@ -101,6 +103,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           join_beta?: boolean | null
+          progress?: number | null
           reason?: string
           size?: string
           status?: string | null
@@ -108,30 +111,6 @@ export type Database = {
           updated_at?: string | null
           user_id?: string
           wallet_address?: string
-        }
-        Relationships: []
-      }
-      processed_tweets: {
-        Row: {
-          id: string
-          points_awarded: number
-          processed_at: string | null
-          tweet_id: string
-          twitter_username: string
-        }
-        Insert: {
-          id?: string
-          points_awarded: number
-          processed_at?: string | null
-          tweet_id: string
-          twitter_username: string
-        }
-        Update: {
-          id?: string
-          points_awarded?: number
-          processed_at?: string | null
-          tweet_id?: string
-          twitter_username?: string
         }
         Relationships: []
       }
@@ -147,36 +126,6 @@ export type Database = {
         Update: {
           id?: string
           is_admin?: boolean | null
-        }
-        Relationships: []
-      }
-      tweet_points: {
-        Row: {
-          created_at: string | null
-          id: string
-          last_tweet_id: string | null
-          points: number | null
-          total_tweets: number | null
-          twitter_username: string
-          updated_at: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          last_tweet_id?: string | null
-          points?: number | null
-          total_tweets?: number | null
-          twitter_username: string
-          updated_at?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          last_tweet_id?: string | null
-          points?: number | null
-          total_tweets?: number | null
-          twitter_username?: string
-          updated_at?: string | null
         }
         Relationships: []
       }

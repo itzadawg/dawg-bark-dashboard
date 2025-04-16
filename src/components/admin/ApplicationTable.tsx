@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Check, X, ExternalLink, Eye, UserCheck, BarChart, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -443,4 +442,3 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
     </div>
   );
 };
-
