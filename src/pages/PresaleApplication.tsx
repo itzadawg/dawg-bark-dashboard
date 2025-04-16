@@ -567,6 +567,15 @@ const PresaleApplication = () => {
                     width="700"
                     height="400"
                   />
+                  
+                  <div className="pt-4">
+                    <Button 
+                      onClick={() => navigate('/presale')}
+                      className="clay-button"
+                    >
+                      Return to Presale Page
+                    </Button>
+                  </div>
                 </div>
               )}
             </>
