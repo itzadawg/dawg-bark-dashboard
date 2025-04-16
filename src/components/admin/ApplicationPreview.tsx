@@ -159,7 +159,7 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
           {application.status === 'approved' && (
             <div className="flex flex-col items-center justify-center py-6">
               <img 
-                src="/lovable-uploads/893f38ba-aab8-4078-a860-71eab4acda53.png" 
+                src="/lovable-uploads/3b054821-e6a5-45dd-9833-3f47c6eea5b8.png" 
                 alt="DAWG approved celebration" 
                 className="max-w-full h-auto rounded-lg mb-4 max-h-96 object-contain"
                 loading="eager"
@@ -183,37 +183,13 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
                 height="400"
               />
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div className="space-y-2 md:col-span-2">
-                  <p className="font-semibold">Why you want to join the DAWG presale:</p>
-                  <p className="bg-white p-3 rounded border border-gray-200">{application.reason}</p>
-                </div>
-                
-                <div className="space-y-2 md:col-span-2">
-                  <p className="font-semibold">How you plan to contribute:</p>
-                  <p className="bg-white p-3 rounded border border-gray-200">{application.contribution}</p>
-                </div>
-                
-                <div className="space-y-2">
-                  <p className="font-semibold">Selected size:</p>
-                  <p>{application.size} ({application.amount} AVAX)</p>
-                </div>
-                
-                <div className="space-y-2">
-                  <p className="font-semibold">Wallet address:</p>
-                  <div 
-                    className="font-mono flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors"
-                    onClick={() => copyToClipboard(application.wallet_address)}
-                    title="Click to copy full address"
-                  >
-                    <span>{formatWalletAddress(application.wallet_address)}</span>
-                    {copied ? (
-                      <Check className="h-4 w-4 text-green-500" />
-                    ) : (
-                      <Copy className="h-4 w-4 text-gray-400" />
-                    )}
-                  </div>
-                </div>
+              <div className="text-center pt-4">
+                <Button 
+                  onClick={() => window.location.href = '/presale'}
+                  className="clay-button"
+                >
+                  Return to Presale Page
+                </Button>
               </div>
             </div>
           )}

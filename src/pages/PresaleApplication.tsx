@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -545,7 +544,7 @@ const PresaleApplication = () => {
               {applicationStatus === 'approved' && (
                 <div className="flex flex-col items-center justify-center py-6">
                   <img 
-                    src="/lovable-uploads/893f38ba-aab8-4078-a860-71eab4acda53.png" 
+                    src="/lovable-uploads/3b054821-e6a5-45dd-9833-3f47c6eea5b8.png"
                     alt="DAWG approved celebration" 
                     className="max-w-full h-auto rounded-lg mb-4 max-h-96 object-contain"
                     loading="eager"
@@ -799,66 +798,4 @@ const PresaleApplication = () => {
 
   if (authCheckTimedOut) {
     return (
-      <div className="clay-container mobile-safe-area bg-dawg-light">
-        <Header />
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center clay-card p-8 max-w-md">
-            <h2 className="text-xl font-bold mb-4">Authentication Check Timed Out</h2>
-            <p className="mb-4">There was a problem verifying your authentication status. Please try again.</p>
-            <div className="flex flex-col gap-3">
-              <Button 
-                onClick={() => navigate('/presale')}
-                className="clay-button"
-              >
-                Go to presale page
-              </Button>
-              <Button 
-                onClick={() => window.location.reload()}
-                variant="outline"
-                className="clay-button bg-white"
-              >
-                Refresh page
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!isAuthenticated) {
-    return (
-      <div className="clay-container mobile-safe-area bg-dawg-light">
-        <Header />
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center clay-card p-8">
-            <p className="text-lg mb-4">Please connect with X to view your application</p>
-            <Button 
-              onClick={() => navigate('/presale')}
-              className="clay-button"
-            >
-              Go to presale page
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="clay-container mobile-safe-area bg-dawg-light">
-      <Header />
-      <div className="min-h-screen px-4 md:px-8 py-12 max-w-3xl mx-auto">
-        {isMobile ? (
-          <ScrollArea className="h-full w-full px-1">
-            {renderContent()}
-          </ScrollArea>
-        ) : (
-          renderContent()
-        )}
-      </div>
-    </div>
-  );
-};
-
-export default PresaleApplication;
+      <div className="clay-container mobile-safe
