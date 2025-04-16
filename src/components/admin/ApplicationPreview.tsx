@@ -50,6 +50,9 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
     });
   };
 
+  // Ensure progress is at least 1 for UI display purposes
+  const displayProgress = application.progress || 1;
+
   const getStatusContent = () => {
     switch (application.status) {
       case 'pending':
@@ -144,7 +147,7 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-                <ProgressIndicator value={application.progress || 0} size="lg" />
+                <ProgressIndicator value={displayProgress} size="lg" />
               </div>
               
               <p className="text-center mt-4 text-gray-600">

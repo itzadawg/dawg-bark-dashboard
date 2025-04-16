@@ -146,6 +146,10 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
 
   const SocialScoreInfoText = "The social score bar is updated every 72 hours. Your score is determined by your X account activity. This includes engaging with posts by the @itzadawg account, engaging with posts that contain $Dawg or @itzadawg and posting with $Dawg or @itzadawg. The higher your score the higher your chances you get accepted for the presale.";
 
+  const getDisplayProgress = (progress?: number) => {
+    return progress || 1;
+  };
+
   return (
     <div className="w-full overflow-auto">
       <Table>
@@ -213,8 +217,8 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                 <TableCell>
                   {app.status === 'pending' && (
                     <div className="flex items-center gap-2">
-                      <ProgressIndicator value={app.progress || 0} size="sm" showLabel={false} />
-                      <span className="text-xs">{app.progress || 0}/10</span>
+                      <ProgressIndicator value={getDisplayProgress(app.progress)} size="sm" showLabel={false} />
+                      <span className="text-xs">{getDisplayProgress(app.progress)}/10</span>
                     </div>
                   )}
                 </TableCell>
@@ -327,8 +331,8 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <ProgressIndicator value={selectedApp.progress || 0} size="sm" showLabel={false} />
-                      <span>{selectedApp.progress || 0}/10</span>
+                      <ProgressIndicator value={getDisplayProgress(selectedApp.progress)} size="sm" showLabel={false} />
+                      <span>{getDisplayProgress(selectedApp.progress)}/10</span>
                     </div>
                   </>
                 )}

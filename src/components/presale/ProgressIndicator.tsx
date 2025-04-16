@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Progress } from '@/components/ui/progress';
 
@@ -14,10 +13,16 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   showLabel = true 
 }) => {
   const sanitizedValue = Math.max(0, Math.min(10, value)); // Ensure value is between 0-10
-  const percentage = sanitizedValue * 10; // Convert to percentage (0-100)
+  const displayValue = sanitizedValue; // Value to display in the label
+  
+  // For the progress bar, we convert to percentage (0-100)
+  // When value is 0, we want to show nothing, so we use 0% width
+  // Otherwise, we calculate the percentage normally
+  const percentage = sanitizedValue === 0 ? 0 : sanitizedValue * 10;
   
   // Determine color based on progress value
   const getProgressColor = () => {
+    if (sanitizedValue === 0) return 'bg-transparent'; // No color for zero
     if (percentage < 40) return 'bg-red-500';
     if (percentage < 70) return 'bg-yellow-500';
     return 'bg-green-500';
@@ -46,7 +51,7 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
       </div>
       {showLabel && (
         <div className="mt-2 text-center font-medium">
-          {sanitizedValue}/10
+          {displayValue}/10
         </div>
       )}
     </div>

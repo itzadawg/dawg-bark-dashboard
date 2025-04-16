@@ -443,6 +443,10 @@ const PresaleApplication = () => {
     return `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
   };
 
+  const getDisplayProgress = (progress?: number) => {
+    return progress || 1;
+  };
+
   const ApplicationStatusDisplay = () => {
     const getStatusContent = () => {
       switch (applicationStatus) {
@@ -528,7 +532,7 @@ const PresaleApplication = () => {
                         </Tooltip>
                       </TooltipProvider>
                     </div>
-                    <ProgressIndicator value={existingApplication.progress || 0} size="lg" />
+                    <ProgressIndicator value={getDisplayProgress(existingApplication.progress)} size="lg" />
                   </div>
                   
                   <p className="text-center mt-4 text-gray-600">
