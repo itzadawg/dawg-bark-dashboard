@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { X } from 'lucide-react';
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -40,6 +41,18 @@ const Header: React.FC = () => {
               className="h-12 relative z-10"
             />
           </Link>
+          <a 
+            href="https://x.com/itzadawg" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="transform transition-transform duration-200 hover:scale-110 relative"
+          >
+            <img 
+              src="/lovable-uploads/21142f42-1419-4c88-ba2f-66edfe5d08a6.png"
+              alt="X (Twitter)"
+              className="h-12 relative z-10"
+            />
+          </a>
         </nav>
       </div>
     </header>;
