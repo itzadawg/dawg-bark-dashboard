@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Copy, Check, Info } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -108,26 +109,132 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
         <h2 className={`text-2xl font-bold mb-3 ${status.textColor} text-center`}>{status.title}</h2>
         <p className="mb-4 text-center">{status.description}</p>
         <div className="flex flex-col space-y-4">
-          {application.status === 'rejected' && (
+          {application.status === 'pending' && (
             <div className="flex flex-col items-center justify-center py-6">
               <img 
-                src="/lovable-uploads/0bd08fc9-6677-4eea-be6f-537d093293ee.png" 
-                alt="DAWG application rejected" 
+                src="/lovable-uploads/2c0ff9de-72c1-4acf-ac6d-3e4ef34504ae.png" 
+                alt="DAWG review in progress" 
                 className="max-w-full h-auto rounded-lg mb-4 max-h-96 object-contain"
                 loading="eager" 
                 width="700"
                 height="400"
               />
               
+              <div className="my-6 w-full max-w-xs mx-auto">
+                <div className="flex justify-center mb-2">
+                  <p className="text-center text-gray-600 font-medium mr-2">Social Score</p>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button variant="outline" size="sm" className="h-6 w-6 p-0 rounded-full">
+                          <Info className="h-3 w-3" />
+                          <span className="sr-only">Social Score Info</span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent className="w-80 text-sm">
+                        <div className="space-y-2">
+                          <p>
+                            The social score bar is updated every 72 hours. Your score is determined by your X account activity.
+                          </p>
+                          <p>
+                            This includes engaging with posts by the @itzadawg account, engaging with posts that contain $Dawg or @itzadawg and posting with $Dawg or @itzadawg.
+                          </p>
+                          <p className="font-medium">
+                            The higher your score the higher your chances you get accepted for the presale.
+                          </p>
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <ProgressIndicator value={displayProgress} size="lg" />
+              </div>
+              
+              <p className="text-center mt-4 text-gray-600">
+                The DAWG team is reviewing your application carefully.
+              </p>
+            </div>
+          )}
+          
+          {application.status === 'approved' && (
+            <div className="flex flex-col items-center justify-center py-6">
+              <img 
+                src="/lovable-uploads/893f38ba-aab8-4078-a860-71eab4acda53.png" 
+                alt="DAWG approved celebration" 
+                className="max-w-full h-auto rounded-lg mb-4 max-h-96 object-contain"
+                loading="eager"
+                width="700"
+                height="400"
+              />
+              <p className="text-center mt-4 text-green-700 font-semibold">
+                Congratulations! Your application has been approved.
+              </p>
+            </div>
+          )}
+          
+          {application.status === 'rejected' && (
+            <div className="flex flex-col items-center justify-center py-6">
+              <img 
+                src="/lovable-uploads/0bd08fc9-6677-4eea-be6f-537d093293ee.png" 
+                alt="DAWG application rejected" 
+                className="max-w-full h-auto rounded-lg mb-4 max-h-96 object-contain"
+                loading="eager"
+                width="700"
+                height="400"
+              />
+              
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                <div className="space-y-2 text-center">
-                  <p className="text-gray-600 font-semibold">
-                    We appreciate your interest in the DAWG presale. 
-                    While your application was not approved this time, 
-                    we encourage you to stay engaged with our community.
-                  </p>
+                <div className="space-y-2 md:col-span-2">
+                  <p className="font-semibold">Why you want to join the DAWG presale:</p>
+                  <p className="bg-white p-3 rounded border border-gray-200">{application.reason}</p>
+                </div>
+                
+                <div className="space-y-2 md:col-span-2">
+                  <p className="font-semibold">How you plan to contribute:</p>
+                  <p className="bg-white p-3 rounded border border-gray-200">{application.contribution}</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <p className="font-semibold">Selected size:</p>
+                  <p>{application.size} ({application.amount} AVAX)</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <p className="font-semibold">Wallet address:</p>
+                  <div 
+                    className="font-mono flex items-center gap-2 cursor-pointer hover:bg-gray-50 p-1 rounded transition-colors"
+                    onClick={() => copyToClipboard(application.wallet_address)}
+                    title="Click to copy full address"
+                  >
+                    <span>{formatWalletAddress(application.wallet_address)}</span>
+                    {copied ? (
+                      <Check className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <Copy className="h-4 w-4 text-gray-400" />
+                    )}
+                  </div>
                 </div>
               </div>
+            </div>
+          )}
+          
+          {application.status === 'approved' && (
+            <div className="space-y-3 md:col-span-2 mt-4 p-4 bg-green-50 rounded-md border border-green-200">
+              <h3 className="text-lg font-bold text-green-800">Payment Instructions</h3>
+              <p className="font-medium">Please send <span className="font-bold">{application.amount} AVAX</span> to this wallet address:</p>
+              <div 
+                className="font-mono text-sm bg-white p-3 break-all flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-50 border border-green-100 rounded"
+                onClick={() => copyToClipboard("0x829b054cf1a5A791aEaE52f509A8D0eF93416b63")}
+                title="Click to copy"
+              >
+                <span>0x829b054cf1a5A791aEaE52f509A8D0eF93416b63</span>
+                {copied ? (
+                  <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                ) : (
+                  <Copy className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                )}
+              </div>
+              <p className="text-sm text-green-700 mt-2">Once your payment is confirmed, your allocation will be secured.</p>
             </div>
           )}
         </div>
