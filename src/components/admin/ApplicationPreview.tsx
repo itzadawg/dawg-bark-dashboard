@@ -153,6 +153,14 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
               <p className="text-center mt-4 text-gray-600">
                 The DAWG team is reviewing your application carefully.
               </p>
+              
+              <div className="mt-6">
+                <Button 
+                  className="clay-button"
+                >
+                  Check Back Later
+                </Button>
+              </div>
             </div>
           )}
           
@@ -169,6 +177,14 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
               <p className="text-center mt-4 text-green-700 font-semibold">
                 Congratulations! Your application has been approved.
               </p>
+              
+              <div className="mt-6">
+                <Button 
+                  className="clay-button"
+                >
+                  Complete Purchase
+                </Button>
+              </div>
             </div>
           )}
           
