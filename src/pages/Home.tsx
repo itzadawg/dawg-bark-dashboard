@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -12,7 +11,7 @@ const Home = () => {
         <img 
           src="/lovable-uploads/783076db-80a2-4372-9727-92f8d48e0ae0.png" 
           alt="DAWG Background" 
-          className="w-full h-full object-cover md:object-center object-left-top sm:object-center" 
+          className="w-full h-full object-cover object-center brightness-105" 
           loading="eager"
           width="1920"
           height="1080"
@@ -20,7 +19,7 @@ const Home = () => {
       </div>
       
       {/* Dark overlay to improve text visibility */}
-      <div className="absolute inset-0 z-0 bg-black bg-opacity-20"></div>
+      <div className="absolute inset-0 z-0 bg-black bg-opacity-10"></div>
       
       <div className="relative z-10 min-h-screen">
         <Header />
