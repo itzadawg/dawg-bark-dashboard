@@ -143,7 +143,7 @@ const Presale = () => {
         <img 
           src="/lovable-uploads/9cf97d27-5e5e-4f9f-8fad-4cf840895af6.png" 
           alt="DAWG Background" 
-          className="w-full h-full object-cover opacity-90 md:object-center object-right-top sm:object-center" 
+          className="w-full h-full object-cover opacity-90 md:object-center object-right-center sm:object-center" 
           loading="eager"
           width="1920"
           height="1080"
