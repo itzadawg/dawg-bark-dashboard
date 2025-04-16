@@ -40,6 +40,18 @@ const Header: React.FC = () => {
               className="h-12 relative z-10"
             />
           </Link>
+          <a 
+            href="https://x.com/itzadawg" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="transform transition-transform duration-200 hover:scale-110 relative"
+          >
+            <img 
+              src="/lovable-uploads/a29aca80-fcc8-4df9-9110-f423c9b398c7.png"
+              alt="X (Twitter)"
+              className="h-12 relative z-10"
+            />
+          </a>
         </nav>
       </div>
     </header>;
