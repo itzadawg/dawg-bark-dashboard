@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Copy, Check, Info } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -50,7 +49,6 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
     });
   };
 
-  // Ensure progress is at least 1 for UI display purposes
   const displayProgress = application.progress || 1;
 
   const getStatusContent = () => {
@@ -155,9 +153,7 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
               </p>
               
               <div className="mt-6">
-                <Button 
-                  className="clay-button"
-                >
+                <Button className="clay-button bg-dawg hover:bg-dawg/90 text-black font-bold">
                   Check Back Later
                 </Button>
               </div>
@@ -179,9 +175,7 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
               </p>
               
               <div className="mt-6">
-                <Button 
-                  className="clay-button"
-                >
+                <Button className="clay-button bg-dawg hover:bg-dawg/90 text-black font-bold">
                   Complete Purchase
                 </Button>
               </div>
@@ -202,7 +196,7 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
               <div className="text-center pt-4">
                 <Button 
                   onClick={() => window.location.href = '/presale'}
-                  className="clay-button"
+                  className="clay-button bg-dawg hover:bg-dawg/90 text-black font-bold"
                 >
                   Return to Presale Page
                 </Button>
