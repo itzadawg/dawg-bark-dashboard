@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
@@ -143,7 +144,7 @@ const Presale = () => {
         <img 
           src="/lovable-uploads/9cf97d27-5e5e-4f9f-8fad-4cf840895af6.png" 
           alt="DAWG Background" 
-          className="w-full h-full object-cover opacity-90 md:object-center object-right-center sm:object-center" 
+          className="w-full h-full object-cover opacity-90 md:object-center object-right sm:object-center" 
           loading="eager"
           width="1920"
           height="1080"
