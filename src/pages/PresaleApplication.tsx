@@ -729,7 +729,7 @@ const PresaleApplication = () => {
 
   if (isCheckingAuth && !authCheckTimedOut) {
     return (
-      <div className="clay-container mobile-safe-area">
+      <div className="clay-container mobile-safe-area bg-dawg-light">
         <Header />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center clay-card p-8">
@@ -743,7 +743,7 @@ const PresaleApplication = () => {
 
   if (authCheckTimedOut) {
     return (
-      <div className="clay-container mobile-safe-area">
+      <div className="clay-container mobile-safe-area bg-dawg-light">
         <Header />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center clay-card p-8 max-w-md">
@@ -772,7 +772,7 @@ const PresaleApplication = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="clay-container mobile-safe-area">
+      <div className="clay-container mobile-safe-area bg-dawg-light">
         <Header />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center clay-card p-8">
@@ -790,7 +790,7 @@ const PresaleApplication = () => {
   }
 
   return (
-    <div className="clay-container mobile-safe-area">
+    <div className="clay-container mobile-safe-area bg-dawg-light">
       <Header />
       <div className="min-h-screen px-4 md:px-8 py-12 max-w-3xl mx-auto">
         {isMobile ? (
