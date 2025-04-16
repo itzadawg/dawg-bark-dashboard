@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Check, X, ExternalLink, Eye, UserCheck } from 'lucide-react';
+import { Check, X, ExternalLink, Eye, UserCheck, BarChart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -21,6 +20,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ApplicationPreview } from './ApplicationPreview';
+import { ProgressIndicator } from '@/components/presale/ProgressIndicator';
+import { Slider } from "@/components/ui/slider";
 
 interface Application {
   id: string;
@@ -34,6 +35,7 @@ interface Application {
   created_at: string;
   join_beta: boolean | null;
   beta_reason: string | null;
+  progress?: number;
 }
 
 interface ApplicationTableProps {
@@ -49,6 +51,8 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
   const [selectedApp, setSelectedApp] = useState<Application | null>(null);
   const [detailsOpen, setDetailsOpen] = useState<boolean>(false);
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
+  const [progressDialogOpen, setProgressDialogOpen] = useState<boolean>(false);
+  const [progressValue, setProgressValue] = useState<number>(0);
 
   const handleUpdateStatus = async (id: string, status: 'approved' | 'rejected') => {
     setProcessing(id);
@@ -70,6 +74,37 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
     } finally {
       setProcessing(null);
     }
+  };
+
+  const handleUpdateProgress = async () => {
+    if (!selectedApp) return;
+
+    setProcessing(selectedApp.id);
+    try {
+      const { error } = await supabase
+        .from('presale_applications')
+        .update({ progress: progressValue })
+        .eq('id', selectedApp.id);
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast.success('Application progress updated successfully');
+      onStatusChange();
+      setProgressDialogOpen(false);
+    } catch (error) {
+      console.error('Error updating application progress:', error);
+      toast.error('Failed to update application progress');
+    } finally {
+      setProcessing(null);
+    }
+  };
+
+  const openProgressDialog = (app: Application) => {
+    setSelectedApp(app);
+    setProgressValue(app.progress || 0);
+    setProgressDialogOpen(true);
   };
 
   const getStatusBadge = (status: string) => {
@@ -109,13 +144,14 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
             <TableHead>Amount (AVAX)</TableHead>
             <TableHead>Wallet</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead>Progress</TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {applications.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-8 text-gray-500">
+              <TableCell colSpan={8} className="text-center py-8 text-gray-500">
                 No applications found
               </TableCell>
             </TableRow>
@@ -144,6 +180,14 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                 <TableCell>{app.amount}</TableCell>
                 <TableCell className="font-mono text-xs">{formatWalletAddress(app.wallet_address)}</TableCell>
                 <TableCell>{getStatusBadge(app.status)}</TableCell>
+                <TableCell>
+                  {app.status === 'pending' && (
+                    <div className="flex items-center gap-2">
+                      <ProgressIndicator value={app.progress || 0} size="sm" showLabel={false} />
+                      <span className="text-xs">{app.progress || 0}/10</span>
+                    </div>
+                  )}
+                </TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end gap-2">
                     <Button
@@ -166,6 +210,15 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                     </Button>
                     {app.status === 'pending' && (
                       <>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 flex items-center gap-1"
+                          onClick={() => openProgressDialog(app)}
+                        >
+                          <BarChart className="h-4 w-4" />
+                          Progress
+                        </Button>
                         <Button
                           size="sm"
                           variant="outline"
@@ -223,6 +276,16 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                 <div className="font-semibold">Status:</div>
                 <div>{getStatusBadge(selectedApp.status)}</div>
 
+                {selectedApp.status === 'pending' && (
+                  <>
+                    <div className="font-semibold">Progress:</div>
+                    <div className="flex items-center gap-2">
+                      <ProgressIndicator value={selectedApp.progress || 0} size="sm" showLabel={false} />
+                      <span>{selectedApp.progress || 0}/10</span>
+                    </div>
+                  </>
+                )}
+
                 <div className="font-semibold">Join Beta:</div>
                 <div>{selectedApp.join_beta ? 'Yes' : 'No'}</div>
               </div>
@@ -261,6 +324,17 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                 <div className="flex justify-end gap-2 pt-4">
                   <Button
                     variant="outline"
+                    className="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 flex items-center gap-1"
+                    onClick={() => {
+                      setDetailsOpen(false);
+                      openProgressDialog(selectedApp);
+                    }}
+                  >
+                    <BarChart className="h-4 w-4" />
+                    Update Progress
+                  </Button>
+                  <Button
+                    variant="outline"
                     className="bg-green-50 hover:bg-green-100 text-green-700 flex items-center gap-1"
                     onClick={() => {
                       handleUpdateStatus(selectedApp.id, 'approved');
@@ -290,7 +364,6 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
         </DialogContent>
       </Dialog>
 
-      {/* Add user preview modal */}
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
         <DialogContent className="sm:max-w-4xl max-h-[90vh]">
           <DialogHeader>
@@ -305,6 +378,54 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
               <ApplicationPreview application={selectedApp} />
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={progressDialogOpen} onOpenChange={setProgressDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Update Application Progress</DialogTitle>
+            <DialogDescription>
+              {selectedApp?.twitter_username ? `Update progress for @${selectedApp.twitter_username}` : 'Update application progress'}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6 pt-4">
+            <div className="flex flex-col items-center gap-6">
+              <ProgressIndicator value={progressValue} size="lg" />
+              
+              <div className="w-full px-4">
+                <Slider 
+                  max={10}
+                  step={1}
+                  value={[progressValue]}
+                  onValueChange={(values) => setProgressValue(values[0])}
+                  className="w-full"
+                />
+                <div className="flex justify-between mt-2 text-xs text-gray-500">
+                  {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((value) => (
+                    <span key={value}>{value}</span>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setProgressDialogOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleUpdateProgress}
+                disabled={processing === selectedApp?.id}
+                className="bg-dawg hover:bg-dawg/90"
+              >
+                Save Progress
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

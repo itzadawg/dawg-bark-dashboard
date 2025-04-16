@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { ProgressIndicator } from '@/components/presale/ProgressIndicator';
 
 interface Application {
   id: string;
@@ -15,6 +16,7 @@ interface Application {
   created_at: string;
   join_beta: boolean | null;
   beta_reason: string | null;
+  progress?: number;
 }
 
 interface ApplicationPreviewProps {
@@ -102,6 +104,12 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
                 width="700"
                 height="400"
               />
+              
+              <div className="my-6 w-full max-w-xs mx-auto">
+                <p className="text-center mb-2 text-gray-600 font-medium">Application Progress</p>
+                <ProgressIndicator value={application.progress || 0} size="lg" />
+              </div>
+              
               <p className="text-center mt-4 text-gray-600">
                 The DAWG team is reviewing your application carefully.
               </p>

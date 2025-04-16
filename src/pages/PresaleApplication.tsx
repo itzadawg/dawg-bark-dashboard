@@ -12,6 +12,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { ProgressIndicator } from '@/components/presale/ProgressIndicator';
 
 type ApplicationStatus = 'pending' | 'approved' | 'rejected' | null;
 type InvestmentSize = 'Smol Dawg' | 'Dawg' | 'Big Dawg';
@@ -493,6 +494,12 @@ const PresaleApplication = () => {
                     width="700"
                     height="400"
                   />
+                  
+                  <div className="my-6 w-full max-w-xs mx-auto">
+                    <p className="text-center mb-2 text-gray-600 font-medium">Application Progress</p>
+                    <ProgressIndicator value={existingApplication.progress || 0} size="lg" />
+                  </div>
+                  
                   <p className="text-center mt-4 text-gray-600">
                     The DAWG team is reviewing your application carefully.
                   </p>
