@@ -144,6 +144,8 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
     setPreviewOpen(true);
   };
 
+  const SocialScoreInfoText = "The social score bar is updated every 72 hours. Your score is determined by your X account activity. This includes engaging with posts by the @itzadawg account, engaging with posts that contain $Dawg or @itzadawg and posting with $Dawg or @itzadawg. The higher your score the higher your chances you get accepted for the presale.";
+
   return (
     <div className="w-full overflow-auto">
       <Table>
@@ -155,7 +157,24 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
             <TableHead>Amount (AVAX)</TableHead>
             <TableHead>Wallet</TableHead>
             <TableHead>Status</TableHead>
-            <TableHead>Social Score</TableHead>
+            <TableHead>
+              <div className="flex items-center gap-1">
+                Social Score
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-5 w-5 rounded-full p-0">
+                        <Info className="h-4 w-4 text-gray-500" />
+                        <span className="sr-only">Social Score Info</span>
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="top" className="max-w-xs text-xs">
+                      {SocialScoreInfoText}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+            </TableHead>
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -289,7 +308,24 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
 
                 {selectedApp.status === 'pending' && (
                   <>
-                    <div className="font-semibold">Social Score:</div>
+                    <div className="font-semibold">
+                      <div className="flex items-center gap-1">
+                        Social Score
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <Button variant="ghost" size="icon" className="h-5 w-5 rounded-full p-0">
+                                <Info className="h-4 w-4 text-gray-500" />
+                                <span className="sr-only">Social Score Info</span>
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent side="top" className="max-w-xs text-xs">
+                              {SocialScoreInfoText}
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </div>
+                    </div>
                     <div className="flex items-center gap-2">
                       <ProgressIndicator value={selectedApp.progress || 0} size="sm" showLabel={false} />
                       <span>{selectedApp.progress || 0}/10</span>
@@ -419,6 +455,11 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                   ))}
                 </div>
               </div>
+            </div>
+            
+            <div className="flex flex-col space-y-2">
+              <h3 className="text-sm font-medium">What determines the social score?</h3>
+              <p className="text-xs text-gray-600">{SocialScoreInfoText}</p>
             </div>
             
             <div className="flex justify-end gap-2">
