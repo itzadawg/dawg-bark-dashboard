@@ -71,6 +71,7 @@ export type Database = {
           created_at: string | null
           id: string
           join_beta: boolean | null
+          payment_completed: boolean | null
           progress: number | null
           reason: string
           size: string
@@ -87,6 +88,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           join_beta?: boolean | null
+          payment_completed?: boolean | null
           progress?: number | null
           reason: string
           size?: string
@@ -103,6 +105,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           join_beta?: boolean | null
+          payment_completed?: boolean | null
           progress?: number | null
           reason?: string
           size?: string
