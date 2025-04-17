@@ -561,21 +561,15 @@ const PresaleApplication = () => {
                     Congratulations! Your application has been approved.
                   </p>
                   
-                  <div className="mt-6">
-                    <Button className="clay-button bg-dawg hover:bg-dawg/90 text-black font-bold">
-                      Complete Purchase
-                    </Button>
-                  </div>
-                  
                   <div className="space-y-3 md:col-span-2 mt-6 p-4 bg-green-50 rounded-md border border-green-200 w-full max-w-lg">
                     <h3 className="text-lg font-bold text-green-800">Payment Instructions</h3>
                     <p className="font-medium">Please send <span className="font-bold">{existingApplication.amount} AVAX</span> to this wallet address:</p>
                     <div 
                       className="font-mono text-sm bg-white p-3 break-all flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-50 border border-green-100 rounded"
-                      onClick={() => copyToClipboard("0x829b054cf1a5A791aEaE52f509A8D0eF93416b63")}
+                      onClick={() => copyToClipboard(existingApplication.wallet_address)}
                       title="Click to copy"
                     >
-                      <span>0x829b054cf1a5A791aEaE52f509A8D0eF93416b63</span>
+                      <span>{existingApplication.wallet_address}</span>
                       {copied ? (
                         <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
                       ) : (
