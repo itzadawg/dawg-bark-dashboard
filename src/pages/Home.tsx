@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/dashboard/Header';
-import { ShoppingCart, Gamepad2, AlertTriangle, Dog } from 'lucide-react';
+import { ShoppingCart, Gamepad2, Dog } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Home = () => {

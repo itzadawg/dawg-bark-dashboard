@@ -1,11 +1,23 @@
 
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 const Header: React.FC = () => {
-  const location = useLocation();
+  // We're rendering this component conditionally based on the existence of useLocation
+  // to ensure it works both inside and outside of Router contexts
+  let currentPath = '/';
   
-  return <header className="w-full py-4 bg-transparent">
+  try {
+    // Only access router functionality if we're in a component tree with router context
+    const { useLocation } = require('react-router-dom');
+    const location = useLocation();
+    currentPath = location.pathname;
+  } catch (e) {
+    console.log('Header rendered outside Router context');
+  }
+  
+  return (
+    <header className="w-full py-4 bg-transparent">
       <div className="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
         <Link to="/" className="flex items-center mb-4 md:mb-0">
           <img 
@@ -19,7 +31,7 @@ const Header: React.FC = () => {
           <Link 
             to="/presale" 
             className={`transform transition-transform duration-200 hover:scale-110 relative ${
-              location.pathname === '/presale' ? 'after:absolute after:inset-0 after:bg-dawg after:blur-md after:opacity-70 after:-z-10 after:rounded-full' : ''
+              currentPath === '/presale' ? 'after:absolute after:inset-0 after:bg-dawg after:blur-md after:opacity-70 after:-z-10 after:rounded-full' : ''
             }`}
           >
             <img 
@@ -31,7 +43,7 @@ const Header: React.FC = () => {
           <Link 
             to="/gallery" 
             className={`transform transition-transform duration-200 hover:scale-110 relative ${
-              location.pathname === '/gallery' ? 'after:absolute after:inset-0 after:bg-dawg after:blur-md after:opacity-70 after:-z-10 after:rounded-full' : ''
+              currentPath === '/gallery' ? 'after:absolute after:inset-0 after:bg-dawg after:blur-md after:opacity-70 after:-z-10 after:rounded-full' : ''
             }`}
           >
             <img 
@@ -54,7 +66,8 @@ const Header: React.FC = () => {
           </a>
         </nav>
       </div>
-    </header>;
+    </header>
+  );
 };
 
 export default Header;
