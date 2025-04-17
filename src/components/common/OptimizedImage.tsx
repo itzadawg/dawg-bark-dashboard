@@ -22,6 +22,7 @@ const OptimizedImage: React.FC<OptimizedImageProps> = ({
   objectFit = "cover",
   priority = false,
 }) => {
+  // Simple component without hooks
   return (
     <img
       src={src}
