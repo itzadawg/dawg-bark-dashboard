@@ -28,6 +28,7 @@ interface Application {
   join_beta: boolean | null;
   beta_reason: string | null;
   progress?: number;
+  payment_completed?: boolean;
 }
 
 interface ApplicationPreviewProps {
@@ -174,11 +175,27 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
                 Congratulations! Your application has been approved.
               </p>
               
-              <div className="mt-6">
-                <Button className="clay-button bg-dawg hover:bg-dawg/90 text-black font-bold">
-                  Complete Purchase
-                </Button>
-              </div>
+              {application.payment_completed ? (
+                <div className="space-y-3 md:col-span-2 mt-6 p-4 bg-green-50 rounded-md border border-green-200 w-full max-w-lg">
+                  <div className="flex items-center justify-center mb-4">
+                    <div className="bg-green-100 p-3 rounded-full">
+                      <Check className="h-6 w-6 text-green-600" />
+                    </div>
+                  </div>
+                  <h3 className="text-lg font-bold text-green-800 text-center">Payment Confirmed</h3>
+                  <p className="text-center font-medium">Your payment of <span className="font-bold">{application.amount} AVAX</span> has been received!</p>
+                  <p className="text-center">Your allocation for DAWG presale is now secure.</p>
+                  <div className="mt-6 text-center">
+                    <p className="text-sm text-green-700">Thank you for participating in the DAWG presale. You will be notified when the token is ready to claim.</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-6">
+                  <Button className="clay-button bg-dawg hover:bg-dawg/90 text-black font-bold">
+                    Complete Purchase
+                  </Button>
+                </div>
+              )}
             </div>
           )}
           
@@ -204,7 +221,7 @@ export const ApplicationPreview: React.FC<ApplicationPreviewProps> = ({ applicat
             </div>
           )}
           
-          {application.status === 'approved' && (
+          {application.status === 'approved' && !application.payment_completed && (
             <div className="space-y-3 md:col-span-2 mt-4 p-4 bg-green-50 rounded-md border border-green-200">
               <h3 className="text-lg font-bold text-green-800">Payment Instructions</h3>
               <p className="font-medium">Please send <span className="font-bold">{application.amount} AVAX</span> to this wallet address:</p>
