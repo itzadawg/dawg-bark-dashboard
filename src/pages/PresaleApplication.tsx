@@ -538,6 +538,12 @@ const PresaleApplication = () => {
                   <p className="text-center mt-4 text-gray-600">
                     The DAWG team is reviewing your application carefully.
                   </p>
+                  
+                  <div className="mt-6">
+                    <Button className="clay-button bg-dawg hover:bg-dawg/90 text-black font-bold">
+                      Check Back Later
+                    </Button>
+                  </div>
                 </div>
               )}
               
@@ -554,6 +560,30 @@ const PresaleApplication = () => {
                   <p className="text-center mt-4 text-green-700 font-semibold">
                     Congratulations! Your application has been approved.
                   </p>
+                  
+                  <div className="mt-6">
+                    <Button className="clay-button bg-dawg hover:bg-dawg/90 text-black font-bold">
+                      Complete Purchase
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-3 md:col-span-2 mt-6 p-4 bg-green-50 rounded-md border border-green-200 w-full max-w-lg">
+                    <h3 className="text-lg font-bold text-green-800">Payment Instructions</h3>
+                    <p className="font-medium">Please send <span className="font-bold">{existingApplication.amount} AVAX</span> to this wallet address:</p>
+                    <div 
+                      className="font-mono text-sm bg-white p-3 break-all flex items-center justify-between gap-2 cursor-pointer hover:bg-gray-50 border border-green-100 rounded"
+                      onClick={() => copyToClipboard("0x829b054cf1a5A791aEaE52f509A8D0eF93416b63")}
+                      title="Click to copy"
+                    >
+                      <span>0x829b054cf1a5A791aEaE52f509A8D0eF93416b63</span>
+                      {copied ? (
+                        <Check className="h-4 w-4 text-green-500 flex-shrink-0" />
+                      ) : (
+                        <Copy className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      )}
+                    </div>
+                    <p className="text-sm text-green-700 mt-2">Once your payment is confirmed, your allocation will be secured.</p>
+                  </div>
                 </div>
               )}
               
@@ -571,7 +601,7 @@ const PresaleApplication = () => {
                   <div className="pt-4">
                     <Button 
                       onClick={() => navigate('/presale')}
-                      className="clay-button"
+                      className="clay-button bg-dawg hover:bg-dawg/90 text-black font-bold"
                     >
                       Return to Presale Page
                     </Button>

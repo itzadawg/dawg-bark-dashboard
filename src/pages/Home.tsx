@@ -28,7 +28,36 @@ const Home = () => {
         <div className="px-4 sm:px-8 py-12 max-w-7xl mx-auto">
           <div className="flex flex-col items-center justify-center space-y-8 sm:space-y-10">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8 w-full max-w-4xl">
-              {/* Content will go here */}
+              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border-2 border-dawg text-center">
+                <div className="flex justify-center mb-4">
+                  <ShoppingCart className="h-12 w-12 text-dawg" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">Presale</h3>
+                <p className="mb-4 text-gray-600">Join the exclusive DAWG presale and secure your tokens early.</p>
+                <Link to="/presale">
+                  <Button className="w-full bg-dawg hover:bg-dawg/90 text-black">Apply Now</Button>
+                </Link>
+              </div>
+              
+              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border-2 border-dawg text-center">
+                <div className="flex justify-center mb-4">
+                  <Dog className="h-12 w-12 text-dawg" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">Gallery</h3>
+                <p className="mb-4 text-gray-600">Explore our exclusive collection of DAWG artwork and imagery.</p>
+                <Link to="/gallery">
+                  <Button className="w-full bg-dawg hover:bg-dawg/90 text-black">View Gallery</Button>
+                </Link>
+              </div>
+              
+              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-xl shadow-lg border-2 border-dawg text-center">
+                <div className="flex justify-center mb-4">
+                  <Gamepad2 className="h-12 w-12 text-dawg" />
+                </div>
+                <h3 className="text-xl font-bold mb-2">Mini-Game</h3>
+                <p className="mb-4 text-gray-600">Have fun and earn points in our interactive DAWG mini-game.</p>
+                <Button className="w-full bg-dawg hover:bg-dawg/90 text-black" disabled>Coming Soon</Button>
+              </div>
             </div>
           </div>
         </div>
