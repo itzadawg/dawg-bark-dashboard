@@ -1,20 +1,20 @@
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const Header: React.FC = () => {
-  // We're rendering this component conditionally based on the existence of useLocation
-  // to ensure it works both inside and outside of Router contexts
-  let currentPath = '/';
+  const [currentPath, setCurrentPath] = useState('/');
   
-  try {
-    // Only access router functionality if we're in a component tree with router context
-    const { useLocation } = require('react-router-dom');
-    const location = useLocation();
-    currentPath = location.pathname;
-  } catch (e) {
-    console.log('Header rendered outside Router context');
-  }
+  useEffect(() => {
+    try {
+      // Only import and use router functionality when in a component with router context
+      const { useLocation } = require('react-router-dom');
+      const location = useLocation();
+      setCurrentPath(location.pathname);
+    } catch (e) {
+      console.log('Header rendered outside Router context, using default path');
+    }
+  }, []);
   
   return (
     <header className="w-full py-4 bg-transparent">
