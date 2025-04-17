@@ -1,6 +1,8 @@
+
 import React, { useState } from 'react';
-import { Check, X, ExternalLink, Eye, UserCheck, BarChart, Info } from 'lucide-react';
+import { Check, X, ExternalLink, Eye, UserCheck, BarChart, Info, Search, DollarSign } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import {
@@ -47,6 +49,7 @@ interface Application {
   join_beta: boolean | null;
   beta_reason: string | null;
   progress?: number;
+  payment_completed?: boolean;
 }
 
 interface ApplicationTableProps {
@@ -64,6 +67,7 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
   const [previewOpen, setPreviewOpen] = useState<boolean>(false);
   const [progressDialogOpen, setProgressDialogOpen] = useState<boolean>(false);
   const [progressValue, setProgressValue] = useState<number>(0);
+  const [searchQuery, setSearchQuery] = useState<string>('');
 
   const handleUpdateStatus = async (id: string, status: 'approved' | 'rejected') => {
     setProcessing(id);
@@ -112,6 +116,28 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
     }
   };
 
+  const handleUpdatePaymentStatus = async (id: string, payment_completed: boolean) => {
+    setProcessing(id);
+    try {
+      const { error } = await supabase
+        .from('presale_applications')
+        .update({ payment_completed })
+        .eq('id', id);
+      
+      if (error) {
+        throw error;
+      }
+      
+      toast.success(`Payment status ${payment_completed ? 'confirmed' : 'unconfirmed'} successfully`);
+      onStatusChange();
+    } catch (error) {
+      console.error('Error updating payment status:', error);
+      toast.error('Failed to update payment status');
+    } finally {
+      setProcessing(null);
+    }
+  };
+
   const openProgressDialog = (app: Application) => {
     setSelectedApp(app);
     setProgressValue(app.progress || 0);
@@ -127,6 +153,13 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
       default:
         return <Badge className="bg-yellow-500">Pending</Badge>;
     }
+  };
+
+  const getPaymentBadge = (payment_completed: boolean | undefined) => {
+    if (payment_completed === true) {
+      return <Badge className="bg-green-500 ml-2">Paid</Badge>;
+    }
+    return null;
   };
 
   const formatWalletAddress = (address) => {
@@ -150,8 +183,27 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
     return progress || 1;
   };
 
+  // Filter applications based on search query
+  const filteredApplications = applications.filter(app => 
+    app.wallet_address.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (app.twitter_username && app.twitter_username.toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
   return (
     <div className="w-full overflow-auto">
+      <div className="mb-4 relative">
+        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+          <Search className="h-5 w-5 text-gray-400" />
+        </div>
+        <Input
+          type="text"
+          placeholder="Search by wallet address or Twitter username..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10 py-2 border-dawg border-opacity-30 focus:border-dawg"
+        />
+      </div>
+
       <Table>
         <TableHeader>
           <TableRow>
@@ -183,14 +235,14 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {applications.length === 0 ? (
+          {filteredApplications.length === 0 ? (
             <TableRow>
               <TableCell colSpan={8} className="text-center py-8 text-gray-500">
-                No applications found
+                {searchQuery ? 'No matching applications found' : 'No applications found'}
               </TableCell>
             </TableRow>
           ) : (
-            applications.map((app) => (
+            filteredApplications.map((app) => (
               <TableRow key={app.id}>
                 <TableCell className="font-medium">
                   {new Date(app.created_at).toLocaleDateString()}
@@ -213,7 +265,12 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                 <TableCell>{app.size}</TableCell>
                 <TableCell>{app.amount}</TableCell>
                 <TableCell className="font-mono text-xs">{formatWalletAddress(app.wallet_address)}</TableCell>
-                <TableCell>{getStatusBadge(app.status)}</TableCell>
+                <TableCell>
+                  <div className="flex items-center">
+                    {getStatusBadge(app.status)}
+                    {getPaymentBadge(app.payment_completed)}
+                  </div>
+                </TableCell>
                 <TableCell>
                   {app.status === 'pending' && (
                     <div className="flex items-center justify-center gap-2">
@@ -275,6 +332,20 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                         </Button>
                       </>
                     )}
+                    {app.status === 'approved' && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className={`${app.payment_completed 
+                          ? 'bg-gray-50 hover:bg-gray-100 text-gray-700' 
+                          : 'bg-amber-50 hover:bg-amber-100 text-amber-700'} flex items-center gap-1`}
+                        onClick={() => handleUpdatePaymentStatus(app.id, !app.payment_completed)}
+                        disabled={processing === app.id}
+                      >
+                        <DollarSign className="h-4 w-4" />
+                        {app.payment_completed ? 'Unmark Paid' : 'Mark Paid'}
+                      </Button>
+                    )}
                   </div>
                 </TableCell>
               </TableRow>
@@ -308,7 +379,16 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                 <div className="font-mono text-xs break-words">{selectedApp.wallet_address}</div>
                 
                 <div className="font-semibold">Status:</div>
-                <div>{getStatusBadge(selectedApp.status)}</div>
+                <div className="flex items-center">
+                  {getStatusBadge(selectedApp.status)}
+                  {selectedApp.status === 'approved' && (
+                    <span className="ml-2">
+                      {selectedApp.payment_completed ? 
+                        <Badge className="bg-green-500">Payment Completed</Badge> : 
+                        <Badge className="bg-yellow-500">Payment Pending</Badge>}
+                    </span>
+                  )}
+                </div>
 
                 {selectedApp.status === 'pending' && (
                   <>
@@ -367,6 +447,44 @@ export const ApplicationTable: React.FC<ApplicationTableProps> = ({
                     <p className="font-mono text-xs break-words bg-white p-2 rounded border border-green-200">{selectedApp.wallet_address}</p>
                     <p className="font-medium mt-4">Send {selectedApp.amount} AVAX to this wallet address:</p>
                     <p className="font-mono text-xs break-words bg-white p-2 rounded border border-green-200">0x829b054cf1a5A791aEaE52f509A8D0eF93416b63</p>
+                    
+                    <div className="flex items-center mt-4">
+                      <div className="font-medium mr-2">Payment status:</div>
+                      {selectedApp.payment_completed ? (
+                        <Badge className="bg-green-500">Completed</Badge>
+                      ) : (
+                        <Badge className="bg-yellow-500">Pending</Badge>
+                      )}
+                    </div>
+                    
+                    {!selectedApp.payment_completed && (
+                      <Button
+                        className="mt-2 bg-amber-500 hover:bg-amber-600"
+                        onClick={() => {
+                          handleUpdatePaymentStatus(selectedApp.id, true);
+                          setDetailsOpen(false);
+                        }}
+                        disabled={processing === selectedApp.id}
+                      >
+                        <DollarSign className="h-4 w-4 mr-1" />
+                        Mark Payment as Completed
+                      </Button>
+                    )}
+                    
+                    {selectedApp.payment_completed && (
+                      <Button
+                        variant="outline"
+                        className="mt-2"
+                        onClick={() => {
+                          handleUpdatePaymentStatus(selectedApp.id, false);
+                          setDetailsOpen(false);
+                        }}
+                        disabled={processing === selectedApp.id}
+                      >
+                        <DollarSign className="h-4 w-4 mr-1" />
+                        Mark Payment as Pending
+                      </Button>
+                    )}
                   </div>
                 </div>
               )}
